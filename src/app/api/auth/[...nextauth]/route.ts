@@ -3,15 +3,12 @@ import NextAuth from "next-auth";
 import type { NextRequest } from "next/server";
 import { authOptions } from "@/lib/auth";
 
-async function auth(
-  req: NextRequest,
-  ctx: {
-    params: {
-      nextauth: string[];
-    };
-  },
-) {
-  return NextAuth(req, ctx, authOptions(req));
+interface RouteHandlerContext {
+  params: { nextauth: string[] };
+}
+
+async function auth(req: NextRequest, context: RouteHandlerContext) {
+  return await NextAuth(req, context, authOptions(req));
 }
 
 export { auth as GET, auth as POST };
