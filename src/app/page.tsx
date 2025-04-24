@@ -1,4 +1,4 @@
-import SteamSignIn from "@/components/signIn/steam-signin";
+import SteamSignIn from "@/components/auth/steam-signin";
 import { Suspense } from "react";
 
 export default function HomePage() {

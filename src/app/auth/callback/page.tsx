@@ -1,9 +1,7 @@
 // src/app/auth/callback/page.tsx
-"use client";
-
-export const dynamic = "force-dynamic"; // Ou "error" pra bloquear total
-
+import GEPCallback from "@/components/auth/gep-callback";
 import { useSteamRedirect } from "@/hooks/use-steam-redirect";
+import { Suspense } from "react";
 
 export default function AuthCallback() {
   const { status } = useSteamRedirect();
@@ -11,8 +9,8 @@ export default function AuthCallback() {
   if (status === "loading") return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p>Redirecionando de volta para o GSI Client...</p>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <GEPCallback />
+    </Suspense>
   );
 }
