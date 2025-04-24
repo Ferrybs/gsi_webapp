@@ -1,6 +1,8 @@
 // src/app/auth/callback/page.tsx
 "use client";
 
+export const dynamic = "force-dynamic"; // Ou "error" pra bloquear total
+
 import { useSteamRedirect } from "@/hooks/use-steam-redirect";
 
 export default function AuthCallback() {
