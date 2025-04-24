@@ -7,7 +7,8 @@ import { Suspense } from "react";
 export default function AuthCallback() {
   const { status } = useSteamRedirect();
 
-  if (status === "loading") return null;
+  if (status === "loading")
+    return <Suspense fallback={<div>Loading...</div>} />;
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
