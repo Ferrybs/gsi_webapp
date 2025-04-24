@@ -2,6 +2,7 @@
 "use client";
 
 import { useSteamRedirect } from "@/hooks/use-steam-redirect";
+import { Suspense } from "react";
 
 export default function AuthCallback() {
   const { status } = useSteamRedirect();
@@ -9,8 +10,10 @@ export default function AuthCallback() {
   if (status === "loading") return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p>Redirecionando de volta para o GSI Client...</p>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Redirecionando de volta para o GSI Client...</p>
+      </div>
+    </Suspense>
   );
 }
