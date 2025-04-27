@@ -25,7 +25,7 @@ export async function POST(req: Request) {
       id: user.id,
       name: user.name,
       avatar: user.avatar,
-      roles: ["User", "EventAdmin"],
+      roles: ["Streamer", "EventsLog"],
     },
     secret,
     { expiresIn: "7d" },
