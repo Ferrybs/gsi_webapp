@@ -1,0 +1,19 @@
+@theme {
+  --background: #2d3940;
+  --foreground: #f2f1f0;
+
+  --primary: #f27405;
+  --primary-foreground: #f2f1f0;
+
+  --secondary: #f2aa6b;
+  --secondary-foreground: #2d3940;
+
+  --accent: #f2aa6b;
+  --accent-foreground: #2d3940;
+
+  --muted: #94a3b8;
+  --muted-foreground: #2d3940;
+
+  --danger: #f24405;
+  --danger-foreground: #f2f1f0;
+}

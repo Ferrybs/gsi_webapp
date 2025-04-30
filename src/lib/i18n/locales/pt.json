@@ -1,0 +1,380 @@
+{
+  "login": "Entrar",
+  "header": {
+    "back_home": "Voltar ao Início",
+    "streamer_guide": "Guia para Streamers",
+    "streamer_guide_desc": "Tudo o que você precisa saber para integrar o CS2 Bits em suas streams e aumentar o engajamento do seu público."
+  },
+  "footer": {
+    "description": "Uma nova forma de assistir o CS2. Desafie e interaja enquanto assiste seu streamer favorito.",
+    "links": "Links Rápidos",
+    "streamers_guide": "Guia para Streamers",
+    "faq": "FAQ",
+    "legal": "Legal",
+    "terms_of_use": "Termos de Uso",
+    "privacy": "Política de Privacidade",
+    "cookies": "Política de Cookies",
+    "contact": "Contato",
+    "brand": "© 2025 CS2 Bits. Todos os direitos reservados."
+  },
+  "hero": {
+    "challenge": "Desafie,",
+    "predict": "preveja",
+    "engage": "e divita-se",
+    "engage_streamer": "Interaja com seu streamer favorito de forma nova, competitiva e divertida.",
+    "live_cs2": "Uma nova forma de assistir Counter-Strike 2",
+    "live": "AO VIVO",
+    "live_desc": "CS2 Bits Integration Demo",
+    "stream_expirence": "Eleve sua experiência de transmissão",
+    "stream_expirence_desc": "O CS2 Bits oferece aos streamers ferramentas poderosas para criar experiências interativas que mantêm os espectadores engajados e voltando para mais.",
+    "partner": "Aplique como Parceiro"
+  },
+  "features": {
+    "interact_live": "Interatividade ao vivo",
+    "interact_streamer": " Participe em tempo real das transmissões e interaja diretamente com o streamer e outros espectadores.",
+    "challenges": "Desafios com base em eventos reais",
+    "challenges_live": "Faça previsões e desafios baseadas nos eventos que acontecem em tempo real durante a partida.",
+    "custom_challenges": "Desafios personalizados",
+    "unique_challenges": " Participe de desafios únicos criados pelos streamers e ganhe CS2Bits."
+  },
+  "cta": {
+    "new_expirence": "Pronto para uma nova experiência?",
+    "watch_expirence": "Junte-se a milhares de stremers e espectadores para assistir CS2 de uma forma totalmente nova.",
+    "begin_now": "Começar agora",
+    "title": "Pronto para Transformar sua Transmissão?",
+    "description": "Junte-se à nossa comunidade de streamers que está criando conteúdo mais envolvente e lucrativo com o CS2 Bits.",
+    "button": "Candidate-se como Parceiro"
+  },
+  "benefits": {
+    "title": "Por que fazer parceria com a CS2 Bits?",
+    "engagement_title": "Aumento de Engajamento",
+    "engagement_description": "Engaje seu público em tempo real com desafios interativos.",
+    "engagement_point_1": "Desafios personalizados baseados no seu estilo de jogo",
+    "engagement_point_2": "Interação ao vivo com resultados da partida",
+    "engagement_point_3": "Eventos e previsões iniciados pelos espectadores",
+    "unique_content_title": "Conteúdo Único",
+    "unique_content_description": "Destaque-se com recursos interativos exclusivos",
+    "unique_content_point_1": "Desafios personalizados de acordo com seu estilo de jogo",
+    "unique_content_point_2": "Desafios ao vivo com base nos resultados da partida",
+    "unique_content_point_3": "Eventos e previsões iniciados pelos espectadores",
+    "additional_revenue_title": "Renda Adicional",
+    "additional_revenue_description": "Novas oportunidades de monetização para seu canal",
+    "additional_revenue_point_1": "Participação na receita das atividades da plataforma",
+    "additional_revenue_point_2": "Participação na receita dos desafios",
+    "additional_revenue_point_3": "Oportunidades promocionais especiais"
+  },
+  "howItWorks": {
+    "title": "Como funciona?",
+    "tabs": {
+      "setup": "Configuração",
+      "revenue": "Monetização"
+    },
+    "setup": {
+      "title": "Configuração fácil em 3 passos",
+      "steps": {
+        "step1": {
+          "title": "Crie sua conta",
+          "description": "Cadastre-se como streamer e conclua o processo de verificação para obter acesso ao painel de parceiros."
+        },
+        "step2": {
+          "title": "Conecte sua transmissão",
+          "description": "Vincule sua conta do Twitch ou YouTube e instale nossa integração de estado de jogo leve para o CS2."
+        },
+        "step3": {
+          "title": "Comece a transmitir",
+          "description": "Inicie sua live com o CS2 Bits habilitado e seus espectadores poderão interagir imediatamente."
+        }
+      },
+      "requirements": {
+        "title": "Requisitos Técnicos",
+        "items": {
+          "cs2Game": {
+            "name": "Jogo CS2",
+            "description": "Última versão do Counter-Strike 2"
+          },
+          "competitiveMode": {
+            "name": "Modo Competitivo na GC ou FACEIT",
+            "description": "Jogar no modo competitivo no Counter-Strike 2"
+          },
+          "streamingPlatform": {
+            "name": "Plataforma de Streaming",
+            "description": "Conta ativa no Twitch ou YouTube Gaming com permissões de transmissão"
+          },
+          "gameStateIntegration": {
+            "name": "Integração de Estado de Jogo",
+            "description": "Integração de estado de jogo leve que nos permite ler eventos do jogo"
+          }
+        }
+      }
+    },
+    "revenue": {
+      "modelTitle": "Modelo de Compartilhamento de Receita",
+      "point1": "O valor em CS2Bits gastos em desafios durante sua transmissão é paga diretamente a você.",
+      "point2": "Quando um desafio é concluído, o valor em CS2Bits pagos é envida a você.",
+      "integrationTitle": "Integração com a Plataforma",
+      "integrationPoint1": "O CS2 Bits integra-se diretamente à sua configuração de streaming, oferecendo interação em tempo real sem interromper seu gameplay.",
+      "integrationPoint2": "Nosso sistema captura eventos do jogo conforme acontecem para interação imediata dos espectadores."
+    }
+  },
+  "terms": {
+    "title": "Termos de Uso",
+    "lastUpdated": "Última atualização: 30 de abril de 2025",
+    "intro": "Bem-vindo ao CS2 Bits. Ao acessar ou usar nosso site, você concorda com estes Termos de Uso. Por favor, leia-os cuidadosamente antes de usar nossa plataforma.",
+    "acceptance": {
+      "title": "1. Aceitação dos Termos",
+      "content": "Ao acessar ou usar o CS2 Bits, você concorda em ficar vinculado a estes Termos de Uso, todas as leis e regulamentos aplicáveis e concorda que é responsável pelo cumprimento de quaisquer leis locais aplicáveis. Se você não concordar com quaisquer destes termos, está proibido de usar ou acessar este site."
+    },
+    "eligibility": {
+      "title": "2. Elegibilidade",
+      "content": "Para usar o CS2 Bits, você deve ter pelo menos 18 anos de idade ou a idade legal mínima em sua jurisdição para participar de atividades online, o que for maior. Ao usar nosso serviço, você declara e garante que tem idade legal para formar um contrato vinculativo com o CS2 Bits e não está impedido de receber serviços de acordo com as leis do Brasil ou de outra jurisdição aplicável."
+    },
+    "account": {
+      "title": "3. Conta do Usuário",
+      "content1": "Para acessar certos recursos do CS2 Bits, você precisará criar uma conta. Você é responsável por manter a confidencialidade de sua conta e senha e por restringir o acesso ao seu computador. Você concorda em aceitar responsabilidade por todas as atividades que ocorrerem sob sua conta.",
+      "content2": "Você concorda em fornecer informações precisas, atuais e completas durante o processo de registro e em atualizar tais informações para mantê-las precisas, atuais e completas. Se você fornecer informações imprecisas, desatualizadas ou incompletas, ou se o CS2 Bits tiver motivos razoáveis para suspeitar que tais informações são imprecisas, desatualizadas ou incompletas, o CS2 Bits tem o direito de suspender ou encerrar sua conta e recusar qualquer uso presente ou futuro do serviço."
+    },
+    "challenges": {
+      "title": "4. Desafios",
+      "intro1": "O CS2 Bits oferece uma plataforma para desafios virtuais relacionados a partidas de CS2. Toda atividade é realizada com moeda virtual da plataforma, que pode ser adquirida pelos métodos disponíveis no site.",
+      "intro2": "Você entende e concorda que:",
+      "items": {
+        "1": "Os desafios são apenas para entretenimento.",
+        "2": "Os resultados dos desafios são baseados em eventos reais das partidas de CS2.",
+        "3": "O CS2 Bits reserva-se o direito de cancelar desafios em caso de problemas técnicos, suspeita de fraude ou outras circunstâncias que possam comprometer a integridade da plataforma.",
+        "4": "Você não pode transferir ou vender moeda virtual para outros usuários, nem trocá-la por dinheiro real.",
+        "5": "O CS2 Bits pode modificar, suspender ou descontinuar qualquer aspecto do serviço a qualquer momento."
+      }
+    },
+    "conduct": {
+      "title": "5. Conduta do Usuário",
+      "intro": "Ao usar o CS2 Bits, você concorda em não:",
+      "items": {
+        "1": "Violar quaisquer leis ou regulamentos aplicáveis;",
+        "2": "Usar o serviço para qualquer propósito ilegal ou não autorizado;",
+        "3": "Realizar qualquer atividade que interfira ou atrapalhe o serviço;",
+        "4": "Tentar acessar áreas do site para as quais você não tenha permissão;",
+        "5": "Usar bots, scripts ou outros meios automatizados para interagir com o serviço;",
+        "6": "Manipular resultados ou explorar falhas do sistema;",
+        "7": "Assediar, ameaçar ou intimidar outros usuários;",
+        "8": "Publicar conteúdo que seja ofensivo, difamatório, obsceno ou de outra forma inapropriado."
+      }
+    },
+    "intellectualProperty": {
+      "title": "6. Propriedade Intelectual",
+      "content1": "O conteúdo do CS2 Bits, incluindo, mas não se limitando a texto, gráficos, logotipos, ícones, imagens, clipes de áudio, downloads digitais e compilações de dados, é propriedade do CS2 Bits ou de seus fornecedores de conteúdo e é protegido pelas leis internacionais de direitos autorais.",
+      "content2": "O CS2 Bits não reivindica propriedade sobre o conteúdo que você enviar ou disponibilizar para inclusão no site. No entanto, ao enviar conteúdo, você concede ao CS2 Bits uma licença mundial, isenta de royalties, não exclusiva, para usar, reproduzir, modificar, adaptar, publicar, traduzir, distribuir e exibir tal conteúdo."
+    },
+    "liability": {
+      "title": "7. Limitação de Responsabilidade",
+      "content1": "Em nenhuma hipótese o CS2 Bits, seus diretores, funcionários ou agentes serão responsáveis por quaisquer danos diretos, indiretos, incidentais, especiais, punitivos ou conseqüentes decorrentes do uso ou da incapacidade de usar o serviço.",
+      "content2": "O CS2 Bits não garante que o serviço será ininterrupto, pontual, seguro ou livre de erros; tampouco faz qualquer garantia quanto aos resultados que possam ser obtidos com o uso do serviço ou quanto à precisão ou confiabilidade de quaisquer informações obtidas por meio do serviço."
+    },
+    "modifications": {
+      "title": "8. Modificações aos Termos",
+      "content": "O CS2 Bits reserva-se o direito de modificar estes Termos de Uso a qualquer momento. Continuaremos a publicar os termos atualizados nesta página. Seu uso contínuo do serviço após tais modificações constituirá seu reconhecimento dos Termos de Uso modificados e concordância em cumpri-los."
+    },
+    "governingLaw": {
+      "title": "9. Lei Aplicável",
+      "content": "Estes Termos de Uso serão regidos e interpretados de acordo com as leis do Brasil, sem dar efeito a quaisquer princípios de conflito de leis."
+    },
+    "contact": {
+      "title": "10. Contato",
+      "intro": "Se você tiver alguma dúvida sobre estes Termos de Uso, entre em contato conosco em:",
+      "email": "<strong>Email:</strong> contact@csbits.com"
+    }
+  },
+  "legalLayout": {
+    "back": "Voltar",
+    "headerTitle": "Informações Legais",
+    "headerSubtitle": "Documentos Legais do CS2 Bits",
+    "footerCopyright": "© 2025 CS2 Bits. Todos os direitos reservados.",
+    "footerBack": "Voltar para a página inicial"
+  },
+  "legalNavigation": {
+    "termsOfUse": "Termos de Uso",
+    "privacyPolicy": "Política de Privacidade",
+    "cookiePolicy": "Política de Cookies"
+  },
+  "legalPage": {
+    "title": "Documentos Legais",
+    "subtitle": "Por favor, revise nossos documentos legais para entender como operamos, protegemos seus dados e usamos cookies em nossa plataforma.",
+    "terms": {
+      "title": "Termos de Uso",
+      "updated": "Última atualização: 30 de abril de 2025",
+      "description": "Nossos Termos de Uso descrevem as regras e diretrizes para usar a plataforma CS2 Bits, incluindo elegibilidade do usuário, gerenciamento de conta, políticas de desafios e expectativas de conduta.",
+      "read": "Ler Termos de Uso"
+    },
+    "privacy": {
+      "title": "Política de Privacidade",
+      "updated": "Última atualização: 30 de abril de 2025",
+      "description": "Nossa Política de Privacidade explica como coletamos, usamos e protegemos suas informações pessoais quando você usa nossa plataforma, além de seus direitos sobre seus dados.",
+      "read": "Ler Política de Privacidade"
+    },
+    "cookies": {
+      "title": "Política de Cookies",
+      "updated": "Última atualização: 30 de abril de 2025",
+      "description": "Nossa Política de Cookies detalha como usamos cookies e tecnologias similares em nosso site, quais tipos de cookies utilizamos e como você pode controlá-los.",
+      "read": "Ler Política de Cookies"
+    }
+  },
+  "privacyPolicy": {
+    "title": "Política de Privacidade",
+    "lastUpdated": "Última atualização: 30 de abril de 2025",
+    "intro": "O CS2 Bits está comprometido em proteger sua privacidade. Esta Política de Privacidade explica como coletamos, usamos, divulgamos e protegemos suas informações quando você utiliza nosso serviço.",
+    "infoCollect": {
+      "title": "1. Informações que Coletamos",
+      "description": "Coletamos vários tipos de informações para fornecer e melhorar nosso serviço para você:",
+      "personalInfo": {
+        "title": "1.1 Informações Pessoais",
+        "description": "Quando você se registra em nossa plataforma, podemos coletar:",
+        "items": {
+          "firstName": "Nome e sobrenome",
+          "email": "Endereço de email",
+          "username": "Nome de usuário",
+          "steamProfile": "Informações de perfil Steam (quando você autentica via Steam)",
+          "dateOfBirth": "Data de nascimento (para verificação de idade)",
+          "countryResidence": "País de residência"
+        }
+      },
+      "usageInfo": {
+        "title": "1.2 Informações de Uso",
+        "description": "Também coletamos informações sobre como você interage com nosso serviço:",
+        "items": {
+          "accessLogs": "Logs de acesso e atividade",
+          "betsChallenges": "Informações sobre desafios",
+          "interactions": "Interações com outros usuários",
+          "preferences": "Preferências e configurações",
+          "deviceInfo": "Informações do dispositivo e navegador",
+          "ipAddress": "Endereço IP e dados aproximados de localização"
+        }
+      }
+    },
+    "useInfo": {
+      "title": "2. Como Usamos suas Informações",
+      "description": "Usamos as informações coletadas para:",
+      "items": {
+        "provide": "Fornecer, manter e melhorar nossos serviços",
+        "process": "Processar e gerenciar sua conta, desafios e transações",
+        "personalize": "Personalizar sua experiência na plataforma",
+        "communicate": "Comunicar-se com você sobre atualizações, promoções e eventos",
+        "fraudPrevention": "Detectar e prevenir atividades fraudulentas ou abusivas",
+        "legalCompliance": "Cumprir obrigações legais e regulatórias",
+        "analyze": "Analisar tendências e comportamentos de usuários para melhorar nossos serviços"
+      }
+    },
+    "sharingInfo": {
+      "title": "3. Compartilhamento de Informações",
+      "description": "Podemos compartilhar suas informações nas seguintes circunstâncias:",
+      "serviceProviders": {
+        "title": "3.1 Provedores de Serviço",
+        "description": "Compartilhamos informações com provedores de terceiros que nos ajudam a operar, fornecer e melhorar nossos serviços. Esses provedores têm acesso às suas informações apenas para executar tarefas em nosso nome e estão obrigados a não divulgá-las ou usá-las para qualquer outro propósito."
+      },
+      "legalRequirements": {
+        "title": "3.2 Exigências Legais",
+        "description": "Podemos divulgar suas informações se exigido por lei, regulamento, processo legal ou solicitação governamental."
+      },
+      "protectionOfRights": {
+        "title": "3.3 Proteção de Direitos",
+        "description": "Podemos divulgar informações quando acreditarmos ser necessário para proteger nossos direitos, proteger sua segurança ou a segurança de terceiros, investigar fraudes ou responder a solicitações governamentais."
+      },
+      "businessTransfers": {
+        "title": "3.4 Transferências de Negócios",
+        "description": "Se o CS2 Bits estiver envolvido em uma fusão, aquisição ou venda de ativos, suas informações poderão ser transferidas como parte dessa transação. Notificaremos você antes de suas informações serem transferidas e ficarem sujeitas a uma política de privacidade diferente."
+      }
+    },
+    "dataSecurity": {
+      "title": "4. Segurança dos Dados",
+      "description": "A segurança de suas informações é importante para nós. Implementamos medidas técnicas e organizacionais apropriadas para proteger suas informações contra acesso, alteração, divulgação ou destruição não autorizados. No entanto, nenhum método de transmissão pela Internet ou armazenamento eletrônico é 100% seguro, e não podemos garantir segurança absoluta."
+    },
+    "privacyRights": {
+      "title": "5. Seus Direitos de Privacidade",
+      "description": "Dependendo da sua localização, você pode ter certos direitos relacionados às suas informações pessoais, incluindo:",
+      "items": {
+        "access": "Acessar as informações pessoais que temos sobre você",
+        "correct": "Corrigir informações imprecisas ou incompletas",
+        "delete": "Excluir suas informações pessoais",
+        "restrict": "Restringir ou objetar ao processamento de suas informações",
+        "portability": "Solicitar portabilidade de suas informações",
+        "withdrawConsent": "Retirar seu consentimento a qualquer momento"
+      },
+      "instructions": "Para exercer esses direitos, entre em contato conosco pelos canais fornecidos na seção \"Contato\" abaixo."
+    },
+    "dataRetention": {
+      "title": "6. Retenção de Dados",
+      "description": "Reteremos suas informações pessoais pelo tempo necessário para cumprir os propósitos descritos nesta Política de Privacidade, a menos que um período de retenção mais longo seja exigido ou permitido por lei."
+    },
+    "children": {
+      "title": "7. Crianças",
+      "description": "Nosso serviço não é destinado a indivíduos com menos de 18 anos de idade. Não coletamos intencionalmente informações pessoais de crianças. Se você for pai ou responsável e acreditar que seu filho nos forneceu informações pessoais, entre em contato conosco para que possamos tomar as medidas necessárias."
+    },
+    "changes": {
+      "title": "8. Alterações nesta Política de Privacidade",
+      "description": "Podemos atualizar nossa Política de Privacidade de tempos em tempos. Notificaremos você sobre quaisquer alterações publicando a nova Política de Privacidade nesta página e atualizando a data de \"última atualização\" no topo. Recomendamos que você revise periodicamente esta Política de Privacidade."
+    },
+    "contact": {
+      "title": "9. Contato",
+      "intro": "Se você tiver alguma dúvida sobre esta Política de Privacidade, entre em contato conosco:",
+      "email": "<strong>Email:</strong> privacy@csbits.com"
+    }
+  },
+  "cookiePolicy": {
+    "title": "Política de Cookies",
+    "lastUpdated": "Última atualização: 30 de abril de 2025",
+    "intro": "Esta Política de Cookies explica como o CS2 Bits usa cookies e tecnologias similares para reconhecê-lo quando você visita nosso site. Ela explica o que são essas tecnologias e por que as usamos, bem como seus direitos de controlar nosso uso delas.",
+    "whatAreCookies": {
+      "title": "1. O que são Cookies?",
+      "description1": "Cookies são pequenos arquivos de dados que são colocados em seu computador ou dispositivo móvel quando você visita um site. Cookies são amplamente utilizados pelos proprietários de sites para fazer seus sites funcionarem ou funcionarem de forma mais eficiente, bem como para fornecer informações de relatórios.",
+      "description2": "Cookies definidos pelo proprietário do site (neste caso, o CS2 Bits) são chamados de \"cookies primários\". Cookies definidos por partes diferentes do proprietário do site são chamados de \"cookies de terceiros\". Cookies de terceiros habilitam recursos ou funcionalidades de terceiros a serem fornecidos no site ou através dele (por exemplo, publicidade, conteúdo interativo e análises). As partes que definem esses cookies de terceiros podem reconhecer seu dispositivo tanto quando ele visita o site em questão quanto quando visita certos outros sites."
+    },
+    "whyUseCookies": {
+      "title": "2. Por que Usamos Cookies?",
+      "description": "Usamos cookies primários e de terceiros por várias razões. Alguns cookies são necessários por razões técnicas para que nosso site funcione, e nos referimos a eles como cookies \"essenciais\" ou \"estritamente necessários\". Outros cookies também nos permitem rastrear e direcionar os interesses de nossos usuários para aprimorar a experiência em nosso site. Terceiros servem cookies por meio de nosso site para publicidade, análise e outros fins."
+    },
+    "typesCookies": {
+      "title": "3. Tipos de Cookies que Usamos",
+      "description": "Os tipos específicos de cookies primários e de terceiros fornecidos por meio de nosso site e os propósitos que eles executam são descritos abaixo:",
+      "essential": {
+        "title": "3.1 Cookies Essenciais",
+        "description": "Esses cookies são estritamente necessários para fornecer a você os serviços disponíveis em nosso site e para usar alguns de seus recursos, como acesso a áreas seguras. Como esses cookies são estritamente necessários para entregar o site, você não pode recusá-los sem afetar como nosso site funciona."
+      },
+      "performance": {
+        "title": "3.2 Cookies de Desempenho e Funcionalidade",
+        "description": "Esses cookies são usados para aprimorar o desempenho e a funcionalidade de nosso site, mas não são essenciais para seu uso. No entanto, sem esses cookies, certas funcionalidades podem ficar indisponíveis."
+      },
+      "analytics": {
+        "title": "3.3 Cookies de Análise e Personalização",
+        "description": "Esses cookies coletam informações que são usadas em forma agregada para nos ajudar a entender como nosso site está sendo usado ou quão eficazes são nossas campanhas de marketing, ou para nos ajudar a personalizar nosso site para você. Eles nos permitem reconhecer e contar o número de visitantes e ver como os visitantes se movem em nosso site quando o estão usando."
+      },
+      "marketing": {
+        "title": "3.4 Cookies de Marketing",
+        "description": "Esses cookies são usados para rastrear visitantes em outros sites. A intenção é exibir anúncios que sejam relevantes e envolventes para o usuário individual e, assim, mais valiosos para os editores e anunciantes terceirizados."
+      },
+      "social": {
+        "title": "3.5 Cookies de Mídias Sociais",
+        "description": "Esses cookies são definidos por uma variedade de serviços de mídias sociais que adicionamos ao site para permitir que você compartilhe nosso conteúdo com seus amigos e redes. Eles podem rastrear seu navegador em outros sites e criar um perfil de seus interesses. Isso pode afetar o conteúdo e as mensagens que você vê em outros sites que visita."
+      }
+    },
+    "controlCookies": {
+      "title": "4. Como Você Pode Controlar Cookies",
+      "description1": "Você tem o direito de decidir se aceita ou rejeita cookies. Você pode exercer suas preferências de cookies clicando nos links de opt-out apropriados fornecidos em nosso site.",
+      "description2": "Você também pode definir ou alterar os controles de cookies do seu navegador para aceitar ou recusar cookies. Se escolher rejeitar cookies, você ainda pode usar nosso site, embora seu acesso a algumas funcionalidades e áreas possa ser restrito.",
+      "description3Part1": "Além disso, a maioria das redes de publicidade oferece uma forma de optar por não receber publicidade direcionada. Para obter mais informações, visite ",
+      "optOutLink1": "http://www.aboutads.info/choices/",
+      "description3Part2": " ou ",
+      "optOutLink2": "http://www.youronlinechoices.com",
+      "description3Part3": "."
+    },
+    "pastCookies": {
+      "title": "5. Cookies que Foram Definidos no Passado",
+      "description": "Se você desativou um ou mais cookies, ainda podemos usar informações coletadas de cookies antes de sua preferência de desativação ser definida; no entanto, pararemos de usar o cookie desativado para coletar qualquer informação adicional."
+    },
+    "changesPolicy": {
+      "title": "6. Alterações à Nossa Política de Cookies",
+      "description": "Podemos atualizar nossa Política de Cookies de tempos em tempos. Publicaremos quaisquer alterações nesta página atualizando a data de \"Última atualização\" no topo desta Política de Cookies. Recomendamos que você revise periodicamente esta Política de Cookies para quaisquer alterações."
+    },
+    "moreInfo": {
+      "title": "7. Onde Você Pode Obter Mais Informações",
+      "description": "Se você tiver alguma dúvida sobre nosso uso de cookies ou outras tecnologias, envie um email para contact@csbits.com."
+    }
+  }
+}
