@@ -59,6 +59,7 @@ export function authOptions(
             data: {
               user_id: userData.id,
               balance: 0,
+              event_balance: 0,
             },
           });
         }

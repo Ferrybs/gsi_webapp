@@ -14,10 +14,10 @@ export const UsersSchema = z.object({
   id: z.string(),
   steam_id: z.string(),
   username: z.string(),
-  email: z.string().email().nullable(),
+  email: z.string().email().or(z.literal("")).nullable(),
   trade_link: z
     .string()
-    .regex(TRADE_LINK_REGEX, "error.invalid_trade_link")
+    .regex(TRADE_LINK_REGEX, "Invalid trade link")
     .or(z.literal(""))
     .nullable(),
   avatar_url: z.string().nullable(),

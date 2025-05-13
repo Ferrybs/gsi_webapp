@@ -14,7 +14,9 @@
   "header": {
     "back_home": "Voltar ao Início",
     "streamer_guide": "Guia para Streamers",
-    "streamer_guide_desc": "Tudo o que você precisa saber para integrar o CS2 Bits em suas streams e aumentar o engajamento do seu público."
+    "streamer_guide_desc": "Tudo o que você precisa saber para integrar o CS2 Bits em suas streams e aumentar o engajamento do seu público.",
+    "balance": "CS2Bits",
+    "event_balance": "CS2Bits EV"
   },
   "footer": {
     "description": "Uma nova forma de assistir o CS2. Desafie e interaja enquanto assiste seu streamer favorito.",

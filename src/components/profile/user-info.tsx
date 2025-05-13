@@ -95,7 +95,7 @@ export function UserInfo({ userData }: UserInfoProps) {
               </FormItem>
 
               {/* Email */}
-              <FormItem className="flex-1">
+              <FormItem className="flex-1 relative">
                 <FormLabel className="text-muted-foreground flex items-center gap-1">
                   <AtSign className="h-4 w-4" /> {t("profile.email")}
                 </FormLabel>
@@ -106,26 +106,8 @@ export function UserInfo({ userData }: UserInfoProps) {
                   />
                 </FormControl>
                 {form.formState.errors.email && (
-                  <p className="text-red-500 text-sm">
+                  <p className="absolute text-red-500 text-sm left-0 top-full">
                     {form.formState.errors.email.message}
-                  </p>
-                )}
-              </FormItem>
-
-              {/* Trade Link */}
-              <FormItem className="flex-1">
-                <FormLabel className="text-muted-foreground flex items-center gap-1">
-                  <ExternalLink className="h-4 w-4" /> {t("profile.trade_link")}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...form.register("trade_link")}
-                    className="text-lg font-medium w-full"
-                  />
-                </FormControl>
-                {form.formState.errors.trade_link && (
-                  <p className="text-red-500 text-sm">
-                    {form.formState.errors.trade_link.message}
                   </p>
                 )}
               </FormItem>
@@ -160,6 +142,24 @@ export function UserInfo({ userData }: UserInfoProps) {
                     </Button>
                   </div>
                 </FormControl>
+              </FormItem>
+
+              {/* Trade Link */}
+              <FormItem className="flex-1 relative">
+                <FormLabel className="text-muted-foreground flex items-center gap-1">
+                  <ExternalLink className="h-4 w-4" /> {t("profile.trade_link")}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...form.register("trade_link")}
+                    className="text-lg font-medium w-full"
+                  />
+                </FormControl>
+                {form.formState.errors.trade_link && (
+                  <p className="absolute text-red-500 text-sm left-0 top-full">
+                    {form.formState.errors.trade_link.message}
+                  </p>
+                )}
               </FormItem>
             </div>
           </div>

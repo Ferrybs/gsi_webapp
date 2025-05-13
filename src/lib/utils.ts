@@ -19,3 +19,13 @@ export function formatTimeSince(date: Date) {
     return `${hours}h ${minutes}min`;
   }
 }
+
+export function formatCurrency(value: number) {
+  const formatted = new Intl.NumberFormat("en-US", {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+
+  return `${formatted} pts`;
+}
