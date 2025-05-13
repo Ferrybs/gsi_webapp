@@ -1,16 +1,17 @@
-import { sign } from "jsonwebtoken";
-import { NextApiRequest } from "next";
 import { NextAuthOptions } from "next-auth";
-import Steam from "next-auth-steam";
+import prisma from "./prisma";
 import { JWT } from "next-auth/jwt";
+import { sign } from "jsonwebtoken";
+import Steam from "next-auth-steam";
 import { NextRequest } from "next/server";
+import { NextApiRequest } from "next";
 
 export function authOptions(
-  req: Request | NextRequest | NextApiRequest,
+  req: Request | NextRequest | NextApiRequest | null,
 ): NextAuthOptions {
   return {
     providers: [
-      Steam(req, {
+      Steam(req ?? new Request(process.env.NEXTAUTH_URL!), {
         clientSecret: process.env.STEAM_SECRET!,
       }),
     ],
@@ -25,7 +26,7 @@ export function authOptions(
               avatar: user.image,
             },
             process.env.NEXTAUTH_SECRET!,
-            { expiresIn: "7d" },
+            { expiresIn: "30d" },
           );
         }
         return token;
@@ -39,6 +40,29 @@ export function authOptions(
             avatar: session.user?.image,
           },
         };
+      },
+      async signIn({ user }) {
+        const userData = await prisma.users.upsert({
+          where: { steam_id: user.id },
+          update: { username: user.name ?? user.id, avatar_url: user.image },
+          create: {
+            steam_id: user.id,
+            username: user.name ?? user.id,
+            avatar_url: user.image,
+          },
+        });
+        const userBalance = await prisma.user_balances.findUnique({
+          where: { user_id: userData.id },
+        });
+        if (!userBalance) {
+          await prisma.user_balances.create({
+            data: {
+              user_id: userData.id,
+              balance: 0,
+            },
+          });
+        }
+        return true;
       },
     },
     secret: process.env.NEXTAUTH_SECRET,

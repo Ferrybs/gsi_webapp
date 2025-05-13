@@ -8,6 +8,12 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import "@/lib/i18n/i18n-provider";
 import { I18nProvider } from "@/lib/i18n/i18n-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import HomeHeader from "@/components/home/layout/home-header";
+import { cookies } from "next/headers";
+import { Toaster } from "sonner";
+import HomeFooter from "@/components/home/layout/home-footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,14 +23,18 @@ export const metadata: Metadata = {
     "Uma nova forma de viver o CS2. Aposte, desafie e interaja enquanto assiste seu streamer favorito.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("NEXT_LOCALE")?.value ?? "pt";
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang={locale} suppressHydrationWarning>
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} min-h-screen flex flex-col items-center`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -32,8 +42,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SessionWrapper>
-            <I18nProvider>
-              <QueryProvider>{children}</QueryProvider>
+            <I18nProvider locale={locale}>
+              <QueryProvider>
+                <HomeHeader />
+                {children}
+                <Toaster />
+                <HomeFooter />
+              </QueryProvider>
             </I18nProvider>
           </SessionWrapper>
         </ThemeProvider>

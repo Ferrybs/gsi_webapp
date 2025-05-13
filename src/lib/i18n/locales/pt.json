@@ -1,5 +1,16 @@
 {
   "login": "Entrar",
+  "signInPage": {
+    "welcomeTitle": "Bem-vindo ao CS2 Bits",
+    "description": "Entre com sua conta Steam para acessar desafios e previsões em tempo real",
+    "sloganMain": "Challenge. Predict. Engage.",
+    "sloganSub": "Interaja com seu streamer favorito de forma nova, competitiva e divertida.",
+    "button": {
+      "connecting": "Conectando...",
+      "signIn": "Entrar com Steam"
+    },
+    "agreement": "Ao entrar, você concorda com nossos <0>Termos de Serviço</0> e <1>Política de Privacidade</1>."
+  },
   "header": {
     "back_home": "Voltar ao Início",
     "streamer_guide": "Guia para Streamers",
@@ -20,9 +31,9 @@
   "hero": {
     "challenge": "Desafie,",
     "predict": "preveja",
-    "engage": "e divita-se",
+    "engage": "e dirvita-se",
     "engage_streamer": "Interaja com seu streamer favorito de forma nova, competitiva e divertida.",
-    "live_cs2": "Uma nova forma de assistir Counter-Strike 2",
+    "live_cs2": "Ver partidas",
     "live": "AO VIVO",
     "live_desc": "CS2 Bits Integration Demo",
     "stream_expirence": "Eleve sua experiência de transmissão",
@@ -34,8 +45,8 @@
     "interact_streamer": " Participe em tempo real das transmissões e interaja diretamente com o streamer e outros espectadores.",
     "challenges": "Desafios com base em eventos reais",
     "challenges_live": "Faça previsões e desafios baseadas nos eventos que acontecem em tempo real durante a partida.",
-    "custom_challenges": "Desafios personalizados",
-    "unique_challenges": " Participe de desafios únicos criados pelos streamers e ganhe CS2Bits."
+    "exchange_points": "Troque seus pontos por skins",
+    "points_for_skins": "Transforme suas previsões e desafios em prêmios: resgate skins diretamente com seus pontos."
   },
   "cta": {
     "new_expirence": "Pronto para uma nova experiência?",
@@ -89,11 +100,11 @@
         "title": "Requisitos Técnicos",
         "items": {
           "cs2Game": {
-            "name": "Jogo CS2",
+            "name": "Jogo CS 2",
             "description": "Última versão do Counter-Strike 2"
           },
           "competitiveMode": {
-            "name": "Modo Competitivo na GC ou FACEIT",
+            "name": "Premier, Competitivo, GC ou FACEIT",
             "description": "Jogar no modo competitivo no Counter-Strike 2"
           },
           "streamingPlatform": {
@@ -375,6 +386,102 @@
     "moreInfo": {
       "title": "7. Onde Você Pode Obter Mais Informações",
       "description": "Se você tiver alguma dúvida sobre nosso uso de cookies ou outras tecnologias, envie um email para contact@csbits.com."
+    }
+  },
+  "userProfile": {
+    "streamer": "Streamer",
+    "user": "Usuário",
+    "tabs": {
+      "info": "Informações",
+      "stats": "Estatísticas",
+      "history": "Histórico"
+    },
+    "info": {
+      "title": "Perfil do Usuário",
+      "description": "Suas informações pessoais e configurações"
+    },
+    "history": {
+      "title": "Histórico de Atividades",
+      "description": "Suas atividades recentes no CS2 Bits",
+      "noActivity": "Nenhuma atividade recente",
+      "noActivityDescription": "Suas atividades aparecerão aqui quando você começar a interagir com desafios e previsões."
+    }
+  },
+  "profile": {
+    "title": "Perfil",
+    "username": "Nome de usuário",
+    "email": "Email",
+    "steam_id": "Steam ID",
+    "toggle_visibility": "Alternar visibilidade",
+    "save": "Salvar",
+    "trade_link": "Link de troca",
+    "open_trade_link": "Abrir link de troca no Steam",
+    "errorTitle": "Erro",
+    "errorDescription": "Ocorreu um erro ao carregar os dados do perfil: {{message}}",
+    "tryAgain": "Tentar novamente",
+    "notFoundTitle": "Usuário não encontrado",
+    "notFoundDescription": "Não foi possível encontrar os dados do seu perfil. Por favor, tente novamente mais tarde.",
+    "confirm_email": "Confirmar e-mail",
+    "confirm_email_description": "Por favor, confirme o código enviado para o seu novo e-mail para continuar.",
+    "trade_link_updated": "Link de troca atualizado com sucesso",
+    "streamer": {
+      "title": "Informações de Streamer",
+      "username": "Pagina do Streamer",
+      "stream_url": "URLs das Streams",
+      "copied": "URL copiada para a área de transferência"
+    }
+  },
+  "streamer": {
+    "description": "Acompanhe a partida ao vivo, faça previsões e interaja com o streamer"
+  },
+  "error": {
+    "match_update": "Erro ao receber dados da partida",
+    "match_stats_update": "Erro ao receber estatísticas da partida",
+    "websocket_connection": "Erro ao conectar com o servidor",
+    "user_not_found": "Usuário não encontrado",
+    "invalid_otp": "OTP inválido",
+    "otp_not_found": "OTP não encontrado",
+    "invalid_email": "Email inválido",
+    "invalid_trade_link": "Link de troca inválido",
+    "error_sending_otp": "Erro ao enviar OTP",
+    "error_confirming_otp": "Erro ao confirmar OTP",
+    "email_already_confirmed": "E-mail já confirmado",
+    "otp_already_sent": "Tentativa de troca de e-mail já realizada, tente novamente em 5 minutos",
+    "trade_link_updated": "Link de troca atualizado com sucesso",
+    "trade_link_incorrect": "Link de troca incorreto",
+    "invalid_trade_not_owner": "Link de troca não pertence ao usuário"
+  },
+  "match": {
+    "offline": "OFFLINE",
+    "kills": "Kills",
+    "deaths": "Deaths",
+    "assists": "Assists",
+    "duration": "Duração",
+    "rounds_name": "Rounds",
+    "map": "Mapa",
+    "kda": "KDA",
+    "playerStats": "Estatísticas do Jogador",
+    "rounds": {
+      "rounds_live": "Rounds ao vivo",
+      "rounds_live_description": "Acompanhe as rounds ao vivo de {{streamer}}",
+      "round_kills": "Mortes na rodada",
+      "headshots": "Headshots",
+      "round_headshots": "Headshots na rodada",
+      "round_health": "Vida na rodada",
+      "round_equipment": "Valor do equipamento",
+      "round_events": "Eventos da rodada",
+      "headshot": "Headshot",
+      "round_high_equipment": "Equipamento alto na rodada",
+      "round_survived": "Sobreviveu com {{health}} de vida",
+      "round_finished": "Rodada finalizada: {{label}}",
+      "rounds_waiting": "Aguardando rounds",
+      "rounds_waiting_description": "Os rounds começarão em breve",
+      "ct_win_defuse": "CTs venceram por desativar a bomba",
+      "t_win_bomb": "Ts venceram com a bomba explodida",
+      "ct_win_time": "CTs venceram por esgotar o tempo",
+      "ct_win_elimination": "CTs venceram por eliminação",
+      "t_win_elimination": "Ts venceram por eliminação",
+      "t_win_time": "Ts venceram por esgotar o tempo"
     }
   }
 }

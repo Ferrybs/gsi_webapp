@@ -1,53 +1,29 @@
 "use client";
-import { Target, Trophy, Zap } from "lucide-react";
+import { Trophy, Zap } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import HomeFeatureItem from "./home-feature-item";
+import { Ak47 } from "../icons/ak47-icon";
 
 function HomeFeaturesSection() {
   const { t } = useTranslation();
   return (
     <section className="container mx-auto px-4 py-16">
       <div className="grid md:grid-cols-3 gap-8">
-        <div className="bg-card/30 p-6 rounded-xl border border-border/30 flex items-start gap-4">
-          <div className="bg-primary/20 p-3 rounded-lg">
-            <Zap className="text-primary h-6 w-6" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-2">
-              {t("features.interact_live")}
-            </h3>
-            <p className="text-foreground/70">
-              {t("features.interact_streamer")}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-card/30 p-6 rounded-xl border border-border/30 flex items-start gap-4">
-          <div className="bg-primary/20 p-3 rounded-lg">
-            <Trophy className="text-primary h-6 w-6" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-2">
-              {t("features.challenges")}
-            </h3>
-            <p className="text-foreground/70">
-              {t("features.challenges_live")}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-card/30 p-6 rounded-xl border border-border/30 flex items-start gap-4">
-          <div className="bg-primary/20 p-3 rounded-lg">
-            <Target className="text-primary h-6 w-6" />
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-2">
-              {t("features.custom_challenges")}
-            </h3>
-            <p className="text-foreground/70">
-              {t("features.unique_challenges")}
-            </p>
-          </div>
-        </div>
+        <HomeFeatureItem
+          icon={<Zap className="text-primary h-8 w-8" />}
+          title={t("features.interact_live")}
+          desc={t("features.interact_streamer")}
+        />
+        <HomeFeatureItem
+          icon={<Trophy className="text-primary h-8 w-8" />}
+          title={t("features.challenges")}
+          desc={t("features.challenges_live")}
+        />
+        <HomeFeatureItem
+          icon={<Ak47 className="text-primary h-8 w-8 p-0 m-0" />}
+          title={t("features.exchange_points")}
+          desc={t("features.points_for_skins")}
+        />
       </div>
     </section>
   );

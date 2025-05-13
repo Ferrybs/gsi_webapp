@@ -1,26 +1,25 @@
-// lib/i18n/index.ts
 "use client";
 import i18n from "i18next";
-import { initReactI18next } from "react-i18next";
+import { initReactI18next, I18nextProvider } from "react-i18next";
 import pt from "./locales/pt.json";
 import en from "./locales/en.json";
+import { ReactNode, useEffect } from "react";
 
-import { ReactNode } from "react";
-
-export function I18nProvider({ children }: { children: ReactNode }) {
-  return <>{children}</>;
-}
-
-void i18n.use(initReactI18next).init({
-  resources: {
-    pt: { translation: pt },
-    en: { translation: en },
-  },
+i18n.use(initReactI18next).init({
+  resources: { pt: { translation: pt }, en: { translation: en } },
   fallbackLng: "pt",
-  lng: "pt",
-  interpolation: {
-    escapeValue: false,
-  },
+  interpolation: { escapeValue: false },
 });
 
-export default i18n;
+export function I18nProvider({
+  children,
+  locale,
+}: {
+  children: ReactNode;
+  locale: string;
+}) {
+  useEffect(() => {
+    i18n.changeLanguage(locale);
+  }, [locale]);
+  return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
+}

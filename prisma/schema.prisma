@@ -1,0 +1,278 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model match_player_deaths {
+  id                 Int
+  stats_id           String             @db.Uuid
+  round_number       Int
+  team_side_name     team_side
+  hp_before          Int
+  created_at         DateTime           @default(now()) @db.Timestamp(6)
+  match_player_stats match_player_stats @relation(fields: [stats_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([id, stats_id])
+}
+
+model match_player_kills {
+  id                 Int
+  stats_id           String             @db.Uuid
+  round_number       Int
+  team_side_name     team_side
+  is_headshot        Boolean            @default(false)
+  created_at         DateTime           @default(now()) @db.Timestamp(6)
+  match_player_stats match_player_stats @relation(fields: [stats_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([id, stats_id])
+}
+
+model match_player_rounds {
+  stats_id              String             @db.Uuid
+  round_number          Int
+  team_side_name        team_side
+  kills                 Int
+  hs_kills              Int
+  health                Int
+  equipment_val         Int
+  round_conclusion_name round_conclusion?
+  created_at            DateTime           @default(now()) @db.Timestamp(6)
+  updated_at            DateTime           @default(now()) @db.Timestamp(6)
+  match_player_stats    match_player_stats @relation(fields: [stats_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([stats_id, round_number])
+}
+
+model match_player_stats {
+  id                  String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  match_id            String                @unique @db.Uuid
+  round               Int                   @default(0)
+  ct_score            Int                   @default(0)
+  t_score             Int                   @default(0)
+  team_side_name      team_side
+  kills               Int                   @default(0)
+  deaths              Int                   @default(0)
+  assists             Int                   @default(0)
+  started_at          DateTime              @default(now()) @db.Timestamp(6)
+  updated_at          DateTime              @default(now()) @db.Timestamp(6)
+  match_player_deaths match_player_deaths[]
+  match_player_kills  match_player_kills[]
+  match_player_rounds match_player_rounds[]
+  matches             matches               @relation(fields: [match_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model matches {
+  id                 String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  streamer_user_id   String              @db.Uuid
+  map_name           map_name
+  mode_name          map_mode
+  phase_name         match_phase
+  status_name        match_status
+  started_at         DateTime            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime            @default(now()) @db.Timestamp(6)
+  ended_at           DateTime?           @db.Timestamp(6)
+  match_player_stats match_player_stats?
+  users              streamers           @relation(fields: [streamer_user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  stream_matches     stream_matches?
+}
+
+model user_balances {
+  user_id String  @id @db.Uuid
+  balance Decimal @default(0) @db.Decimal(14, 2)
+  users   users   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model user_roles {
+  user_id   String    @db.Uuid
+  role_name role_type
+  users     users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, role_name])
+}
+
+model user_transactions {
+  id          String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id     String           @db.Uuid
+  amount      Decimal          @db.Decimal(14, 2)
+  type        transaction_type
+  description String?
+  created_at  DateTime         @default(now()) @db.Timestamp(6)
+  users       users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  id                String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  steam_id          String              @unique @db.VarChar(50)
+  username          String              @db.VarChar(100)
+  email             String?             @db.VarChar(100)
+  avatar_url        String?
+  trade_link        String?
+  user_status_name  user_status         @default(Active)
+  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  streamers         streamers?
+  user_balances     user_balances?
+  user_payments     user_payments[]
+  user_roles        user_roles[]
+  user_transactions user_transactions[]
+}
+
+model stream_urls {
+  streamer_id          String          @db.Uuid
+  stream_provider_name stream_provider
+  url                  String
+  streamers            streamers       @relation(fields: [streamer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([streamer_id, stream_provider_name])
+}
+
+model streamers {
+  id             String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id        String           @unique @db.Uuid
+  username_id    String           @unique @db.VarChar(26)
+  display_name   String?          @db.VarChar(30)
+  avatar_url     String?
+  matches        matches[]
+  stream_matches stream_matches[]
+  stream_urls    stream_urls[]
+  users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model stream_matches {
+  id           String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  match_id     String              @unique @db.Uuid
+  streamer_id  String              @db.Uuid
+  match_status stream_match_status @default(Preparing)
+  created_at   DateTime            @default(now()) @db.Timestamp(6)
+  updated_at   DateTime            @default(now()) @db.Timestamp(6)
+  matches      matches             @relation(fields: [match_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  streamers    streamers           @relation(fields: [streamer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model user_payments {
+  id                      String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                 String           @db.Uuid
+  provider                payment_provider
+  provider_transaction_id String?
+  real_amount             Decimal          @db.Decimal(14, 2)
+  currency_name           currency         @default(BRL)
+  cs2bits_amount          Decimal          @db.Decimal(14, 2)
+  status                  payment_status   @default(Pending)
+  created_at              DateTime         @default(now()) @db.Timestamp(6)
+  updated_at              DateTime         @default(now()) @db.Timestamp(6)
+  users                   users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+enum map_mode {
+  Competitive
+}
+
+enum map_name {
+  de_dust2
+  de_inferno
+  de_mirage
+  de_nuke
+  de_overpass
+  de_vertigo
+  de_ancient
+  de_anubis
+  de_cache
+  de_train
+  de_community
+}
+
+enum match_phase {
+  Live
+  Warmup
+  Intermission
+  Gameover
+}
+
+enum match_status {
+  Detected
+  Started
+  InProgress
+  Finished
+  Abandoned
+  Invalid
+}
+
+enum match_tracking_status {
+  Collecting
+  Invalid
+  Verified
+}
+
+enum result_status {
+  Win
+  Lose
+  Pending
+}
+
+enum role_type {
+  EventsLog
+  Streamer
+  User
+}
+
+enum stream_match_status {
+  Preparing
+  Live
+  Finished
+  Invalidated
+}
+
+enum team_side {
+  T
+  CT
+}
+
+enum transaction_type {
+  Deposit
+  Predict
+  Reward
+  Refund
+}
+
+enum user_status {
+  Active
+  Inative
+  Deleted
+}
+
+enum round_conclusion {
+  t_win_elimination
+  t_win_bomb
+  t_win_time
+  ct_win_elimination
+  ct_win_defuse
+  ct_win_rescue
+  ct_win_time
+}
+
+enum stream_provider {
+  twitch
+  youtube
+}
+
+enum currency {
+  BRL
+  CRYPTO
+}
+
+enum payment_provider {
+  Coinbase
+  Gateway
+}
+
+enum payment_status {
+  Pending
+  Completed
+  Failed
+  Canceled
+  Refunded
+}
