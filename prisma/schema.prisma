@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -82,10 +81,12 @@ model matches {
 }
 
 model user_balances {
-  user_id       String  @id @db.Uuid
-  balance       Decimal @default(0) @db.Decimal(14, 2)
-  event_balance Decimal @default(0) @db.Decimal(14, 2)
-  users         users   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_id       String   @id @db.Uuid
+  balance       Decimal  @default(0) @db.Decimal(20, 4)
+  event_balance Decimal  @default(0) @db.Decimal(20, 4)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+  users         users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model user_roles {
@@ -97,13 +98,14 @@ model user_roles {
 }
 
 model user_transactions {
-  id          String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id     String           @db.Uuid
-  amount      Decimal          @db.Decimal(14, 2)
-  type        transaction_type
-  description String?
-  created_at  DateTime         @default(now()) @db.Timestamp(6)
-  users       users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                       String                     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                  String                     @db.Uuid
+  amount                   Decimal                    @db.Decimal(20, 4)
+  type                     transaction_type
+  description              String?
+  created_at               DateTime                   @default(now()) @db.Timestamp(6)
+  user_payment_transaction user_payment_transaction[]
+  users                    users                      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model users {
@@ -119,6 +121,7 @@ model users {
   streamers         streamers?
   user_balances     user_balances?
   user_payments     user_payments[]
+  user_preferences  user_preferences?
   user_roles        user_roles[]
   user_transactions user_transactions[]
 }
@@ -156,17 +159,46 @@ model stream_matches {
 }
 
 model user_payments {
-  id                      String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id                 String           @db.Uuid
-  provider                payment_provider
-  provider_transaction_id String?
-  real_amount             Decimal          @db.Decimal(14, 2)
-  currency_name           currency         @default(BRL)
-  cs2bits_amount          Decimal          @db.Decimal(14, 2)
-  status                  payment_status   @default(Pending)
-  created_at              DateTime         @default(now()) @db.Timestamp(6)
-  updated_at              DateTime         @default(now()) @db.Timestamp(6)
-  users                   users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                       String                     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                  String                     @db.Uuid
+  provider                 payment_provider
+  provider_transaction_id  String?
+  fiat_amount              Decimal                    @db.Decimal(20, 4)
+  currency_name            currency                   @default(BRL)
+  points_amount            Decimal                    @db.Decimal(20, 4)
+  status                   payment_status             @default(Pending)
+  created_at               DateTime                   @default(now()) @db.Timestamp(6)
+  updated_at               DateTime                   @default(now()) @db.Timestamp(6)
+  user_payment_transaction user_payment_transaction[]
+  users                    users                      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model point_packages {
+  id            Int      @id @default(autoincrement())
+  name          String
+  points_amount Decimal  @db.Decimal(20, 4)
+  price         Decimal  @db.Decimal(20, 4)
+  currency      currency
+  bonus_points  Decimal  @default(0) @db.Decimal(20, 4)
+  active        Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model user_payment_transaction {
+  user_transaction_id String            @db.Uuid
+  user_payments_id    String            @db.Uuid
+  user_payments       user_payments     @relation(fields: [user_payments_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_transactions   user_transactions @relation(fields: [user_transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_transaction_id, user_payments_id])
+}
+
+model user_preferences {
+  user_id        String   @id @db.Uuid
+  currency       currency @default(BRL)
+  cookie_consent Boolean  @default(false)
+  users          users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 enum map_mode {
@@ -219,6 +251,7 @@ enum role_type {
   EventsLog
   Streamer
   User
+  Admin
 }
 
 enum stream_match_status {
@@ -236,7 +269,9 @@ enum team_side {
 enum transaction_type {
   Deposit
   Predict
+  Challenge
   Reward
+  Exchange
   Refund
 }
 
@@ -263,16 +298,18 @@ enum stream_provider {
 
 enum currency {
   BRL
-  CRYPTO
+  USD
+  USDC
 }
 
 enum payment_provider {
   Coinbase
-  Gateway
+  Stripe
 }
 
 enum payment_status {
   Pending
+  Processing
   Completed
   Failed
   Canceled

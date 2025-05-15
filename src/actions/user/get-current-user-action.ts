@@ -1,5 +1,5 @@
 "use server";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getServerSteamUser } from "@/lib/session";
 
 export async function getCurrentUserAction() {

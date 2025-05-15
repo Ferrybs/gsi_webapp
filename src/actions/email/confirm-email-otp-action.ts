@@ -2,7 +2,7 @@
 import { z } from "zod";
 import { getCurrentUserAction } from "../user/get-current-user-action";
 import redis from "@/lib/redis";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { ActionResponse } from "@/types/action-responde";
 
 const bodySchema = z.object({ otp: z.string().length(6) });

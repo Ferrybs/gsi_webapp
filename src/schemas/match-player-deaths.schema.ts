@@ -1,7 +1,5 @@
-
-
 import { z } from "zod";
-import { team_side } from "../../generated/prisma";
+import { team_side } from "@prisma/client";
 
 export const MatchPlayerDeathsSchema = z.object({
   id: z.number(),
@@ -11,4 +9,3 @@ export const MatchPlayerDeathsSchema = z.object({
   hp_before: z.number(),
   created_at: z.string(),
 });
-

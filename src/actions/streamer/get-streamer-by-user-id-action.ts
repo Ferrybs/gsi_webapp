@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function getStreamerByUserIdAction(user_id: string) {
   const streamer = await prisma.streamers.findUnique({

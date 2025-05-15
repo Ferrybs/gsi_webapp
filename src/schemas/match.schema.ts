@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { map_mode, map_name, match_phase, match_status } from "../../generated/prisma";
+import { map_mode, map_name, match_phase, match_status } from "@prisma/client";
 
 export const MatchSchema = z.object({
   id: z.string(),
@@ -9,16 +9,16 @@ export const MatchSchema = z.object({
   phase_name: z.nativeEnum(match_phase),
   status_name: z.nativeEnum(match_status),
   started_at: z.preprocess(
-    arg => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date()
+    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    z.date(),
   ),
   updated_at: z.preprocess(
-    arg => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date()
+    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    z.date(),
   ),
   ended_at: z.preprocess(
-    arg => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date().nullable()
+    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    z.date().nullable(),
   ),
 });
 

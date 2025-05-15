@@ -1,5 +1,6 @@
 {
   "login": "Entrar",
+  "logout": "Sair",
   "signInPage": {
     "welcomeTitle": "Bem-vindo ao CS2 Bits",
     "description": "Entre com sua conta Steam para acessar desafios e previsões em tempo real",
@@ -16,7 +17,8 @@
     "streamer_guide": "Guia para Streamers",
     "streamer_guide_desc": "Tudo o que você precisa saber para integrar o CS2 Bits em suas streams e aumentar o engajamento do seu público.",
     "balance": "CS2Bits",
-    "event_balance": "CS2Bits EV"
+    "event_balance": "CS2Bits EV",
+    "buy_cs2bits": "Comprar CS2Bits"
   },
   "footer": {
     "description": "Uma nova forma de assistir o CS2. Desafie e interaja enquanto assiste seu streamer favorito.",
@@ -451,7 +453,11 @@
     "otp_already_sent": "Tentativa de troca de e-mail já realizada, tente novamente em 5 minutos",
     "trade_link_updated": "Link de troca atualizado com sucesso",
     "trade_link_incorrect": "Link de troca incorreto",
-    "invalid_trade_not_owner": "Link de troca não pertence ao usuário"
+    "invalid_trade_not_owner": "Link de troca não pertence ao usuário",
+    "user_not_authenticated": "Usuário não autenticado",
+    "failed_to_process_payment": "Erro ao processar pagamento",
+    "payment_status_not_found": "Status de pagamento não encontrado",
+    "invalid_payment_id": "ID de pagamento inválido"
   },
   "match": {
     "offline": "OFFLINE",
@@ -485,5 +491,43 @@
       "t_win_elimination": "Ts venceram por eliminação",
       "t_win_time": "Ts venceram por esgotar o tempo"
     }
+  },
+  "purchase": {
+    "title": "Comprar CS2Bits",
+    "select_package": "Selecione um Pacote",
+    "points": "Pontos",
+    "points_label": "pontos",
+    "bonus": "Bônus",
+    "bonus_points": "pts bônus",
+    "price": "Preço",
+    "payment_method": "Método de Pagamento",
+    "credit_card": "Cartão de Crédito",
+    "credit_card_description": "Pague com cartão de crédito via Stripe",
+    "crypto_usdt": "Crypto (USDC)",
+    "crypto_description": "Pague com USDC via Coinbase Commerce",
+    "summary": "Resumo",
+    "selected_package": "Pacote selecionado",
+    "package_bonus": "Bônus do pacote",
+    "total_price": "Preço total",
+    "proceed_to_payment": "Prosseguir para Pagamento",
+    "processing": "Processando...",
+    "select_package_error": "Por favor, selecione um pacote",
+    "payment_error": "Falha ao criar pagamento",
+    "unexpected_error": "Ocorreu um erro inesperado"
+  },
+  "payment": {
+    "cancelled": "Pagamento Cancelado",
+    "cancelled_description": "Seu pagamento foi cancelado. Nenhuma cobrança foi realizada.",
+    "return_home": "Voltar para a Página Inicial",
+    "success": "Pagamento Bem-sucedido",
+    "success_description": "Seu pagamento foi processado com sucesso!",
+    "processing": "Processando Pagamento",
+    "processing_description": "Por favor, aguarde enquanto processamos seu pagamento...",
+    "already_processed": "Pagamento já processado",
+    "failed": "Pagamento Falhou",
+    "failed_description": "Ocorreu um erro ao processar seu pagamento. Por favor, tente novamente.",
+    "processed_successfully": "Pagamento processado com sucesso",
+    "return_to_home": "Voltar para a página inicial",
+    "processed_completely": "Pagamento processado completamente"
   }
 }

@@ -2,7 +2,7 @@
 import { ActionResponse } from "@/types/action-responde";
 import { getCurrentUserAction } from "./get-current-user-action";
 import { validateTradeLinkAction } from "./validate-user-trade-link-action";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 export async function updateTradeLinkAction(
   link: string,
 ): Promise<ActionResponse<boolean>> {

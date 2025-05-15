@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { team_side } from "../../generated/prisma";
+import { team_side } from "@prisma/client";
 
 export const MatchPlayerKillsSchema = z.object({
   id: z.number(),

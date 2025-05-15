@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { team_side } from "../../generated/prisma";
+import { team_side } from "@prisma/client";
 
 export const MatchPlayerStatsSchema = z.object({
   id: z.string(),
@@ -12,12 +12,12 @@ export const MatchPlayerStatsSchema = z.object({
   deaths: z.number(),
   assists: z.number(),
   started_at: z.preprocess(
-    arg => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date()
+    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    z.date(),
   ),
   updated_at: z.preprocess(
-    arg => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date()
+    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    z.date(),
   ),
 });
 

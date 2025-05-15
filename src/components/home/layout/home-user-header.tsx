@@ -9,17 +9,22 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Plus } from "lucide-react";
 import { MdOutlineAccountBalanceWallet } from "react-icons/md";
+import { VscSymbolEvent } from "react-icons/vsc";
 import { Skeleton } from "../../ui/skeleton";
 import { useTranslation } from "react-i18next";
 import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
 import { type Users, UsersSchema } from "@/schemas/users.schema";
 import { useEffect, useState } from "react";
 import { getUserBalanceAction } from "@/actions/user/get-user-balance-action";
-import { UserBalance, UserBalanceSchema } from "@/schemas/user-balance.schema";
+import {
+  type UserBalance,
+  UserBalanceSchema,
+} from "@/schemas/user-balance.schema";
 import { formatCurrency } from "@/lib/utils";
-import { VscSymbolEvent } from "react-icons/vsc";
+import { Button } from "@/components/ui/button";
+import { PurchaseModal } from "@/components/purchase/purchase-modal";
 
 export default function HomeUserHeader() {
   const router = useRouter();
@@ -27,6 +32,7 @@ export default function HomeUserHeader() {
 
   const [userData, setUserData] = useState<Users | null>(null);
   const [userBalance, setUserBalance] = useState<UserBalance | null>(null);
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
 
   useEffect(() => {
     getCurrentUserAction().then((user) => setUserData(UsersSchema.parse(user)));
@@ -35,12 +41,19 @@ export default function HomeUserHeader() {
     );
   }, []);
 
+  const handleOpenPurchaseModal = () => {
+    setIsPurchaseModalOpen(true);
+  };
+
   return (
     <div className="flex items-center gap-3">
       {/* Balance Display */}
       <div className="flex items-center gap-2">
         {/* Main Balance */}
-        <div className="flex items-center gap-1 bg-primary/10 text-primary rounded-md px-2 py-1">
+        <div
+          className="flex items-center gap-1 bg-primary/10 text-primary rounded-md px-2 py-1 cursor-pointer hover:bg-primary/20 transition-colors"
+          onClick={handleOpenPurchaseModal}
+        >
           <MdOutlineAccountBalanceWallet className="h-4 w-4" />
           <span className="text-base font-medium">
             {!userBalance ? (
@@ -139,6 +152,19 @@ export default function HomeUserHeader() {
               </span>
             </div>
           </div>
+
+          {/* Buy CS2Bits button */}
+          <div className="px-4 py-2 border-b border-muted-foreground/10">
+            <Button
+              onClick={handleOpenPurchaseModal}
+              className="w-full flex items-center gap-2"
+              variant="outline"
+            >
+              <Plus className="h-4 w-4" />
+              {t("header.buy_cs2bits", "Buy CS2Bits")}
+            </Button>
+          </div>
+
           <DropdownMenuItem
             onClick={() => router.push("/profile")}
             className="py-3 cursor-pointer font-medium flex items-center gap-2 m-1 text-base"
@@ -158,6 +184,12 @@ export default function HomeUserHeader() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* Purchase Modal */}
+      <PurchaseModal
+        isOpen={isPurchaseModalOpen}
+        onClose={() => setIsPurchaseModalOpen(false)}
+      />
     </div>
   );
 }

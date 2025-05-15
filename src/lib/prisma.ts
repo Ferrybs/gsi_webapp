@@ -1,29 +1,23 @@
-import { Prisma, PrismaClient } from "../../generated/prisma";
+// src/lib/prisma.ts
+import { PrismaClient } from "@prisma/client";
 
-const prismaClientSingleton = () => {
-  // Custom extended Prisma ORM instance with client extensions, adding a method to verify the existence of a database entry.
-  return new PrismaClient().$extends({
-    model: {
-      $allModels: {
-        async exists<T>(
-          this: T,
-          where: Prisma.Args<T, "findFirst">["where"],
-        ): Promise<boolean> {
-          const context = Prisma.getExtensionContext(this);
-          const result = await (context as any).findFirst({ where });
-          return result !== null;
-        },
-      },
-    },
+function createPrismaClient() {
+  return new PrismaClient({
+    log: [
+      { level: "query", emit: "stdout" },
+      { level: "warn", emit: "stdout" },
+      { level: "error", emit: "stdout" },
+      { level: "info", emit: "stdout" },
+    ],
   });
-};
+}
 
-declare const globalThis: {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
-} & typeof global;
+declare global {
+  var prisma: PrismaClient | undefined;
+}
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+export const prisma = global.prisma ?? createPrismaClient();
 
-export default prisma;
-
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+if (process.env.NODE_ENV !== "production") {
+  global.prisma = prisma;
+}

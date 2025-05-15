@@ -1,0 +1,113 @@
+{
+  "data": {
+    "brand_color": "#122332",
+    "brand_logo_url": "https://res.cloudinary.com/commerce/image/upload/v1747181020/uu06eejhwqvxv6o8zs1n.png",
+    "charge_kind": "WEB3",
+    "code": "Q6AX6NTZ",
+    "collected_email": false,
+    "created_at": "2025-05-14T02:29:04Z",
+    "expires_at": "2025-05-16T02:29:04Z",
+    "hosted_url": "https://commerce.coinbase.com/pay/62823052-12d4-4896-860a-fef8de1693df",
+    "id": "62823052-12d4-4896-860a-fef8de1693df",
+    "metadata": {},
+    "ocs_points_override": false,
+    "organization_name": "CS2 Bits",
+    "payments": [
+      {
+        "payment_id": "0x3f4a9c211982be8da47040ed20066c677e16508e8e9692fcb41a636ff2d94dd4",
+        "network": "polygon",
+        "transaction_id": "0x3f4a9c211982be8da47040ed20066c677e16508e8e9692fcb41a636ff2d94dd4",
+        "status": "pending",
+        "detected_at": "2025-05-14T02:36:47Z",
+        "value": {
+          "local": { "amount": "1", "currency": "BRL" },
+          "crypto": { "amount": "0.178308", "currency": "USDC" }
+        },
+        "payer_addresses": ["0xdd20ae954ed1a6f0ecbfc1e1deb29f172c7d3432"]
+      }
+    ],
+    "pricing": {
+      "local": { "amount": "1", "currency": "BRL" },
+      "settlement": { "amount": "0.178308", "currency": "USDC" }
+    },
+    "pricing_type": "fixed_price",
+    "pwcb_only": false,
+    "redirects": {
+      "cancel_url": "https://dev.cs2bits.com/payment/cancel?payment_id=bfbe0c5c-0835-4cf1-aeb3-18180426f86",
+      "success_url": "https://dev.cs2bits.com/payment/success?session_id=cs_test_a1vKnJuHbuLUdY6fqS0eJAr9k5W98qd1atB0HPOX4dwe2BkOixaMTBvL5A",
+      "will_redirect_after_success": true
+    },
+    "support_email": "contact@cs2bits.com",
+    "timeline": [
+      { "status": "NEW", "time": "2025-05-14T02:29:04Z" },
+      { "status": "SIGNED", "time": "2025-05-14T02:30:10Z" },
+      { "status": "PENDING", "time": "2025-05-14T02:36:49Z" }
+    ],
+    "web3_data": {
+      "transfer_intent": {
+        "call_data": {
+          "deadline": "2025-05-16T02:29:04Z",
+          "fee_amount": "1783",
+          "id": "0x76db9964ddd84314ae4d0e8e7563fdf1",
+          "operator": "0x8fccc78dae0a8f93b0fe6799de888d4c57e273db",
+          "prefix": "0x4b3220496e666f726d6174696f6e616c204d6573736167653a20333220",
+          "recipient": "0x6ed95CA8B7A651C9e66842322B3ABe0d9a0AF314",
+          "recipient_amount": "176525",
+          "recipient_currency": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+          "refund_destination": "0xdD20AE954ED1a6F0eCbfC1e1DEB29F172c7D3432",
+          "signature": "0x72b7cdf080530e30c41cb02b6e5b4d823877b910d67b723dcd5088dabb1077e52adad7c93d83ebb0c32c62cbc40ebe84e2a57a07eb634382ae6b306e62f3bb821c"
+        },
+        "metadata": {
+          "chain_id": 137,
+          "contract_address": "0x288844216a63638381784E0C1081A3826fD5a2E4",
+          "sender": "0xdD20AE954ED1a6F0eCbfC1e1DEB29F172c7D3432"
+        }
+      },
+      "success_events": [
+        {
+          "chain_id": 137,
+          "finalized": false,
+          "input_token_address": "0x0000000000000000000000000000000000000000",
+          "input_token_amount": "689139790107193436",
+          "network_fee_paid": "13630403623819070",
+          "network_fee_paid_local": "0.019826605334725967",
+          "recipient": "0x6ed95ca8b7a651c9e66842322b3abe0d9a0af314",
+          "sender": "0xdd20ae954ed1a6f0ecbfc1e1deb29f172c7d3432",
+          "timestamp": "2025-05-14T02:36:47Z",
+          "tx_hsh": "0x3f4a9c211982be8da47040ed20066c677e16508e8e9692fcb41a636ff2d94dd4"
+        }
+      ],
+      "failure_events": [],
+      "contract_addresses": {
+        "137": "0x288844216a63638381784E0C1081A3826fD5a2E4",
+        "1": "0x1FA57f879417e029Ef57D7Ce915b0aA56A507C31",
+        "8453": "0x03059433BCdB6144624cC2443159D9445C32b7a8"
+      },
+      "settlement_currency_addresses": {
+        "137": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "1": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "8453": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+      },
+      "subsidized_payments_chain_to_tokens": {
+        "137": {
+          "token_addresses": ["0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359"]
+        },
+        "1": { "token_addresses": [""] },
+        "8453": {
+          "token_addresses": ["0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"]
+        }
+      },
+      "contract_caller_request_id": ""
+    },
+    "web3_retail_payment_metadata": {
+      "quote_id": "",
+      "source_amount": { "amount": null, "currency": null },
+      "exchange_rate_with_spread": { "amount": null, "currency": null },
+      "exchange_rate_without_spread": { "amount": null, "currency": null },
+      "max_retail_payment_value_usd": 10000,
+      "fees": [],
+      "high_value_payment_currencies": ["usdc", "btc", "eth", "sol", "xrp"]
+    },
+    "web3_retail_payments_enabled": true
+  }
+}

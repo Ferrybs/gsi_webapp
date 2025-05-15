@@ -1,9 +1,6 @@
 "use server";
 
-import prisma from "@/lib/prisma";
-
-
-
+import { prisma } from "@/lib/prisma";
 
 export async function getCurrentMatch(streamerUserId: string) {
   const match = await prisma.matches.findFirst({
@@ -11,11 +8,11 @@ export async function getCurrentMatch(streamerUserId: string) {
       streamer_user_id: streamerUserId,
       AND: [
         {
-          ended_at: null
-        }
-      ]
-    }
-  })
+          ended_at: null,
+        },
+      ],
+    },
+  });
 
   return match;
 }

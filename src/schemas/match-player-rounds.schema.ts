@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { round_conclusion, team_side } from "../../generated/prisma";
+import { round_conclusion, team_side } from "@prisma/client";
 
 export const MatchPlayerRoundsSchema = z.object({
   stats_id: z.string().uuid(),

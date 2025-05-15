@@ -6,7 +6,6 @@ import { Streamer } from "@/schemas/streamer.schema";
 import { useMatchData } from "@/hooks/use-match-data";
 import { useEffect } from "react";
 import { redirect } from "next/navigation";
-import { PredictionsCard } from "./predictions-card";
 
 interface MatchDetailsPageProps {
   streamer: Streamer | null;

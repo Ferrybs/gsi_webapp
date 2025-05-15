@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { stream_match_status } from "../../generated/prisma";
+import { stream_match_status } from "@prisma/client";
 
 export const StreamMatchesSchema = z.object({
   id: z.string(),

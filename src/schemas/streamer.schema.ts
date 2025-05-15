@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { stream_provider } from "../../generated/prisma";
-
+import { stream_provider } from "@prisma/client";
 
 export const StreamUrlSchema = z.object({
   url: z.string(),

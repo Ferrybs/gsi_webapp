@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function getMatchStatsByMatchId(match_id: string | null) {
   if (!match_id) {

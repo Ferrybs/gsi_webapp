@@ -1,5 +1,5 @@
 import { NextAuthOptions } from "next-auth";
-import prisma from "./prisma";
+import { prisma } from "./prisma";
 import { JWT } from "next-auth/jwt";
 import { sign } from "jsonwebtoken";
 import Steam from "next-auth-steam";

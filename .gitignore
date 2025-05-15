@@ -10,6 +10,10 @@
 !.yarn/releases
 !.yarn/versions
 
+
+todo.md
+coinbase*.sh
+coinbase*.js
 # testing
 /coverage
 

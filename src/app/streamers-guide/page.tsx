@@ -3,8 +3,6 @@ import StremersGuideHero from "@/components/stremers-guide/streamers-guide-hero"
 import StreamerGuideHowItWorks from "@/components/stremers-guide/stremers-guide-how-it-works";
 import StremersGuideBenefits from "@/components/stremers-guide/stremers-guide-benefits";
 import StreamersGuideCTA from "@/components/stremers-guide/streamers-guide-cta";
-import StreamersGuideFooter from "@/components/stremers-guide/layout/streamers-guide-footer";
-import { useTranslation } from "react-i18next";
 
 export default function StreamerGuidePage() {
   return (

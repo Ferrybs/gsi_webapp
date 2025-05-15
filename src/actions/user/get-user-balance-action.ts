@@ -2,7 +2,7 @@
 
 import { UserBalanceSchema } from "@/schemas/user-balance.schema";
 import { getCurrentUserAction } from "./get-current-user-action";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function getUserBalanceAction() {
   const user = await getCurrentUserAction();
