@@ -14,6 +14,10 @@ export async function getPointPackagesAction() {
       },
     });
 
+    if (!packages) {
+      return [];
+    }
+
     return packages.map((pkg) => PointPackageSchema.parse(pkg));
   } catch (error) {
     console.error("Error fetching point packages:", error);

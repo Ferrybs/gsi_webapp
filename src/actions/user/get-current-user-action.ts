@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { getServerSteamUser } from "@/lib/session";
+import { UsersSchema } from "@/schemas/users.schema";
 
 export async function getCurrentUserAction() {
   const steamUser = await getServerSteamUser();
@@ -18,5 +19,9 @@ export async function getCurrentUserAction() {
     },
   });
 
-  return user;
+  if (!user) {
+    return null;
+  }
+
+  return UsersSchema.parse(user);
 }

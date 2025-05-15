@@ -13,5 +13,9 @@ export async function getMatchStatsByMatchId(match_id: string | null) {
     },
   });
 
+  if (!stats) {
+    return null;
+  }
+
   return MatchPlayerStatsSchema.parse(stats);
 }

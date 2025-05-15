@@ -15,5 +15,9 @@ export async function getMatchRounds(statsId: string | null) {
     },
   });
 
+  if (!rounds) {
+    return null;
+  }
+
   return rounds.map((round) => MatchPlayerRoundsSchema.parse(round));
 }

@@ -14,6 +14,8 @@ export async function getCurrentMatch(streamerUserId: string) {
       ],
     },
   });
-
+  if (!match) {
+    return null;
+  }
   return MatchSchema.parse(match);
 }

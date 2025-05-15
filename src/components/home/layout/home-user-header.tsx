@@ -65,7 +65,7 @@ export default function HomeUserHeader() {
         </div>
 
         {/* Event Balance */}
-        <div className="flex items-center gap-1 bg-green-500/10 text-green-500 rounded-md px-2 py-1">
+        {/* <div className="flex items-center gap-1 bg-green-500/10 text-green-500 rounded-md px-2 py-1">
           <VscSymbolEvent className="h-4 w-4" />
           <span className="text-base font-medium">
             {!userBalance ? (
@@ -74,7 +74,7 @@ export default function HomeUserHeader() {
               formatCurrency(Number(userBalance.event_balance))
             )}
           </span>
-        </div>
+        </div> */}
       </div>
 
       {/* User Dropdown */}
@@ -139,7 +139,7 @@ export default function HomeUserHeader() {
                 )}
               </span>
             </div>
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
               <span className="text-base text-muted-foreground">
                 {t("header.event_balance")}:
               </span>
@@ -150,7 +150,7 @@ export default function HomeUserHeader() {
                   formatCurrency(Number(userBalance.event_balance))
                 )}
               </span>
-            </div>
+            </div> */}
           </div>
 
           {/* Buy CS2Bits button */}

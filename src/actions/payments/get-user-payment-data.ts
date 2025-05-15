@@ -12,5 +12,10 @@ export async function getUserPaymentData(paymentId: string) {
   const payment = await prisma.user_payments.findUnique({
     where: { id: paymentId, user_id: user.id },
   });
+
+  if (!payment) {
+    return null;
+  }
+
   return UserPaymentSchema.parse(payment);
 }

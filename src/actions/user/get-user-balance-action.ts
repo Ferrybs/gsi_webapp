@@ -30,6 +30,10 @@ export async function getUserBalanceAction() {
       return UserBalanceSchema.parse(newUserBalance);
     }
 
+    if (!userBalance) {
+      return null;
+    }
+
     return UserBalanceSchema.parse(userBalance);
   } catch (error) {
     console.error("Error fetching user balance:", error);

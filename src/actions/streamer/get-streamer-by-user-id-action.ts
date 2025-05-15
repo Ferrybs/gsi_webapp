@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { StreamerSchema } from "@/schemas/streamer.schema";
 
 export async function getStreamerByUserIdAction(user_id: string) {
   const streamer = await prisma.streamers.findUnique({
@@ -11,5 +12,10 @@ export async function getStreamerByUserIdAction(user_id: string) {
       stream_urls: true,
     },
   });
-  return streamer;
+
+  if (!streamer) {
+    return null;
+  }
+
+  return StreamerSchema.parse(streamer);
 }
