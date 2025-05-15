@@ -1,9 +1,6 @@
 "use server";
 
-import {
-  CoinbaseTimelineStatus,
-  TimelineStatus,
-} from "@/schemas/coinbase-payment-status.schema";
+import { CoinbaseTimelineStatus } from "@/schemas/coinbase-payment-status.schema";
 import { prisma } from "@/lib/prisma";
 import { coinbaseGetLastEvent } from "@/lib/utils";
 
@@ -12,7 +9,7 @@ export async function processCoinbaseWebhookPayment(
 ) {
   const payment = await prisma.user_payments.findFirst({
     where: {
-      provider_transaction_id: CoinbaseTimelineStatus.id,
+      provider_transaction_id: CoinbaseTimelineStatus.id, // coinbasse = user_payments.id / stripesession.id
     },
   });
 

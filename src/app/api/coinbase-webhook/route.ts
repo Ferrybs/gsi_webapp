@@ -42,24 +42,29 @@ export async function POST(request: NextRequest) {
     .digest("hex");
 
   if (signature !== expected) {
-    console.warn(" ⚠️ Invalid signature:", signature, "expected:", expected);
-    console.warn(" ⚠️ Raw Body: ", rawBody);
+    console.warn(
+      " ⚠️ [CoinbaseWebhook] Invalid signature:",
+      signature,
+      "expected:",
+      expected,
+    );
+    console.warn(" ⚠️ [CoinbaseWebhook] Raw Body: ", rawBody);
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
   try {
     const payload = JSON.parse(rawBody);
-    console.log("Coinbase Webhook Payload", payload);
+    console.log("[CoinbaseWebhook] Payload", payload);
     const result = CoinbaseWebhookSchema.safeParse(payload);
     try {
       if (result.success && result.data.event.type !== "charge:created") {
         const response = await processCoinbaseWebhookPayment(
           result.data.event.data,
         );
-        console.log("[processCoinbaseWebhookPayment] Response: ", response);
+        console.log("[CoinbaseWebhook] Response: ", response);
       }
     } catch (err) {
-      console.error("Error processing event", err);
+      console.error("❌ [CoinbaseWebhook] Error processing event", err);
     } finally {
       return NextResponse.json(
         `Received event id=${result.data?.id}, type=${result.data?.event.type}`,
@@ -67,7 +72,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (err) {
-    console.error("Invalid JSON payload", err);
+    console.error("[CoinbaseWebhook] Invalid JSON payload", err);
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 }

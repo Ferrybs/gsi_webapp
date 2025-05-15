@@ -47,7 +47,13 @@ export default function PaymentSuccessPage() {
       }
     };
     setTimeout(() => {
-      fetchPaymentData();
+      if (
+        paymentStatus !== "Completed" &&
+        paymentStatus !== "Failed" &&
+        paymentStatus !== "Canceled"
+      ) {
+        fetchPaymentData();
+      }
     }, 5000);
   }, [searchParams]);
 

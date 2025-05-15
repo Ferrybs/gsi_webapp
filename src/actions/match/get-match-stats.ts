@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { MatchPlayerStatsSchema } from "@/schemas/match-player-stats.schema";
 
 export async function getMatchStatsByMatchId(match_id: string | null) {
   if (!match_id) {
@@ -12,5 +13,5 @@ export async function getMatchStatsByMatchId(match_id: string | null) {
     },
   });
 
-  return stats;
+  return MatchPlayerStatsSchema.parse(stats);
 }

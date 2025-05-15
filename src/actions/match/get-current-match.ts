@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { MatchSchema } from "@/schemas/match.schema";
 
 export async function getCurrentMatch(streamerUserId: string) {
   const match = await prisma.matches.findFirst({
@@ -14,5 +15,5 @@ export async function getCurrentMatch(streamerUserId: string) {
     },
   });
 
-  return match;
+  return MatchSchema.parse(match);
 }
