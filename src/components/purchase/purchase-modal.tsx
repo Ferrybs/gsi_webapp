@@ -97,7 +97,9 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
       if (result.success && result.url) {
         window.location.href = result.url;
       } else {
-        toast.error(result.error || t("purchase.payment_error"));
+        toast.error(
+          result.error ? t(result.error) : t("purchase.payment_error"),
+        );
         // Update payment status to Failed if there was an error creating the payment link
         if (result.paymentId) {
           await updateUserPaymentStatusAction(result.paymentId, "Failed");

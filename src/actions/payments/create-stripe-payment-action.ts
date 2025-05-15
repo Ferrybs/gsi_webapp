@@ -53,6 +53,6 @@ export async function createStripePaymentAction(data: CreateDefaultPayment) {
     return { success: true, url: session.url, paymentId: payment.id };
   } catch (error) {
     console.error("Error creating Stripe payment:", error);
-    return { success: false, error: "Failed to create payment" };
+    return { success: false, error: "error.payment_creation_failed" };
   }
 }

@@ -75,6 +75,6 @@ export async function createCoinbasePaymentAction(data: CreateDefaultPayment) {
     };
   } catch (error) {
     console.error("Error creating Coinbase payment:", error);
-    return { success: false, error: "Failed to create payment" };
+    return { success: false, error: "error.payment_creation_failed" };
   }
 }

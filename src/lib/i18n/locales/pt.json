@@ -457,7 +457,8 @@
     "user_not_authenticated": "Usuário não autenticado",
     "failed_to_process_payment": "Erro ao processar pagamento",
     "payment_status_not_found": "Status de pagamento não encontrado",
-    "invalid_payment_id": "ID de pagamento inválido"
+    "invalid_payment_id": "ID de pagamento inválido",
+    "payment_creation_failed": "Erro ao criar pagamento, tente novamente mais tarde"
   },
   "match": {
     "offline": "OFFLINE",

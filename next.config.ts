@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["i.pravatar.cc", "placehold.co"],
   },
+  staticPageGenerationTimeout: 300,
   /* config options here */
 };
 

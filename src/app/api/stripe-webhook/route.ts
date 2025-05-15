@@ -26,13 +26,14 @@ export async function POST(request: NextRequest) {
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
+  let message = "";
   try {
     const result = await processStripeWebhookPayment(session, event.type);
     console.log("✅ [StripeWebhook] processed:", result);
   } catch (err: any) {
     console.error("❌ [StripeWebhook] Error processing:", err.message);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    message = err.message;
   }
 
-  return NextResponse.json({ received: true }, { status: 200 });
+  return NextResponse.json({ received: true, message }, { status: 200 });
 }
