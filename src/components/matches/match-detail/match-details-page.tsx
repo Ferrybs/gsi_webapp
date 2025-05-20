@@ -47,13 +47,11 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
       </div>
 
       <div className="lg:col-span-4 space-y-6">
-        {matchData && (
-          <PredictionsList
-            streamer={streamer}
-            matchId={matchData.id}
-            currentRound={statsData?.round || 0}
-          />
-        )}
+        <PredictionsList
+          streamer={streamer}
+          matchId={matchData?.id ?? null}
+          currentRound={statsData?.round || 0}
+        />
       </div>
     </div>
   );

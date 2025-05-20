@@ -73,9 +73,13 @@ export async function placeBetAction({
       },
       include: {
         prediction_templates: true,
+        stream_matches: {
+          include: {
+            streamers: true,
+          },
+        },
       },
     });
-
     if (!prediction) {
       return PlaceBetResponseSchema.parse({
         success: false,
@@ -149,7 +153,7 @@ export async function placeBetAction({
     });
 
     // Revalidate paths to update UI
-    revalidatePath(`/[streamer]`);
+    revalidatePath(`/${prediction.stream_matches.streamers.username_id}`);
 
     return PlaceBetResponseSchema.parse({
       success: true,

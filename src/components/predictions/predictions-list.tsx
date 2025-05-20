@@ -12,7 +12,7 @@ import { Streamer } from "@/schemas/streamer.schema";
 
 interface PredictionsListProps {
   streamer: Streamer;
-  matchId: string;
+  matchId: string | null;
   currentRound: number;
 }
 
@@ -30,6 +30,11 @@ export function PredictionsList({
   const fetchPredictions = async () => {
     try {
       setIsLoading(true);
+      if (!matchId) {
+        setPredictions([]);
+        setError(null);
+        return;
+      }
       const res = await getPredictionsAction(matchId);
       setPredictions(res);
       setError(null);
