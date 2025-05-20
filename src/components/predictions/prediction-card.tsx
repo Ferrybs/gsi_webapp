@@ -1,9 +1,14 @@
 "use client";
 
 import type React from "react";
-
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,114 +16,135 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
 import { placeBetAction } from "@/actions/predictions/place-bet-action";
 import { PredictionOption } from "./prediction-option";
-import { Clock, Users, Trophy, AlertCircle, AlertTriangle } from "lucide-react";
+import { Clock, Trophy, AlertCircle, AlertTriangle, Users } from "lucide-react";
 import { toast } from "sonner";
 import { getUserBalanceAction } from "@/actions/user/get-user-balance-action";
-import type { EnhancedPrediction } from "@/schemas/prediction.schema";
+import type {
+  EnhancedPrediction,
+  OptionLabel,
+} from "@/schemas/prediction.schema";
 import { formatTimeSince } from "@/lib/utils";
 
+// shadcn form + zod
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { UserBalance } from "@/schemas/user-balance.schema";
+import { Streamer } from "@/schemas/streamer.schema";
+
 interface PredictionCardProps {
+  streamer: Streamer;
   prediction: EnhancedPrediction;
   currentRound: number;
 }
 
 export function PredictionCard({
+  streamer,
   prediction,
   currentRound,
 }: PredictionCardProps) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { data: session } = useSession();
-  const [betAmount, setBetAmount] = useState<string>("");
-  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
+  const [selectedOptionLabel, setSelectedOptionLabel] =
+    useState<OptionLabel | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userBalance, setUserBalance] = useState<number>(0);
+  const [userBalance, setUserBalance] = useState<UserBalance | null>(null);
 
   const isOpen = prediction.state === "Open";
   const isResolved = prediction.state === "Resolved";
   const isClosed = prediction.state === "Closed";
   const isCanceled = prediction.state === "Canceled";
-
   const isRoundThresholdReached =
     currentRound >= prediction.prediction_templates.threshold_round;
-
   const userHasBet = prediction.userTotalBets > 0;
 
-  const parsedBetAmount = Number.parseFloat(betAmount || "0");
-  const hasInsufficientBalance = parsedBetAmount > userBalance;
-  const isBelowMinimum =
-    parsedBetAmount < prediction.prediction_templates.min_bet_amount;
+  // Zod schema para o form
+  const betSchema = z.object({
+    amount: z
+      .string()
+      .refine(
+        (val) => {
+          const num = Number(val);
+          return !isNaN(num) && num > 0;
+        },
+        { message: t("predictions.enter_valid_amount") },
+      )
+      .refine(
+        (val) => Number(val) >= prediction.prediction_templates.min_bet_amount,
+        {
+          message: t("predictions.minimum_bet_description", {
+            amount: prediction.prediction_templates.min_bet_amount,
+          }),
+        },
+      )
+      .refine(
+        (val) =>
+          userBalance != null ? Number(val) <= userBalance.balance : false,
+        {
+          message: t("predictions.insufficient_balance"),
+        },
+      ),
+  });
+
+  const form = useForm<z.infer<typeof betSchema>>({
+    resolver: zodResolver(betSchema),
+    defaultValues: {
+      amount: "",
+    },
+  });
 
   // Fetch user balance
   useEffect(() => {
     if (session) {
       getUserBalanceAction().then((balance) => {
         if (balance) {
-          setUserBalance(Number(balance.balance));
+          setUserBalance(balance);
         }
       });
     }
   }, [session]);
 
-  const handleSelectOption = (optionId: string) => {
-    if (!isOpen) return;
-    setSelectedOptionId(optionId);
-  };
-
-  const handleBetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Only allow numbers and one decimal point
-    if (/^\d*\.?\d*$/.test(value)) {
-      setBetAmount(value);
+  // Reset selected option and bet amount when prediction state changes
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedOptionLabel(null);
+      form.reset({ amount: "" });
     }
+  }, [isOpen]);
+
+  const handleSelectOption = (optionId: OptionLabel) => {
+    if (!isOpen || !userBalance) return;
+    setSelectedOptionLabel(optionId);
   };
 
-  const handlePlaceBet = async () => {
+  const handlePlaceBet = async (values: { amount: string }) => {
     if (!session) {
       toast.error(t("user.login_required"), {
         description: t("predictions.login_to_bet"),
       });
       return;
     }
-
-    if (!selectedOptionId) {
+    if (!selectedOptionLabel) {
       toast.error(t("predictions.select_option"), {
         description: t("predictions.select_option_description"),
       });
       return;
     }
-
-    const amount = Number.parseFloat(betAmount);
-    if (isNaN(amount) || amount <= 0) {
-      toast.error(t("predictions.invalid_amount"), {
-        description: t("predictions.enter_valid_amount"),
-      });
-      return;
-    }
-
-    if (amount < prediction.prediction_templates.min_bet_amount) {
-      toast.error(t("predictions.minimum_bet"), {
-        description: t("predictions.minimum_bet_description", {
-          amount: prediction.prediction_templates.min_bet_amount,
-        }),
-      });
-      return;
-    }
-
-    if (amount > userBalance) {
-      toast.error(t("user.insufficient_balance"), {
-        description: t("predictions.insufficient_balance_description"),
-      });
-      return;
-    }
-
+    const amount = Number.parseFloat(values.amount);
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append("predictionId", prediction.id);
-    formData.append("optionId", selectedOptionId);
-    formData.append("amount", amount.toString());
-
-    const result = await placeBetAction(formData);
+    const result = await placeBetAction({
+      predictionId: prediction.id,
+      optionLabel: selectedOptionLabel,
+      amount,
+    });
 
     setIsSubmitting(false);
 
@@ -126,13 +152,13 @@ export function PredictionCard({
       toast.success(t("predictions.bet_placed"), {
         description: result.message,
       });
-      setBetAmount("");
-      setSelectedOptionId(null);
+      form.reset({ amount: "" });
+      setSelectedOptionLabel(null);
 
       // Update user balance after successful bet
       const updatedBalance = await getUserBalanceAction();
       if (updatedBalance) {
-        setUserBalance(Number(updatedBalance.balance));
+        setUserBalance(updatedBalance);
       }
     } else {
       toast.error(t("predictions.bet_failed"), {
@@ -155,22 +181,15 @@ export function PredictionCard({
     }
   };
 
-  // Reset selected option and bet amount when prediction state changes
-  useEffect(() => {
-    if (!isOpen) {
-      setSelectedOptionId(null);
-      setBetAmount("");
-    }
-  }, [isOpen]);
-
-  // Add quick bet buttons
-  const quickBetAmounts = [10, 50, 100];
+  // Quick bet buttons
+  const quickBetAmounts = [100, 500, 1000];
   const handleQuickBet = (amount: number) => {
-    setBetAmount(amount.toString());
+    form.setValue("amount", amount.toString());
+    form.clearErrors("amount");
   };
-
   const handleAllIn = () => {
-    setBetAmount(userBalance.toString());
+    form.setValue("amount", userBalance?.balance.toString() ?? "");
+    form.clearErrors("amount");
   };
 
   return (
@@ -178,10 +197,14 @@ export function PredictionCard({
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <CardTitle className="text-lg font-bold">
-            {t(`predictions.${prediction.prediction_templates.kind}`)}
+            {t(`predictions.${prediction.prediction_templates.kind}`, {
+              streamer: streamer.username_id,
+              round: prediction.prediction_templates.threshold_round + 0.5,
+            })}
           </CardTitle>
           {getStatusBadge()}
         </div>
+        <CardDescription>{t(`predictions.select_description`)}</CardDescription>
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
           <Clock size={14} />
           <span>{formatTimeSince(prediction.created_at)}</span>
@@ -202,13 +225,13 @@ export function PredictionCard({
         <div className="space-y-3">
           {prediction.options.map((option) => (
             <PredictionOption
-              key={option.id}
+              key={option.label}
               option={option}
-              isSelected={selectedOptionId === option.id}
+              isSelected={selectedOptionLabel === option.label}
               isWinner={
-                isResolved && prediction.winning_option_id === option.id
+                isResolved && prediction.winning_option_label === option.label
               }
-              onClick={() => handleSelectOption(option.id)}
+              onClick={() => handleSelectOption(option.label)}
               disabled={!isOpen}
             />
           ))}
@@ -229,81 +252,84 @@ export function PredictionCard({
           </div>
         </div>
 
-        {isOpen && (
-          <div className="space-y-2 pt-2 border-t">
-            <div className="flex items-center gap-2">
-              <Input
-                type="text"
-                placeholder={t("predictions.enter_amount")}
-                value={betAmount}
-                onChange={handleBetAmountChange}
-                className={`flex-1 ${hasInsufficientBalance ? "border-red-500 focus-visible:ring-red-500" : ""}`}
-                disabled={!selectedOptionId || isSubmitting}
-                min={prediction.prediction_templates.min_bet_amount}
+        {isOpen && userBalance && (
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handlePlaceBet)}
+              className="space-y-2 pt-2 border-t"
+            >
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center gap-2">
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder={t("predictions.enter_amount")}
+                          {...field}
+                          className={`flex-1`}
+                          disabled={!selectedOptionLabel || isSubmitting}
+                          min={prediction.prediction_templates.min_bet_amount}
+                        />
+                      </FormControl>
+                      <Button
+                        type="submit"
+                        disabled={!selectedOptionLabel || isSubmitting}
+                        className="whitespace-nowrap"
+                      >
+                        {t("predictions.place_bet")}
+                      </Button>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              <Button
-                onClick={handlePlaceBet}
-                disabled={
-                  !selectedOptionId ||
-                  !betAmount ||
-                  isSubmitting ||
-                  hasInsufficientBalance ||
-                  isBelowMinimum
-                }
-                className="whitespace-nowrap"
-              >
-                {t("predictions.place_bet")}
-              </Button>
-            </div>
 
-            {/* Quick bet buttons */}
-            <div className="flex gap-2 mt-2">
-              {quickBetAmounts.map((amount) => (
+              {/* Quick bet buttons */}
+              <div className="flex gap-2 mt-2">
+                {quickBetAmounts.map((amount) => (
+                  <Button
+                    key={amount}
+                    variant="outline"
+                    size="sm"
+                    type="button"
+                    onClick={() => handleQuickBet(amount)}
+                    disabled={
+                      !selectedOptionLabel ||
+                      isSubmitting ||
+                      amount > userBalance.balance
+                    }
+                    className="flex-1"
+                  >
+                    {amount}
+                  </Button>
+                ))}
                 <Button
-                  key={amount}
                   variant="outline"
                   size="sm"
-                  onClick={() => handleQuickBet(amount)}
+                  type="button"
+                  onClick={handleAllIn}
                   disabled={
-                    !selectedOptionId || isSubmitting || amount > userBalance
+                    !selectedOptionLabel ||
+                    isSubmitting ||
+                    userBalance.balance <= 0
                   }
                   className="flex-1"
                 >
-                  {amount}
+                  {t("predictions.all_in")}
                 </Button>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleAllIn}
-                disabled={!selectedOptionId || isSubmitting || userBalance <= 0}
-                className="flex-1"
-              >
-                {t("predictions.all_in")}
-              </Button>
-            </div>
+              </div>
 
-            <div className="flex flex-col gap-1">
-              <p className="text-xs text-muted-foreground">
-                {t("predictions.min_bet")}:{" "}
-                {prediction.prediction_templates.min_bet_amount}
-              </p>
-
-              {hasInsufficientBalance && betAmount && (
-                <p className="text-xs text-red-500 flex items-center gap-1">
-                  <AlertTriangle size={12} />
-                  {t("user.insufficient_balance")}
+              <div className="flex flex-col gap-1">
+                <p className="text-xs text-muted-foreground">
+                  {t("predictions.min_bet")}:{" "}
+                  {prediction.prediction_templates.min_bet_amount}
                 </p>
-              )}
-
-              {isBelowMinimum && betAmount && (
-                <p className="text-xs text-amber-500 flex items-center gap-1">
-                  <AlertTriangle size={12} />
-                  {t("predictions.below_minimum")}
-                </p>
-              )}
-            </div>
-          </div>
+              </div>
+            </form>
+          </Form>
         )}
 
         {userHasBet && (
@@ -315,13 +341,13 @@ export function PredictionCard({
           </div>
         )}
 
-        {isResolved && prediction.winning_option_id && (
+        {isResolved && prediction.winning_option_label && (
           <div className="pt-2 border-t">
             <p className="text-sm font-medium text-green-500">
               {t("predictions.winner")}:{" "}
               {
                 prediction.options.find(
-                  (o) => o.id === prediction.winning_option_id,
+                  (o) => o.label === prediction.winning_option_label,
                 )?.label
               }
             </p>

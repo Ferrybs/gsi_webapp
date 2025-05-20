@@ -9,22 +9,29 @@ import {
   type PlaceBetResponse,
   PlaceBetResponseSchema,
 } from "@/schemas/prediction.schema";
+import { option_label } from "@prisma/client";
 
 const PlaceBetSchema = z.object({
   predictionId: z.string(),
-  optionId: z.string(),
+  optionId: z.nativeEnum(option_label),
   amount: z.number().min(0.01),
 });
 
 type PlaceBetInput = z.infer<typeof PlaceBetSchema>;
 
-export async function placeBetAction(
-  formData: FormData,
-): Promise<PlaceBetResponse> {
+export async function placeBetAction({
+  predictionId,
+  optionLabel,
+  amount,
+}: {
+  predictionId: string;
+  optionLabel: option_label;
+  amount: number;
+}): Promise<PlaceBetResponse> {
   const validatedFields = PlaceBetSchema.safeParse({
-    predictionId: formData.get("predictionId"),
-    optionId: formData.get("optionId"),
-    amount: Number.parseFloat(formData.get("amount") as string),
+    predictionId,
+    optionId: optionLabel,
+    amount,
   });
 
   if (!validatedFields.success) {
@@ -34,7 +41,11 @@ export async function placeBetAction(
     });
   }
 
-  const { predictionId, optionId, amount } = validatedFields.data;
+  const {
+    predictionId: validPredictionId,
+    optionId,
+    amount: validAmount,
+  } = validatedFields.data;
 
   try {
     // Get current user
@@ -48,7 +59,7 @@ export async function placeBetAction(
 
     // Check user balance
     const userBalance = await getUserBalanceAction();
-    if (!userBalance || Number(userBalance.balance) < amount) {
+    if (!userBalance || Number(userBalance.balance) < validAmount) {
       return PlaceBetResponseSchema.parse({
         success: false,
         message: "Insufficient balance",
@@ -58,7 +69,7 @@ export async function placeBetAction(
     // Get prediction with its template to check if it's still open and get min_bet_amount
     const prediction = await prisma.predictions.findUnique({
       where: {
-        id: predictionId,
+        id: validPredictionId,
       },
       include: {
         prediction_templates: true,
@@ -79,7 +90,7 @@ export async function placeBetAction(
       });
     }
 
-    if (amount < Number(prediction.prediction_templates.min_bet_amount)) {
+    if (validAmount < Number(prediction.prediction_templates.min_bet_amount)) {
       return PlaceBetResponseSchema.parse({
         success: false,
         message: `Minimum bet amount is ${prediction.prediction_templates.min_bet_amount}`,
@@ -89,12 +100,12 @@ export async function placeBetAction(
     // Start a transaction to ensure all operations succeed or fail together
     await prisma.$transaction(async (tx) => {
       // Create the user prediction
-      const userPrediction = await tx.user_predicions.create({
+      const userPrediction = await tx.user_predictions.create({
         data: {
           user_id: currentUser.id,
-          prediction_id: predictionId,
-          option_id: optionId,
-          amount,
+          prediction_id: validPredictionId,
+          option_label: optionId,
+          amount: validAmount,
         },
       });
 
@@ -105,7 +116,7 @@ export async function placeBetAction(
         },
         data: {
           balance: {
-            decrement: amount,
+            decrement: validAmount,
           },
         },
       });
@@ -114,7 +125,7 @@ export async function placeBetAction(
       const transaction = await tx.user_transactions.create({
         data: {
           user_id: currentUser.id,
-          amount: -amount,
+          amount: -validAmount,
           description: `Bet on prediction ${prediction.prediction_templates.kind}`,
           type: "Predict",
         },
@@ -138,7 +149,7 @@ export async function placeBetAction(
     });
 
     // Revalidate paths to update UI
-    revalidatePath(`/match/[id]`);
+    revalidatePath(`/[streamer]`);
 
     return PlaceBetResponseSchema.parse({
       success: true,

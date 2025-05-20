@@ -6,7 +6,7 @@ import {
   MatchPlayerStatsSchema,
 } from "@/schemas/match-player-stats.schema";
 import { useMatchWebSocket } from "./use-match-websocket";
-import { getCurrentMatch } from "@/actions/match/get-current-match";
+import { getCurrentMatchByStreamerId } from "@/actions/match/get-current-match";
 import { getMatchStatsByMatchId } from "@/actions/match/get-match-stats";
 import { MatchPlayerRounds } from "@/schemas/match-player-rounds.schema";
 import { getMatchRounds } from "@/actions/match/get-match-rounds";
@@ -22,7 +22,7 @@ export function useMatchData(streamerUserId: string) {
 
   useEffect(() => {
     if (matchWebSocketData === null) {
-      getCurrentMatch(streamerUserId).then((match) => {
+      getCurrentMatchByStreamerId(streamerUserId).then((match) => {
         const result = MatchSchema.safeParse(match);
         if (result.success) {
           setMatchData(result.data);

@@ -555,17 +555,25 @@
     "minimum_bet_description": "O valor mínimo de aposta é {{amount}}",
     "bet_placed": "Aposta Realizada",
     "bet_failed": "Falha na Aposta",
-    "no_predictions": "Não há previsões ativas para esta partida",
+    "no_predictions": "Não há previsões ativas para esta partida ainda",
     "error_loading": "Erro ao carregar previsões",
     "closes_at_round": "Fecha no round {{round}}",
     "canceled_description": "Esta previsão foi cancelada. Todas as apostas foram reembolsadas.",
     "below_minimum": "Abaixo do valor mínimo",
     "insufficient_balance_description": "Você não tem saldo suficiente para fazer esta aposta",
     "all_in": "All In",
-    "MatchOutcome": "Resultado da Partida",
+    "MatchOutcome": "{{streamer}} vai vencer a partida?",
     "KillsOver": "Kills Acima",
     "DeathsUnder": "Mortes Abaixo",
-    "RoundAce": "Ace no Round",
-    "FourKillsOneRound": "4 Kills em Um Round"
+    "RoundAce": "{{streamer}} vai fazer um Ace depois do round {{round}}?",
+    "FourKillsOneRound": "4 Kills em Um Round",
+    "insufficient_balance": "Saldo Insuficiente",
+    "select_description": "Selecione uma opção para apostar",
+    "labels": {
+      "yes": "Sim. Ele é bom",
+      "no": "Não. Ele é hororoso",
+      "over": "Acima",
+      "under": "Abaixo"
+    }
   }
 }

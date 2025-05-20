@@ -5,8 +5,8 @@ import { MatchHeader } from "./match-header";
 import { Streamer } from "@/schemas/streamer.schema";
 import { useMatchData } from "@/hooks/use-match-data";
 import { useEffect } from "react";
-import { redirect } from "next/navigation";
 import { PredictionsList } from "@/components/predictions/predictions-list";
+import { getCurrentMatchByStreamerId } from "@/actions/match/get-current-match";
 
 interface MatchDetailsPageProps {
   streamer: Streamer | null;
@@ -19,16 +19,20 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
   const { matchData, statsData, roundsData } = useMatchData(streamer.id);
 
   useEffect(() => {
-    if (
-      matchData?.status_name === "Invalid" ||
-      matchData?.status_name === "Abandoned" ||
-      matchData?.status_name === "Finished"
-    ) {
-      setTimeout(() => {
-        redirect(`/${streamer.username_id}`);
-      }, 1000);
-    }
-  }, [matchData]);
+    const i = setInterval(() => {
+      if (matchData != null) {
+        getCurrentMatchByStreamerId(streamer.id).then((m) => {
+          if (m == null) {
+            location.reload();
+          }
+        });
+      }
+    }, 2000);
+
+    return () => {
+      clearInterval(i);
+    };
+  }, [streamer]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -45,6 +49,7 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
       <div className="lg:col-span-4 space-y-6">
         {matchData && (
           <PredictionsList
+            streamer={streamer}
             matchId={matchData.id}
             currentRound={statsData?.round || 0}
           />

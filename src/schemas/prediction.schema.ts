@@ -1,12 +1,16 @@
 import { z } from "zod";
-import { bet_state, prediction_kind, template_status } from "@prisma/client";
+import {
+  bet_state,
+  option_label,
+  prediction_kind,
+  template_status,
+} from "@prisma/client";
 import { decimalToNumber } from "./helper.schema";
 
 // Base schemas for database entities
 export const PredictionOptionSchema = z.object({
-  id: z.string(),
-  template_id: z.string(),
-  label: z.string(),
+  label: z.nativeEnum(option_label),
+  template_id: z.number(),
   created_at: z.preprocess(
     (arg) => (typeof arg === "string" ? new Date(arg) : arg),
     z.date(),
@@ -17,7 +21,7 @@ export const UserPredictionSchema = z.object({
   id: z.string(),
   user_id: z.string(),
   prediction_id: z.string(),
-  option_id: z.string(),
+  option_label: z.nativeEnum(option_label),
   amount: decimalToNumber,
   created_at: z.preprocess(
     (arg) => (typeof arg === "string" ? new Date(arg) : arg),
@@ -26,7 +30,7 @@ export const UserPredictionSchema = z.object({
 });
 
 export const PredictionTemplateSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   affiliate_fee_pct: decimalToNumber,
   total_fee_pct: decimalToNumber,
   min_bet_amount: decimalToNumber,
@@ -46,12 +50,12 @@ export const PredictionTemplateSchema = z.object({
 
 export const PredictionSchema = z.object({
   id: z.string(),
-  template_id: z.string(),
+  template_id: z.number(),
   stream_match_id: z.string(),
   fees_total_collected: decimalToNumber.nullable(),
   affiliate_fees_collected: decimalToNumber.nullable(),
   site_fees_collected: decimalToNumber.nullable(),
-  winning_option_id: z.string().nullable(),
+  winning_option_label: z.string().nullable(),
   state: z.nativeEnum(bet_state).default("Open"),
   created_at: z.preprocess(
     (arg) => (typeof arg === "string" ? new Date(arg) : arg),
@@ -61,7 +65,7 @@ export const PredictionSchema = z.object({
     (arg) => (typeof arg === "string" ? new Date(arg) : arg),
     z.date(),
   ),
-  user_predicions: z.array(UserPredictionSchema).optional(),
+  user_predictions: z.array(UserPredictionSchema).optional(),
   prediction_templates: PredictionTemplateSchema,
 });
 
@@ -98,3 +102,5 @@ export type EnhancedPredictionOption = z.infer<
   typeof EnhancedPredictionOptionSchema
 >;
 export type PlaceBetResponse = z.infer<typeof PlaceBetResponseSchema>;
+
+export type OptionLabel = option_label;

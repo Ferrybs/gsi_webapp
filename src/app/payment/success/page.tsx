@@ -55,14 +55,13 @@ export default function PaymentSuccessPage() {
     const fetchPaymentData = async () => {
       const payment = await getUserPaymentData(paymentId);
       if (payment) {
-        console.log("Payment async status:", payment.status);
         if (payment.status === "Completed") {
           setParms({
             status: "Completed",
             message: "payment.processed_successfully",
           });
           setIsProcessing(false);
-          router.refresh();
+          location.reload();
         }
       } else {
         setIsProcessing(false);

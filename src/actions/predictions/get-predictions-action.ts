@@ -5,9 +5,6 @@ import { getCurrentUserAction } from "../user/get-current-user-action";
 import {
   type EnhancedPrediction,
   EnhancedPredictionSchema,
-  PredictionOptionSchema,
-  PredictionSchema,
-  PredictionTemplateSchema,
   UserPrediction,
 } from "@/schemas/prediction.schema";
 
@@ -34,7 +31,7 @@ export async function getPredictionsAction(
             prediction_options: true,
           },
         },
-        user_predicions: true,
+        user_predictions: true,
       },
       orderBy: {
         created_at: "desc",
@@ -50,7 +47,7 @@ export async function getPredictionsAction(
         // Get user bets if user is logged in
         let userPredictions: UserPrediction[] = [];
         if (currentUser) {
-          userPredictions = await prisma.user_predicions
+          userPredictions = await prisma.user_predictions
             .findMany({
               where: {
                 prediction_id: prediction.id,
@@ -68,7 +65,7 @@ export async function getPredictionsAction(
         // Get options from the template
         const options =
           prediction.prediction_templates.prediction_options || [];
-        const allBets = prediction.user_predicions || [];
+        const allBets = prediction.user_predictions || [];
 
         // Calculate totals
         const totalBets = allBets.length;
@@ -80,7 +77,7 @@ export async function getPredictionsAction(
         // Calculate per option
         const optionsWithStats = options.map((option) => {
           const optionBets = allBets.filter(
-            (bet) => bet.option_id === option.id,
+            (bet) => bet.option_label === option.label,
           );
           const optionAmount = optionBets.reduce(
             (sum, bet) => sum + Number(bet.amount),
@@ -98,7 +95,7 @@ export async function getPredictionsAction(
 
           // User's bets on this option
           const userBetsOnOption = userPredictions
-            .filter((bet) => bet.option_id === option.id)
+            .filter((bet) => bet.option_label === option.label)
             .reduce((sum, bet) => sum + Number(bet.amount), 0);
 
           return {

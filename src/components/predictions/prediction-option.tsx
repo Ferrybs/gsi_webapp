@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle2, Trophy } from "lucide-react";
 import type { EnhancedPredictionOption } from "@/schemas/prediction.schema";
+import { useTranslation } from "react-i18next";
 
 interface PredictionOptionProps {
   option: EnhancedPredictionOption;
@@ -25,6 +26,8 @@ export function PredictionOption({
   const formattedOdds =
     option.odds > 0 ? `1:${option.odds.toFixed(2)}` : "1:1.00";
 
+  const { t } = useTranslation();
+
   return (
     <div
       className={cn(
@@ -37,7 +40,7 @@ export function PredictionOption({
     >
       <div className="flex justify-between items-center mb-1">
         <div className="font-medium flex items-center gap-1.5">
-          {option.label}
+          {t(`predictions.labels.${option.label}`)}
           {isSelected && <CheckCircle2 size={16} className="text-primary" />}
           {isWinner && <Trophy size={16} className="text-green-500" />}
         </div>

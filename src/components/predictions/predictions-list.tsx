@@ -6,24 +6,25 @@ import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Flame } from "lucide-react";
 import { getPredictionsAction } from "@/actions/predictions/get-predictions-action";
-import {
-  EnhancedPredictionOptionSchema,
-  type EnhancedPrediction,
-} from "@/schemas/prediction.schema";
+import { type EnhancedPrediction } from "@/schemas/prediction.schema";
 import { PredictionCard } from "./prediction-card";
+import { Streamer } from "@/schemas/streamer.schema";
 
 interface PredictionsListProps {
+  streamer: Streamer;
   matchId: string;
   currentRound: number;
 }
 
 export function PredictionsList({
+  streamer,
   matchId,
   currentRound,
 }: PredictionsListProps) {
   const { t } = useTranslation();
   const [predictions, setPredictions] = useState<EnhancedPrediction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [round, setRound] = useState(currentRound);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchPredictions = async () => {
@@ -46,20 +47,14 @@ export function PredictionsList({
 
   // Refetch every 10 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
+    if (currentRound !== round) {
       fetchPredictions();
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [matchId]);
+    }
+    setRound(currentRound);
+  }, [currentRound]);
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-bold flex items-center gap-2">
-        <Flame size={18} className="text-primary" />
-        {t("predictions.title")}
-      </h3>
-
       {isLoading ? (
         <PredictionsLoading />
       ) : error ? (
@@ -91,6 +86,7 @@ export function PredictionsList({
         predictions.map((prediction) => (
           <PredictionCard
             key={prediction.id}
+            streamer={streamer}
             prediction={prediction}
             currentRound={currentRound}
           />
