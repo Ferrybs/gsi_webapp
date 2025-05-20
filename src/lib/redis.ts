@@ -1,5 +1,11 @@
 import Redis from "ioredis";
 
-const redis = new Redis(process.env.REDIS_URL!);
+declare global {
+  var redisG: Redis | undefined;
+}
 
-export default redis;
+export const redis = globalThis.redisG ?? new Redis(process.env.REDIS_URL!);
+
+if (process.env.NODE_ENV !== "production") {
+  globalThis.redisG = redis;
+}

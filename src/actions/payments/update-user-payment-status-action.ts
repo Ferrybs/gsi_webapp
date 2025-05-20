@@ -1,7 +1,7 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
 import { getCurrentUserAction } from "../user/get-current-user-action";
+import paymentStatusChangedEvent from "../stream/payment-status-changed-event";
 
 export async function updateUserPaymentStatusAction(
   paymentId: string,
@@ -14,15 +14,9 @@ export async function updateUserPaymentStatusAction(
       throw new Error("User not found");
     }
 
-    await prisma.user_payments.update({
-      where: {
-        id: paymentId,
-        user_id: user.id,
-      },
-      data: {
-        status: status,
-        updated_at: new Date(),
-      },
+    await paymentStatusChangedEvent({
+      payment_id: paymentId,
+      new_status: status,
     });
 
     return { success: true };

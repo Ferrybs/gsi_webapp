@@ -13,11 +13,11 @@ function createPrismaClient() {
 }
 
 declare global {
-  var prisma: PrismaClient | undefined;
+  var prismaG: PrismaClient | undefined;
 }
 
-export const prisma = global.prisma ?? createPrismaClient();
+export const prisma = global.prismaG ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
-  global.prisma = prisma;
+  global.prismaG = prisma;
 }

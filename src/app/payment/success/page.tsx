@@ -19,83 +19,97 @@ export default function PaymentSuccessPage() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const fetchPaymentData = async () => {
-      const paymentId = searchParams.get("payment_id");
-      if (!paymentId) {
-        setIsProcessing(false);
-        setPaymentStatus("Pending");
-        setMessage("error.invalid_payment_id");
-        return;
-      }
-      const payment = await getUserPaymentData(paymentId);
-      if (payment) {
-        setPaymentStatus(payment.status);
-        setMessage(
-          payment.status === "Completed"
-            ? "payment.processed_successfully"
-            : payment.status === "Failed"
-              ? "payment.failed_description"
-              : payment.status === "Canceled"
-                ? "payment.cancelled_description"
-                : "payment.already_processed",
-        );
-        setIsProcessing(false);
-      } else {
-        setIsProcessing(false);
-        setPaymentStatus("Pending");
-        setMessage("error.invalid_payment_id");
-      }
-    };
-    setTimeout(() => {
-      if (
-        paymentStatus !== "Completed" &&
-        paymentStatus !== "Failed" &&
-        paymentStatus !== "Canceled"
-      ) {
-        fetchPaymentData();
-      }
-    }, 5000);
-  }, [searchParams]);
-
-  useEffect(() => {
     const paymentId = searchParams.get("payment_id");
 
+    const setParms = ({
+      status,
+      message,
+    }: {
+      status: PaymentStatus;
+      message: string;
+    }) => {
+      setMessage(
+        message
+          ? status === "Processing"
+            ? "payment.processing_description"
+            : status === "Completed"
+              ? "payment.processed_successfully"
+              : status === "Failed"
+                ? "payment.failed_description"
+                : status === "Canceled"
+                  ? "payment.cancelled_description"
+                  : message
+          : "error.failed_to_process_payment",
+      );
+      setPaymentStatus(status);
+    };
+
     if (!paymentId) {
-      setIsProcessing(false);
-      setPaymentStatus("Pending");
-      setMessage("error.invalid_payment_id");
+      setParms({
+        status: "Pending",
+        message: "error.invalid_payment_id",
+      });
       return;
+    }
+
+    const fetchPaymentData = async () => {
+      const payment = await getUserPaymentData(paymentId);
+      if (payment) {
+        console.log("Payment async status:", payment.status);
+        if (payment.status === "Completed") {
+          setParms({
+            status: "Completed",
+            message: "payment.processed_successfully",
+          });
+          setIsProcessing(false);
+          router.refresh();
+        }
+      } else {
+        setIsProcessing(false);
+        setParms({
+          status: "Pending",
+          message: "error.invalid_payment_id",
+        });
+      }
+    };
+    let intervalId: NodeJS.Timeout | undefined;
+    if (paymentStatus === "Processing" || paymentStatus === "Pending") {
+      intervalId = setInterval(() => {
+        fetchPaymentData();
+      }, 3000);
     }
 
     const processPayment = async () => {
       try {
         const result = await processUserPaymentSuccessAction(paymentId);
-
-        setPaymentStatus(result.payment_status ?? "Pending");
-        setMessage(
-          result.message
-            ? result.payment_status === "Processing"
-              ? "payment.processing_description"
-              : result.payment_status === "Completed"
-                ? "payment.processed_successfully"
-                : result.payment_status === "Failed"
-                  ? "payment.failed_description"
-                  : result.payment_status === "Canceled"
-                    ? "payment.cancelled_description"
-                    : result.message
-            : "error.failed_to_process_payment",
-        );
+        if (!result.payment_status) {
+          setParms({
+            status: "Pending",
+            message: "error.failed_to_process_payment",
+          });
+          return;
+        }
+        setParms({
+          status: result.payment_status,
+          message: result.message || "error.failed_to_process_payment",
+        });
       } catch (error) {
         console.error("Error processing payment:", error);
-        setPaymentStatus("Failed");
-        setMessage("error.failed_to_process_payment");
+        setParms({
+          status: "Failed",
+          message: "error.failed_to_process_payment",
+        });
       } finally {
         setIsProcessing(false);
       }
     };
-
-    processPayment();
-  }, [searchParams]);
+    if (paymentStatus === "Pending") {
+      processPayment();
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [searchParams, paymentStatus]);
 
   return (
     <div className="container mx-auto py-12 px-4">

@@ -21,7 +21,7 @@ export function useMatchData(streamerUserId: string) {
     useMatchWebSocket(streamerUserId);
 
   useEffect(() => {
-    if (!matchWebSocketData) {
+    if (matchWebSocketData === null) {
       getCurrentMatch(streamerUserId).then((match) => {
         const result = MatchSchema.safeParse(match);
         if (result.success) {
@@ -31,10 +31,10 @@ export function useMatchData(streamerUserId: string) {
     } else {
       setMatchData(matchWebSocketData);
     }
-  }, [streamerUserId, matchData, matchWebSocketData]);
+  }, [streamerUserId, matchWebSocketData]);
 
   useEffect(() => {
-    if (!statsWebSocketData) {
+    if (statsWebSocketData === null) {
       getMatchStatsByMatchId(matchData?.id || null).then((stats) => {
         const result = MatchPlayerStatsSchema.safeParse(stats);
         if (result.success) {
@@ -47,7 +47,7 @@ export function useMatchData(streamerUserId: string) {
   }, [matchData, statsWebSocketData]);
 
   useEffect(() => {
-    if (!roundsWebSocketData) {
+    if (roundsWebSocketData === null) {
       getMatchRounds(statsData?.id || null).then((rounds) => {
         if (rounds) {
           setRoundsData(rounds);

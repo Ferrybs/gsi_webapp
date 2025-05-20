@@ -54,14 +54,21 @@ export async function POST(request: NextRequest) {
 
   try {
     const payload = JSON.parse(rawBody);
-    console.log("[CoinbaseWebhook] Payload", payload);
+
     const result = CoinbaseWebhookSchema.safeParse(payload);
     try {
       if (result.success && result.data.event.type !== "charge:created") {
+        console.log(
+          "[CoinbaseWebhook] Process Payload",
+          result.data,
+          result.data.event.data,
+        );
         const response = await processCoinbaseWebhookPayment(
           result.data.event.data,
         );
         console.log("[CoinbaseWebhook] Response: ", response);
+      } else {
+        console.log("[CoinbaseWebhook] Raw Payload", payload);
       }
     } catch (err) {
       console.error("❌ [CoinbaseWebhook] Error processing event", err);

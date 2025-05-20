@@ -81,12 +81,13 @@ model matches {
 }
 
 model user_balances {
-  user_id       String   @id @db.Uuid
-  balance       Decimal  @default(0) @db.Decimal(20, 4)
-  event_balance Decimal  @default(0) @db.Decimal(20, 4)
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime @default(now()) @db.Timestamptz(6)
-  users         users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_id                   String                      @id @db.Uuid
+  balance                   Decimal                     @default(0) @db.Decimal(20, 4)
+  event_balance             Decimal                     @default(0) @db.Decimal(20, 4)
+  created_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  user_balance_transactions user_balance_transactions[]
+  users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model user_roles {
@@ -98,14 +99,16 @@ model user_roles {
 }
 
 model user_transactions {
-  id                       String                     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id                  String                     @db.Uuid
-  amount                   Decimal                    @db.Decimal(20, 4)
-  type                     transaction_type
-  description              String?
-  created_at               DateTime                   @default(now()) @db.Timestamp(6)
-  user_payment_transaction user_payment_transaction[]
-  users                    users                      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                           String                         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                      String                         @db.Uuid
+  amount                       Decimal                        @db.Decimal(20, 4)
+  type                         transaction_type
+  description                  String?
+  created_at                   DateTime                       @default(now()) @db.Timestamp(6)
+  user_balance_transactions    user_balance_transactions[]
+  user_payment_transactions    user_payment_transactions[]
+  user_prediction_transactions user_prediction_transactions[]
+  users                        users                          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model users {
@@ -121,6 +124,7 @@ model users {
   streamers         streamers?
   user_balances     user_balances?
   user_payments     user_payments[]
+  user_predicions   user_predicions[]
   user_preferences  user_preferences?
   user_roles        user_roles[]
   user_transactions user_transactions[]
@@ -136,15 +140,16 @@ model stream_urls {
 }
 
 model streamers {
-  id             String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id        String           @unique @db.Uuid
-  username_id    String           @unique @db.VarChar(26)
-  display_name   String?          @db.VarChar(30)
-  avatar_url     String?
-  matches        matches[]
-  stream_matches stream_matches[]
-  stream_urls    stream_urls[]
-  users          users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                String           @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id           String           @unique @db.Uuid
+  username_id       String           @unique @db.VarChar(26)
+  affiliate_balance Decimal          @default(0) @db.Decimal(20, 4)
+  display_name      String?          @db.VarChar(30)
+  avatar_url        String?
+  matches           matches[]
+  stream_matches    stream_matches[]
+  stream_urls       stream_urls[]
+  users             users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model stream_matches {
@@ -154,23 +159,24 @@ model stream_matches {
   match_status stream_match_status @default(Preparing)
   created_at   DateTime            @default(now()) @db.Timestamp(6)
   updated_at   DateTime            @default(now()) @db.Timestamp(6)
+  predictions  predictions[]
   matches      matches             @relation(fields: [match_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   streamers    streamers           @relation(fields: [streamer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model user_payments {
-  id                       String                     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id                  String                     @db.Uuid
-  provider                 payment_provider
-  provider_transaction_id  String?
-  fiat_amount              Decimal                    @db.Decimal(20, 4)
-  currency_name            currency                   @default(BRL)
-  points_amount            Decimal                    @db.Decimal(20, 4)
-  status                   payment_status             @default(Pending)
-  created_at               DateTime                   @default(now()) @db.Timestamp(6)
-  updated_at               DateTime                   @default(now()) @db.Timestamp(6)
-  user_payment_transaction user_payment_transaction[]
-  users                    users                      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                        String                      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                   String                      @db.Uuid
+  provider                  payment_provider
+  provider_transaction_id   String?
+  fiat_amount               Decimal                     @db.Decimal(20, 4)
+  currency_name             currency                    @default(BRL)
+  points_amount             Decimal                     @db.Decimal(20, 4)
+  status                    payment_status              @default(Pending)
+  created_at                DateTime                    @default(now()) @db.Timestamp(6)
+  updated_at                DateTime                    @default(now()) @db.Timestamp(6)
+  user_payment_transactions user_payment_transactions[]
+  users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model point_packages {
@@ -185,20 +191,101 @@ model point_packages {
   updated_at    DateTime @default(now()) @db.Timestamptz(6)
 }
 
-model user_payment_transaction {
-  user_transaction_id String            @db.Uuid
-  user_payments_id    String            @db.Uuid
-  user_payments       user_payments     @relation(fields: [user_payments_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user_transactions   user_transactions @relation(fields: [user_transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([user_transaction_id, user_payments_id])
-}
-
 model user_preferences {
   user_id        String   @id @db.Uuid
   currency       currency @default(BRL)
   cookie_consent Boolean  @default(false)
   users          users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model prediction_options {
+  id                    String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  template_id           String               @db.Uuid
+  label                 String
+  created_at            DateTime             @default(now()) @db.Timestamp(6)
+  predictions_templates prediction_templates @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  predictions           predictions[]
+  user_predicions       user_predicions[]
+}
+
+model predictions {
+  id                       String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  template_id              String               @db.Uuid
+  stream_match_id          String               @db.Uuid
+  fees_total_collected     Decimal?             @db.Decimal(20, 4)
+  affiliate_fees_collected Decimal?             @db.Decimal(20, 4)
+  site_fees_collected      Decimal?             @db.Decimal(20, 4)
+  winning_option_id        String?              @db.Uuid
+  state                    bet_state            @default(Open)
+  created_at               DateTime             @default(now()) @db.Timestamp(6)
+  updated_at               DateTime             @default(now()) @db.Timestamp(6)
+  stream_matches           stream_matches       @relation(fields: [stream_match_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  prediction_templates     prediction_templates @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  prediction_options       prediction_options?  @relation(fields: [winning_option_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_predicions          user_predicions[]
+}
+
+model trigger_audit_logs {
+  id           Int              @id @default(autoincrement())
+  fired_at     DateTime         @default(now()) @db.Timestamptz(6)
+  trigger_name String
+  event_type   audit_event_type
+  description  String
+  details      Json?
+}
+
+model prediction_templates {
+  id                 String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  affiliate_fee_pct  Decimal              @default(0) @db.Decimal(5, 4)
+  total_fee_pct      Decimal              @default(0) @db.Decimal(5, 4)
+  min_bet_amount     Decimal              @default(0) @db.Decimal(20, 4)
+  kind               prediction_kind      @unique
+  template_status    template_status      @default(Active)
+  threshold_round    Int
+  created_at         DateTime             @default(now()) @db.Timestamp(6)
+  updated_at         DateTime             @default(now()) @db.Timestamp(6)
+  prediction_options prediction_options[]
+  predictions        predictions[]
+}
+
+model user_balance_transactions {
+  user_transaction_id String            @db.Uuid
+  user_balance_id     String            @db.Uuid
+  user_balances       user_balances     @relation(fields: [user_balance_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  user_transactions   user_transactions @relation(fields: [user_transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_transaction_id, user_balance_id])
+}
+
+model user_payment_transactions {
+  user_transaction_id String            @db.Uuid
+  user_payment_id     String            @db.Uuid
+  user_payments       user_payments     @relation(fields: [user_payment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_transactions   user_transactions @relation(fields: [user_transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_transaction_id, user_payment_id])
+}
+
+model user_predicions {
+  id                           String                         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                      String                         @db.Uuid
+  prediction_id                String                         @db.Uuid
+  option_id                    String                         @db.Uuid
+  amount                       Decimal                        @db.Decimal(20, 4)
+  created_at                   DateTime                       @default(now()) @db.Timestamp(6)
+  prediction_options           prediction_options             @relation(fields: [option_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  predictions                  predictions                    @relation(fields: [prediction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                        users                          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_prediction_transactions user_prediction_transactions[]
+}
+
+model user_prediction_transactions {
+  user_transaction_id String            @db.Uuid
+  user_prediction_id  String            @db.Uuid
+  user_predicions     user_predicions   @relation(fields: [user_prediction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_transactions   user_transactions @relation(fields: [user_transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_transaction_id, user_prediction_id])
 }
 
 enum map_mode {
@@ -241,12 +328,6 @@ enum match_tracking_status {
   Verified
 }
 
-enum result_status {
-  Win
-  Lose
-  Pending
-}
-
 enum role_type {
   EventsLog
   Streamer
@@ -268,9 +349,8 @@ enum team_side {
 
 enum transaction_type {
   Deposit
-  Predict
-  Challenge
   Reward
+  Predict
   Exchange
   Refund
 }
@@ -314,4 +394,30 @@ enum payment_status {
   Failed
   Canceled
   Refunded
+}
+
+enum audit_event_type {
+  Action
+  Exception
+}
+
+enum bet_state {
+  Open
+  Closed
+  Resolved
+  Canceled
+}
+
+enum prediction_kind {
+  MatchOutcome
+  KillsOver
+  DeathsUnder
+  RoundAce
+  FourKillsOneRound
+}
+
+enum template_status {
+  Active
+  Inactive
+  Deprecated
 }

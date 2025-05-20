@@ -6,8 +6,17 @@ import stripe from "@/lib/stripe";
 import { payment_status, user_payments } from "@prisma/client";
 import { CoinbaseTimelineStatusSchema } from "@/schemas/coinbase-payment-status.schema";
 import { coinbaseGetLastEvent } from "@/lib/utils";
+import paymentStatusChangedEvent from "../stream/payment-status-changed-event";
+import { revalidatePath } from "next/cache";
 
-export async function processUserPaymentSuccessAction(paymentId: string) {
+interface ProcessPaymentResponse {
+  payment_status?: payment_status;
+  message: string;
+}
+
+export async function processUserPaymentSuccessAction(
+  paymentId: string,
+): Promise<ProcessPaymentResponse> {
   try {
     const user = await getCurrentUserAction();
 
@@ -26,15 +35,14 @@ export async function processUserPaymentSuccessAction(paymentId: string) {
       throw new Error("Payment not found");
     }
 
-    if (
-      payment.status === "Completed" ||
-      payment.status === "Canceled" ||
-      payment.status === "Failed" ||
-      payment.status === "Refunded"
-    ) {
+    if (payment.status !== "Pending") {
+      revalidatePath("/payment/success");
       return {
         payment_status: payment.status,
-        message: "payment.already_processed",
+        message:
+          payment.status === "Processing"
+            ? "payment.processing_description"
+            : "payment.already_processed",
       };
     }
 
@@ -57,23 +65,21 @@ export async function processUserPaymentSuccessAction(paymentId: string) {
       };
     }
 
-    await prisma.user_payments.update({
-      where: {
-        id: payment.id,
-      },
-      data: {
-        status: paymentStatus,
-      },
+    await paymentStatusChangedEvent({
+      payment_id: payment.id,
+      new_status: paymentStatus,
     });
 
+    revalidatePath("/payment/success");
+
     return {
-      payment_status: paymentStatus,
-      message: "payment.processed_completely",
+      payment_status: "Processing",
+      message: "payment.processing_description",
     };
   } catch (error) {
     console.error("Error processing payment success:", error);
     return {
-      error: "error.failed_to_process_payment",
+      message: "error.failed_to_process_payment",
     };
   }
 }

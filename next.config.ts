@@ -2,9 +2,19 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["i.pravatar.cc", "placehold.co"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "i.pravatar.cc",
+      },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
+    ],
   },
   staticPageGenerationTimeout: 300,
+  allowedDevOrigins: ["dev.cs2bits.com"],
   /* config options here */
 };
 

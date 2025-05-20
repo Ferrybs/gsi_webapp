@@ -3,12 +3,12 @@
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { payment_status } from "@prisma/client";
+import paymentStatusChangedEvent from "../stream/payment-status-changed-event";
 
 export async function processStripeWebhookPayment(
   session: Stripe.Checkout.Session,
   eventType: string,
 ) {
-  // 1) Busque o pagamento pelo ID da sessão de checkout
   const payment = await prisma.user_payments.findFirst({
     where: { provider_transaction_id: session.id },
   });
@@ -38,7 +38,6 @@ export async function processStripeWebhookPayment(
       newStatus = null;
   }
 
-  // 3) Se não for um evento que muda o status, apenas retorne sem alterações
   if (!newStatus) {
     return {
       payment_status: payment.status,
@@ -47,10 +46,8 @@ export async function processStripeWebhookPayment(
     };
   }
 
-  // 4) Se já estiver no status desejado (ou for cancelado > completed), não duplique
   if (
     payment.status === newStatus ||
-    // opcional: não permita reabrir falhas
     (payment.status === "Canceled" && newStatus === "Completed")
   ) {
     return {
@@ -60,22 +57,20 @@ export async function processStripeWebhookPayment(
     };
   }
 
-  // 5) Atualize o status na base
-  await prisma.user_payments.update({
-    where: { id: payment.id },
-    data: { status: newStatus },
+  await paymentStatusChangedEvent({
+    payment_id: payment.id,
+    new_status: newStatus,
   });
 
-  // 6) Retorne o resultado
   const msg =
     newStatus === "Completed"
-      ? "payment.processed_successfully"
+      ? "payment.processing_description"
       : newStatus === "Failed"
         ? "payment.failed_description"
         : "payment.canceled";
 
   return {
-    payment_status: newStatus,
+    payment_status: newStatus === "Completed" ? "Processing" : newStatus,
     payment_id: payment.id,
     message: msg,
   };

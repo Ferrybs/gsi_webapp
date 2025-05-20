@@ -13,11 +13,11 @@ export function formatTimeSince(date: Date) {
   );
 
   if (diffInMinutes < 60) {
-    return `${diffInMinutes}min`;
+    return `${diffInMinutes} min`;
   } else {
     const hours = Math.floor(diffInMinutes / 60);
     const minutes = diffInMinutes % 60;
-    return `${hours}h ${minutes}min`;
+    return `${hours} h ${minutes} min`;
   }
 }
 

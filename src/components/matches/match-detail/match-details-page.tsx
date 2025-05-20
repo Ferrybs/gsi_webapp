@@ -6,6 +6,7 @@ import { Streamer } from "@/schemas/streamer.schema";
 import { useMatchData } from "@/hooks/use-match-data";
 import { useEffect } from "react";
 import { redirect } from "next/navigation";
+import { PredictionsList } from "@/components/predictions/predictions-list";
 
 interface MatchDetailsPageProps {
   streamer: Streamer | null;
@@ -24,8 +25,8 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
       matchData?.status_name === "Finished"
     ) {
       setTimeout(() => {
-        return redirect(`/${streamer.username_id}`);
-      }, 2000);
+        redirect(`/${streamer.username_id}`);
+      }, 1000);
     }
   }, [matchData]);
 
@@ -41,10 +42,13 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
         <RoundList rounds={roundsData || []} streamer={streamer} />
       </div>
 
-      {/* TODO: Adicionar  Coluna lateral */}
       <div className="lg:col-span-4 space-y-6">
-        {/* <PredictionsCard predictions={match.predictions} /> */}
-        {/* <ChallengesCard challenges={match.challenges} /> */}
+        {matchData && (
+          <PredictionsList
+            matchId={matchData.id}
+            currentRound={statsData?.round || 0}
+          />
+        )}
       </div>
     </div>
   );
