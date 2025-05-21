@@ -10,6 +10,7 @@ import {
   PlaceBetResponseSchema,
 } from "@/schemas/prediction.schema";
 import { option_label } from "@prisma/client";
+import { redis } from "@/lib/redis";
 
 const PlaceBetSchema = z.object({
   predictionId: z.string(),
@@ -73,6 +74,11 @@ export async function placeBetAction({
       },
       include: {
         prediction_templates: true,
+        stream_matches: {
+          include: {
+            streamers: true,
+          },
+        },
       },
     });
     if (!prediction) {
@@ -146,6 +152,11 @@ export async function placeBetAction({
         },
       });
     });
+
+    await redis.publish(
+      "match_events:" + prediction.stream_matches.streamer_id + ":bet",
+      prediction.id,
+    );
 
     // Revalidate paths to update UI
     revalidatePath("/[streamer]");

@@ -19,10 +19,11 @@ import { PredictionOption } from "./prediction-option";
 import { Clock, Trophy, AlertCircle, AlertTriangle, Users } from "lucide-react";
 import { toast } from "sonner";
 import { getUserBalanceAction } from "@/actions/user/get-user-balance-action";
-import type {
-  OptionLabel,
-  Prediction,
-  PredictionDetail,
+import {
+  PredictionDetailSchema,
+  type OptionLabel,
+  type Prediction,
+  type PredictionDetail,
 } from "@/schemas/prediction.schema";
 import { formatTimeSince } from "@/lib/utils";
 
@@ -41,7 +42,7 @@ import { UserBalance } from "@/schemas/user-balance.schema";
 import { Streamer } from "@/schemas/streamer.schema";
 import { Skeleton } from "../ui/skeleton";
 import { getPredictionsDetailsAction } from "@/actions/predictions/get-predictions-details-action";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface PredictionCardProps {
   streamer: Streamer;
@@ -66,14 +67,22 @@ export function PredictionCard({
 
   const qc = useQueryClient();
 
+  const { data: predictionDetailsData, isRefetching } = useQuery({
+    queryKey: ["predictionDetails", prediction.id],
+    queryFn: async () => {
+      const d = await getPredictionsDetailsAction(prediction.id);
+      return PredictionDetailSchema.parse(d);
+    },
+    enabled: !!prediction.id,
+    refetchOnWindowFocus: false,
+  });
+
   useEffect(() => {
-    getPredictionsDetailsAction(prediction.id).then((details) => {
-      if (details) {
-        setPredictionDetails(details);
-        setUserHasBet(details.userTotalBets > 0);
-      }
-    });
-  }, [prediction]);
+    if (predictionDetailsData) {
+      setPredictionDetails(predictionDetailsData);
+      setUserHasBet(predictionDetailsData.userTotalBets > 0);
+    }
+  }, [predictionDetailsData, isRefetching]);
 
   const isOpen = prediction.state === "Open";
   const isResolved = prediction.state === "Resolved";

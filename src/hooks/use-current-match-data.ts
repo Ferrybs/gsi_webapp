@@ -10,15 +10,22 @@ import { getCurrentMatchByStreamerId } from "@/actions/match/get-current-match";
 import { getMatchStatsByMatchId } from "@/actions/match/get-match-stats";
 import { MatchPlayerRounds } from "@/schemas/match-player-rounds.schema";
 import { getMatchRounds } from "@/actions/match/get-match-rounds";
+import { Prediction } from "@/schemas/prediction.schema";
+import { getPredictionsAction } from "@/actions/predictions/get-predictions-action";
 
-export function useMatchData(streamerUserId: string) {
+export function useCurrentMatchData(streamerUserId: string) {
   const [matchData, setMatchData] = useState<Match | null>(null);
   const [statsData, setStatsData] = useState<MatchPlayerStats | null>(null);
   const [roundsData, setRoundsData] = useState<MatchPlayerRounds[] | null>(
     null,
   );
-  const { matchWebSocketData, statsWebSocketData, roundsWebSocketData } =
-    useMatchWebSocket(streamerUserId);
+  const [predictionsData, setPredictionsData] = useState<Prediction[]>([]);
+  const {
+    matchWebSocketData,
+    statsWebSocketData,
+    roundsWebSocketData,
+    predData,
+  } = useMatchWebSocket(streamerUserId);
 
   useEffect(() => {
     if (matchWebSocketData === null) {
@@ -58,5 +65,14 @@ export function useMatchData(streamerUserId: string) {
     }
   }, [statsData, roundsWebSocketData]);
 
-  return { matchData, statsData, roundsData };
+  useEffect(() => {
+    if (predData && predData.predictionUpdate && matchData) {
+      getPredictionsAction(matchData.id).then((predictions) => {
+        setPredictionsData(predictions);
+      });
+      predData.setPredictionUpdate(false);
+    }
+  }, [matchData, predData]);
+
+  return { matchData, statsData, roundsData, predictionsData };
 }

@@ -3,12 +3,10 @@
 import { RoundList } from "./round-list";
 import { MatchHeader } from "./match-header";
 import { Streamer } from "@/schemas/streamer.schema";
-import { useMatchData } from "@/hooks/use-match-data";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PredictionsList } from "@/components/predictions/predictions-list";
 import { getCurrentMatchByStreamerId } from "@/actions/match/get-current-match";
-import { Prediction } from "@/schemas/prediction.schema";
-import { getPredictionsAction } from "@/actions/predictions/get-predictions-action";
+import { useCurrentMatchData } from "@/hooks/use-current-match-data";
 
 interface MatchDetailsPageProps {
   streamer: Streamer | null;
@@ -18,8 +16,8 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
   if (!streamer) {
     return <MatchDetailsLoading />;
   }
-  const { matchData, statsData, roundsData } = useMatchData(streamer.id);
-  const [predictionsData, setPredictionsData] = useState<Prediction[]>([]);
+  const { matchData, statsData, roundsData, predictionsData } =
+    useCurrentMatchData(streamer.id);
 
   useEffect(() => {
     const i = setInterval(() => {
@@ -28,9 +26,6 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
           if (m == null) {
             location.reload();
           }
-        });
-        getPredictionsAction(matchData.id).then((predictions) => {
-          setPredictionsData(predictions);
         });
       }
     }, 2000);

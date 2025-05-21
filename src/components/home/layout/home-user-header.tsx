@@ -34,7 +34,7 @@ export default function HomeUserHeader() {
   const [userData, setUserData] = useState<Users | null>(null);
   const [userBalance, setUserBalance] = useState<UserBalance | null>(null);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
-  const { data: balance } = useQuery({
+  const { data: balance, isLoading } = useQuery({
     queryKey: ["userBalance"],
     queryFn: getUserBalanceAction,
   });
@@ -60,7 +60,7 @@ export default function HomeUserHeader() {
         >
           <MdOutlineAccountBalanceWallet className="h-4 w-4" />
           <span className="text-base font-medium">
-            {!userBalance ? (
+            {!userBalance || isLoading ? (
               <Skeleton className="h-4 w-16" />
             ) : (
               formatCurrency(Number(userBalance.balance))
