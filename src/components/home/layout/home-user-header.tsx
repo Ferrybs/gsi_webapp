@@ -25,6 +25,7 @@ import {
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PurchaseModal } from "@/components/purchase/purchase-modal";
+import { useQuery } from "@tanstack/react-query";
 
 export default function HomeUserHeader() {
   const router = useRouter();
@@ -33,13 +34,16 @@ export default function HomeUserHeader() {
   const [userData, setUserData] = useState<Users | null>(null);
   const [userBalance, setUserBalance] = useState<UserBalance | null>(null);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
-
+  const { data: balance } = useQuery({
+    queryKey: ["userBalance"],
+    queryFn: getUserBalanceAction,
+  });
   useEffect(() => {
     getCurrentUserAction().then((user) => setUserData(UsersSchema.parse(user)));
-    getUserBalanceAction().then((balance) =>
-      balance ? setUserBalance(UserBalanceSchema.parse(balance)) : null,
-    );
-  }, []);
+    if (balance) {
+      setUserBalance(UserBalanceSchema.parse(balance));
+    }
+  }, [balance]);
 
   const handleOpenPurchaseModal = () => {
     setIsPurchaseModalOpen(true);

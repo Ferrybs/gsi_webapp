@@ -4,9 +4,11 @@ import { RoundList } from "./round-list";
 import { MatchHeader } from "./match-header";
 import { Streamer } from "@/schemas/streamer.schema";
 import { useMatchData } from "@/hooks/use-match-data";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PredictionsList } from "@/components/predictions/predictions-list";
 import { getCurrentMatchByStreamerId } from "@/actions/match/get-current-match";
+import { Prediction } from "@/schemas/prediction.schema";
+import { getPredictionsAction } from "@/actions/predictions/get-predictions-action";
 
 interface MatchDetailsPageProps {
   streamer: Streamer | null;
@@ -17,6 +19,7 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
     return <MatchDetailsLoading />;
   }
   const { matchData, statsData, roundsData } = useMatchData(streamer.id);
+  const [predictionsData, setPredictionsData] = useState<Prediction[]>([]);
 
   useEffect(() => {
     const i = setInterval(() => {
@@ -26,13 +29,16 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
             location.reload();
           }
         });
+        getPredictionsAction(matchData.id).then((predictions) => {
+          setPredictionsData(predictions);
+        });
       }
     }, 2000);
 
     return () => {
       clearInterval(i);
     };
-  }, [streamer]);
+  }, [matchData, statsData]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -49,7 +55,7 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
       <div className="lg:col-span-4 space-y-6">
         <PredictionsList
           streamer={streamer}
-          matchId={matchData?.id ?? null}
+          predictions={predictionsData}
           currentRound={statsData?.round || 0}
         />
       </div>

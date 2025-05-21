@@ -86,6 +86,14 @@ export const EnhancedPredictionSchema = PredictionSchema.extend({
   user_bets: z.array(UserPredictionSchema).optional(),
 });
 
+export const PredictionDetailSchema = z.object({
+  totalBets: z.number(),
+  totalAmount: z.number(),
+  options: z.array(EnhancedPredictionOptionSchema),
+  userTotalBets: z.number(),
+  user_bets: z.array(UserPredictionSchema).optional(),
+});
+
 // Response schemas for server actions
 export const PlaceBetResponseSchema = z.object({
   success: z.boolean(),
@@ -101,6 +109,8 @@ export type EnhancedPrediction = z.infer<typeof EnhancedPredictionSchema>;
 export type EnhancedPredictionOption = z.infer<
   typeof EnhancedPredictionOptionSchema
 >;
+
+export type PredictionDetail = z.infer<typeof PredictionDetailSchema>;
 export type PlaceBetResponse = z.infer<typeof PlaceBetResponseSchema>;
 
 export type OptionLabel = option_label;

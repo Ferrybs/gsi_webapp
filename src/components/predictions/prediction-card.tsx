@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import {
   Card,
   CardContent,
@@ -20,8 +20,9 @@ import { Clock, Trophy, AlertCircle, AlertTriangle, Users } from "lucide-react";
 import { toast } from "sonner";
 import { getUserBalanceAction } from "@/actions/user/get-user-balance-action";
 import type {
-  EnhancedPrediction,
   OptionLabel,
+  Prediction,
+  PredictionDetail,
 } from "@/schemas/prediction.schema";
 import { formatTimeSince } from "@/lib/utils";
 
@@ -38,10 +39,13 @@ import {
 } from "@/components/ui/form";
 import { UserBalance } from "@/schemas/user-balance.schema";
 import { Streamer } from "@/schemas/streamer.schema";
+import { Skeleton } from "../ui/skeleton";
+import { getPredictionsDetailsAction } from "@/actions/predictions/get-predictions-details-action";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface PredictionCardProps {
   streamer: Streamer;
-  prediction: EnhancedPrediction;
+  prediction: Prediction;
   currentRound: number;
 }
 
@@ -55,7 +59,21 @@ export function PredictionCard({
   const [selectedOptionLabel, setSelectedOptionLabel] =
     useState<OptionLabel | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userHasBet, setUserHasBet] = useState(false);
   const [userBalance, setUserBalance] = useState<UserBalance | null>(null);
+  const [predictionDetails, setPredictionDetails] =
+    useState<PredictionDetail | null>(null);
+
+  const qc = useQueryClient();
+
+  useEffect(() => {
+    getPredictionsDetailsAction(prediction.id).then((details) => {
+      if (details) {
+        setPredictionDetails(details);
+        setUserHasBet(details.userTotalBets > 0);
+      }
+    });
+  }, [prediction]);
 
   const isOpen = prediction.state === "Open";
   const isResolved = prediction.state === "Resolved";
@@ -63,7 +81,6 @@ export function PredictionCard({
   const isCanceled = prediction.state === "Canceled";
   const isRoundThresholdReached =
     currentRound >= prediction.prediction_templates.threshold_round;
-  const userHasBet = prediction.userTotalBets > 0;
 
   // Zod schema para o form
   const betSchema = z.object({
@@ -146,6 +163,8 @@ export function PredictionCard({
       amount,
     });
 
+    qc.invalidateQueries({ queryKey: ["userBalance"] });
+
     setIsSubmitting(false);
 
     if (result.success) {
@@ -221,147 +240,165 @@ export function PredictionCard({
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-3">
-          {prediction.options.map((option) => (
-            <PredictionOption
-              key={option.label}
-              option={option}
-              isSelected={selectedOptionLabel === option.label}
-              isWinner={
-                isResolved && prediction.winning_option_label === option.label
-              }
-              onClick={() => handleSelectOption(option.label)}
-              disabled={!isOpen}
-            />
-          ))}
-        </div>
-
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Users size={14} />
-            <span>
-              {prediction.totalBets} {t("predictions.bets")}
-            </span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Trophy size={14} />
-            <span>
-              {t("predictions.total_pool")}: {prediction.totalAmount.toFixed(2)}
-            </span>
-          </div>
-        </div>
-
-        {isOpen && userBalance && (
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(handlePlaceBet)}
-              className="space-y-2 pt-2 border-t"
-            >
-              <FormField
-                control={form.control}
-                name="amount"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center gap-2">
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder={t("predictions.enter_amount")}
-                          {...field}
-                          className={`flex-1`}
-                          disabled={!selectedOptionLabel || isSubmitting}
-                          min={prediction.prediction_templates.min_bet_amount}
-                        />
-                      </FormControl>
-                      <Button
-                        type="submit"
-                        disabled={!selectedOptionLabel || isSubmitting}
-                        className="whitespace-nowrap"
-                      >
-                        {t("predictions.place_bet")}
-                      </Button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
+      {!predictionDetails ? (
+        <PredictionCardLoading />
+      ) : (
+        <CardContent className="space-y-4">
+          <div className="space-y-3">
+            {predictionDetails.options.map((option) => (
+              <PredictionOption
+                key={option.label}
+                option={option}
+                isSelected={selectedOptionLabel === option.label}
+                isWinner={
+                  isResolved && prediction.winning_option_label === option.label
+                }
+                onClick={() => handleSelectOption(option.label)}
+                disabled={!isOpen}
               />
+            ))}
+          </div>
 
-              {/* Quick bet buttons */}
-              <div className="flex gap-2 mt-2">
-                {quickBetAmounts.map((amount) => (
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Users size={14} />
+              <span>
+                {predictionDetails.totalBets} {t("predictions.bets")}
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Trophy size={14} />
+              <span>
+                {t("predictions.total_pool")}:{" "}
+                {predictionDetails.totalAmount.toFixed(2)}
+              </span>
+            </div>
+          </div>
+
+          {isOpen && userBalance && (
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(handlePlaceBet)}
+                className="space-y-2 pt-2 border-t"
+              >
+                <FormField
+                  control={form.control}
+                  name="amount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center gap-2">
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder={t("predictions.enter_amount")}
+                            {...field}
+                            className={`flex-1`}
+                            disabled={!selectedOptionLabel || isSubmitting}
+                            min={prediction.prediction_templates.min_bet_amount}
+                          />
+                        </FormControl>
+                        <Button
+                          type="submit"
+                          disabled={!selectedOptionLabel || isSubmitting}
+                          className="whitespace-nowrap"
+                        >
+                          {t("predictions.place_bet")}
+                        </Button>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Quick bet buttons */}
+                <div className="flex gap-2 mt-2">
+                  {quickBetAmounts.map((amount) => (
+                    <Button
+                      key={amount}
+                      variant="outline"
+                      size="sm"
+                      type="button"
+                      onClick={() => handleQuickBet(amount)}
+                      disabled={
+                        !selectedOptionLabel ||
+                        isSubmitting ||
+                        amount > userBalance.balance
+                      }
+                      className="flex-1"
+                    >
+                      {amount}
+                    </Button>
+                  ))}
                   <Button
-                    key={amount}
                     variant="outline"
                     size="sm"
                     type="button"
-                    onClick={() => handleQuickBet(amount)}
+                    onClick={handleAllIn}
                     disabled={
                       !selectedOptionLabel ||
                       isSubmitting ||
-                      amount > userBalance.balance
+                      userBalance.balance <= 0
                     }
                     className="flex-1"
                   >
-                    {amount}
+                    {t("predictions.all_in")}
                   </Button>
-                ))}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  type="button"
-                  onClick={handleAllIn}
-                  disabled={
-                    !selectedOptionLabel ||
-                    isSubmitting ||
-                    userBalance.balance <= 0
-                  }
-                  className="flex-1"
-                >
-                  {t("predictions.all_in")}
-                </Button>
-              </div>
+                </div>
 
-              <div className="flex flex-col gap-1">
-                <p className="text-xs text-muted-foreground">
-                  {t("predictions.min_bet")}:{" "}
-                  {prediction.prediction_templates.min_bet_amount}
-                </p>
-              </div>
-            </form>
-          </Form>
-        )}
+                <div className="flex flex-col gap-1">
+                  <p className="text-xs text-muted-foreground">
+                    {t("predictions.min_bet")}:{" "}
+                    {prediction.prediction_templates.min_bet_amount}
+                  </p>
+                </div>
+              </form>
+            </Form>
+          )}
 
-        {userHasBet && (
-          <div className="pt-2 border-t">
-            <p className="text-sm font-medium">
-              {t("predictions.your_bets")}:{" "}
-              {prediction.userTotalBets.toFixed(2)}
-            </p>
-          </div>
-        )}
+          {userHasBet && (
+            <div className="pt-2 border-t">
+              <p className="text-sm font-medium">
+                {t("predictions.your_bets")}:{" "}
+                {predictionDetails.userTotalBets.toFixed(2)}
+              </p>
+            </div>
+          )}
 
-        {isResolved && prediction.winning_option_label && (
-          <div className="pt-2 border-t">
-            <p className="text-sm font-medium text-green-500">
-              {t("predictions.winner")}:{" "}
-              {
-                prediction.options.find(
-                  (o) => o.label === prediction.winning_option_label,
-                )?.label
-              }
-            </p>
-          </div>
-        )}
+          {isResolved && prediction.winning_option_label && (
+            <div className="pt-2 border-t">
+              <p className="text-sm font-medium text-green-500">
+                {t("predictions.winner")}:{" "}
+                {
+                  predictionDetails.options.find(
+                    (o) => o.label === prediction.winning_option_label,
+                  )?.label
+                }
+              </p>
+            </div>
+          )}
 
-        {isCanceled && (
-          <div className="pt-2 border-t">
-            <p className="text-sm font-medium text-muted-foreground">
-              {t("predictions.canceled_description")}
-            </p>
-          </div>
-        )}
-      </CardContent>
+          {isCanceled && (
+            <div className="pt-2 border-t">
+              <p className="text-sm font-medium text-muted-foreground">
+                {t("predictions.canceled_description")}
+              </p>
+            </div>
+          )}
+        </CardContent>
+      )}
     </Card>
+  );
+}
+
+function PredictionCardLoading() {
+  return (
+    <CardContent className="space-y-4">
+      <div className="space-y-3">
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+      </div>
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-10 w-full" />
+    </CardContent>
   );
 }
