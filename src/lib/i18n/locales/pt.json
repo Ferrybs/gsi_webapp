@@ -1,4 +1,9 @@
 {
+  "callback": {
+    "loading": "Carregando...",
+    "redirect": "Redirecionando...",
+    "waiting": "Por favor, aguarde..."
+  },
   "login": "Entrar",
   "logout": "Sair",
   "signInPage": {
