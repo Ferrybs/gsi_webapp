@@ -17,7 +17,12 @@ export const MatchSchema = z.object({
     z.date(),
   ),
   ended_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    (arg) =>
+      typeof arg === "string"
+        ? new Date(arg)
+        : typeof arg === "undefined"
+          ? null
+          : arg,
     z.date().nullable(),
   ),
 });

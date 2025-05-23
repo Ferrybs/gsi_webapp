@@ -103,7 +103,6 @@ model prediction_options {
 
 model prediction_templates {
   id                 Int                  @id @default(autoincrement())
-  affiliate_fee_pct  Decimal              @default(0) @db.Decimal(5, 4)
   total_fee_pct      Decimal              @default(0) @db.Decimal(5, 4)
   min_bet_amount     Decimal              @default(0) @db.Decimal(20, 4)
   kind               prediction_kind      @unique
@@ -157,6 +156,7 @@ model streamers {
   user_id           String           @unique @db.Uuid
   username_id       String           @unique @db.VarChar(26)
   affiliate_balance Decimal          @default(0) @db.Decimal(20, 4)
+  affiliate_fee_pct Decimal          @default(0) @db.Decimal(5, 4)
   display_name      String?          @db.VarChar(30)
   avatar_url        String?
   matches           matches[]

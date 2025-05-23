@@ -9,3 +9,13 @@ export const decimalToNumber = z.preprocess((val) => {
   }
   return val;
 }, z.number());
+
+export const stringToDate = z.preprocess(
+  (arg) =>
+    typeof arg === "string"
+      ? new Date(arg)
+      : typeof arg === "undefined"
+        ? null
+        : arg,
+  z.date(),
+);
