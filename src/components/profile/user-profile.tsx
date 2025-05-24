@@ -7,16 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Shield, User, History } from "lucide-react";
+import { Shield, User } from "lucide-react";
 import { UserAvatar } from "./user-avatar";
 import { UserInfo } from "./user-info";
 import { StreamerInfo } from "./streamer-info";
 import { UserRoleSchema, Users, UsersSchema } from "@/schemas/users.schema";
-import { UserStats } from "./user-stats";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "../ui/skeleton";
 import { useEffect, useState } from "react";
 import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
+import { TransactionHistory } from "./transaction-history";
 
 export function UserProfile() {
   const [userData, setUser] = useState<Users | null>(null);
@@ -54,12 +54,9 @@ export function UserProfile() {
         </div>
         <div>
           <Tabs defaultValue="info">
-            <TabsList className="grid grid-cols-3 mb-4">
+            <TabsList className="grid grid-cols-2 mb-4">
               <TabsTrigger value="info">
                 {t("userProfile.tabs.info")}
-              </TabsTrigger>
-              <TabsTrigger value="stats">
-                {t("userProfile.tabs.stats")}
               </TabsTrigger>
               <TabsTrigger value="history">
                 {t("userProfile.tabs.history")}
@@ -87,29 +84,8 @@ export function UserProfile() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="stats">
-              <UserStats />
-            </TabsContent>
             <TabsContent value="history">
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t("userProfile.history.title")}</CardTitle>
-                  <CardDescription>
-                    {t("userProfile.history.description")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <History className="h-12 w-12 text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium">
-                      {t("userProfile.history.noActivity")}
-                    </h3>
-                    <p className="text-muted-foreground mt-2">
-                      {t("userProfile.history.noActivityDescription")}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <TransactionHistory />
             </TabsContent>
           </Tabs>
         </div>
@@ -133,9 +109,6 @@ export function UserProfileSkeleton() {
           <Tabs defaultValue="info">
             <TabsList>
               <TabsTrigger value="info">
-                <Skeleton className="h-4 w-16" />
-              </TabsTrigger>
-              <TabsTrigger value="stats">
                 <Skeleton className="h-4 w-16" />
               </TabsTrigger>
               <TabsTrigger value="history">

@@ -2,12 +2,13 @@
 import { prisma } from "@/lib/prisma";
 import { getServerSteamUser } from "@/lib/session";
 import { UsersSchema } from "@/schemas/users.schema";
+import { ActionError } from "@/types/action-error";
 
 export async function getCurrentUserAction() {
   const steamUser = await getServerSteamUser();
 
   if (!steamUser) {
-    return null;
+    throw new ActionError("error.user_not_authenticated");
   }
 
   const user = await prisma.users.findUnique({
@@ -20,7 +21,7 @@ export async function getCurrentUserAction() {
   });
 
   if (!user) {
-    return null;
+    throw new ActionError("error.user_not_found");
   }
 
   return UsersSchema.parse(user);

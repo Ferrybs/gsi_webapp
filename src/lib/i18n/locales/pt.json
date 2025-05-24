@@ -1,4 +1,5 @@
 {
+  "common": { "points": "CS2Bits" },
   "callback": {
     "loading": "Carregando...",
     "redirect": "Redirecionando...",
@@ -413,7 +414,30 @@
       "title": "Histórico de Atividades",
       "description": "Suas atividades recentes no CS2 Bits",
       "noActivity": "Nenhuma atividade recente",
-      "noActivityDescription": "Suas atividades aparecerão aqui quando você começar a interagir com desafios e previsões."
+      "noActivityDescription": "Suas atividades aparecerão aqui quando você começar a interagir com desafios e previsões.",
+      "total": "Total de Atividades: {{count}}"
+    }
+  },
+  "pagination": {
+    "showing": "Mostrando {{start}} a {{end}} de {{total}} resultados",
+    "previous": "Anterior",
+    "next": "Próximo"
+  },
+  "transactions": {
+    "types": {
+      "reward": "Recompesa",
+      "predict": "Previsão",
+      "deposit": "Compra",
+      "exchange": "Troca",
+      "refund": "Reembolso"
+    },
+    "descriptions": {
+      "reward": "Recompesa de CS2Bits",
+      "predictGeneric": "Cobrança de CS2Bits",
+      "deposit": "Compra de CS2Bits"
+    },
+    "filter": {
+      "all": "Todos"
     }
   },
   "profile": {

@@ -1,9 +1,9 @@
 "use server";
 import { transporter } from "@/lib/nodemailer";
-import redis from "@/lib/redis";
 import { z } from "zod";
 import { getCurrentUserAction } from "../user/get-current-user-action";
 import { ActionResponse } from "@/types/action-responde";
+import { redis } from "@/lib/redis";
 
 const requestEmailOtpSchema = z.object({
   email: z.string().email(),
