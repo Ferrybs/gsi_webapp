@@ -31,7 +31,6 @@ export const UserPredictionSchema = z.object({
 
 export const PredictionTemplateSchema = z.object({
   id: z.number(),
-  affiliate_fee_pct: decimalToNumber,
   total_fee_pct: decimalToNumber,
   min_bet_amount: decimalToNumber,
   kind: z.nativeEnum(prediction_kind),

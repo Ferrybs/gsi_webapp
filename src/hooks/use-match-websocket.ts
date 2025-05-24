@@ -29,12 +29,10 @@ export function useMatchWebSocket(streamerUserId: string) {
     null,
   );
   const qc = useQueryClient();
-  const [predictionUpdate, setPredictionUpdate] = useState<boolean>(true);
   const [statsWebSocketData, setStatsWebSocketData] =
     useState<MatchPlayerStats | null>(null);
-  const [roundsWebSocketData, setRoundsWebSocketData] = useState<
-    MatchPlayerRounds[] | null
-  >(null);
+  const [roundsWebSocketData, setRoundsWebSocketData] =
+    useState<MatchPlayerRounds | null>(null);
   useEffect(() => {
     getWsTokenAction().then((token) => {
       setWssToken(token);
@@ -85,26 +83,21 @@ export function useMatchWebSocket(streamerUserId: string) {
         const json = JSON.parse(eventPayload.data);
         const result = MatchPlayerRoundsSchema.safeParse(json);
         if (result.success) {
-          const rounds = roundsWebSocketData?.filter(
-            (round) => round.round_number !== result.data.round_number,
-          );
-          if (rounds) {
-            rounds.push(result.data);
-            rounds.sort((a, b) => b.round_number - a.round_number);
-            setRoundsWebSocketData(rounds);
-          } else {
-            setRoundsWebSocketData([result.data]);
-          }
+          setRoundsWebSocketData(result.data);
         } else {
           console.error("Invalid match data:", result.error);
           toast.error(t("error.match_update"));
         }
       } else if (eventPayload.match_event === "prediction") {
-        setPredictionUpdate(true);
+        qc.invalidateQueries({
+          queryKey: ["prediction"],
+        });
       } else if (eventPayload.match_event === "bet") {
         qc.invalidateQueries({
           queryKey: ["predictionDetails", eventPayload.data],
         });
+      } else if (eventPayload.match_event === "end") {
+        setInterval(() => location.reload(), 4000);
       }
     });
   }, [wssToken, streamerUserId]);
@@ -113,9 +106,5 @@ export function useMatchWebSocket(streamerUserId: string) {
     matchWebSocketData,
     statsWebSocketData,
     roundsWebSocketData,
-    predData: {
-      predictionUpdate,
-      setPredictionUpdate,
-    },
   };
 }

@@ -3,10 +3,12 @@
 import { RoundList } from "./round-list";
 import { MatchHeader } from "./match-header";
 import { Streamer } from "@/schemas/streamer.schema";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PredictionsList } from "@/components/predictions/predictions-list";
-import { getCurrentMatchByStreamerId } from "@/actions/match/get-current-match";
 import { useCurrentMatchData } from "@/hooks/use-current-match-data";
+import { useQuery } from "@tanstack/react-query";
+import { Prediction, PredictionSchema } from "@/schemas/prediction.schema";
+import { getPredictionsAction } from "@/actions/predictions/get-predictions-action";
 
 interface MatchDetailsPageProps {
   streamer: Streamer | null;
@@ -16,24 +18,29 @@ export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
   if (!streamer) {
     return <MatchDetailsLoading />;
   }
-  const { matchData, statsData, roundsData, predictionsData } =
-    useCurrentMatchData(streamer.id);
+  const { matchData, statsData, roundsData } = useCurrentMatchData(streamer.id);
+  const [predictionsData, setPredictionsData] = useState<Prediction[]>([]);
+
+  const {
+    data: predictionsDataQuery,
+    isFetching,
+    isRefetching,
+  } = useQuery({
+    queryKey: ["prediction"],
+    queryFn: async () => {
+      if (!matchData) return [];
+      const pred = await getPredictionsAction(matchData.id);
+      return pred.map((p) => PredictionSchema.parse(p));
+    },
+    enabled: matchData != null,
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
-    const i = setInterval(() => {
-      if (matchData != null) {
-        getCurrentMatchByStreamerId(streamer.id).then((m) => {
-          if (m == null) {
-            location.reload();
-          }
-        });
-      }
-    }, 2000);
-
-    return () => {
-      clearInterval(i);
-    };
-  }, [matchData, statsData]);
+    if (predictionsDataQuery) {
+      setPredictionsData(predictionsDataQuery);
+    }
+  }, [predictionsDataQuery, isFetching, isRefetching]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

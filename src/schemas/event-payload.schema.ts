@@ -8,6 +8,7 @@ export const EventPayloadSchema = z.object({
     "death",
     "prediction",
     "bet",
+    "end",
   ]),
   data: z.string(),
 });
