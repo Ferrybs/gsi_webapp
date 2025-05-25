@@ -8,7 +8,7 @@ export async function getCurrentUserAction() {
   const steamUser = await getServerSteamUser();
 
   if (!steamUser) {
-    throw new ActionError("error.user_not_authenticated");
+    return null;
   }
 
   const user = await prisma.users.findUnique({
@@ -21,7 +21,7 @@ export async function getCurrentUserAction() {
   });
 
   if (!user) {
-    throw new ActionError("error.user_not_found");
+    return null;
   }
 
   return UsersSchema.parse(user);

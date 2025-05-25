@@ -5,6 +5,39 @@
     "redirect": "Redirecionando...",
     "waiting": "Por favor, aguarde..."
   },
+  "form": {
+    "validation": {
+      "name": {
+        "min": "O nome deve ter pelo menos 2 caracteres",
+        "max": "O nome não pode ter mais de 50 caracteres",
+        "required": "O nome é obrigatório"
+      },
+      "plataform": {
+        "required": "A plataforma é obrigatória",
+        "invalid": "Plataforma inválida"
+      },
+      "email": {
+        "required": "O email é obrigatório",
+        "invalid": "Email inválido",
+        "max": "O email não pode ter mais de 150 caracteres"
+      }
+    },
+    "name": "Seu nome",
+    "platform": "Plataforma",
+    "email": "Endereço de email"
+  },
+  "contact": {
+    "title": "Entre em Contato",
+    "description": "Preencha o formulário abaixo e entraremos em contato em breve.",
+    "name": "Nome",
+    "name_placeholder": "Seu nome",
+    "platform": "Plataforma de Streaming",
+    "platform_placeholder": "Selecione sua plataforma de streaming",
+    "success": "Solicitação enviada com sucesso!",
+    "sending": "Enviando...",
+    "sent": "Enviado",
+    "submit": "Enviar Solicitação"
+  },
   "login": "Entrar",
   "logout": "Sair",
   "signInPage": {
@@ -59,11 +92,11 @@
     "points_for_skins": "Transforme suas previsões e desafios em prêmios: Ganhe skins com seus pontos."
   },
   "cta": {
-    "new_expirence": "Pronto para uma nova experiência?",
-    "watch_expirence": "Junte-se a milhares de stremers e espectadores para assistir CS2 de uma forma totalmente nova.",
-    "begin_now": "Começar agora",
+    "new_expirence": "Streamer, pronto para uma nova experiência?",
+    "watch_expirence": "Junte-se para transmitir Counter Strike 2 de uma forma totalmente nova.",
+    "begin_now": "Agende uma demonstração",
     "title": "Pronto para Transformar sua Transmissão?",
-    "description": "Junte-se à nossa comunidade de streamers que está criando conteúdo mais envolvente e lucrativo com o CS2 Bits.",
+    "description": "Junte-se à nossa comunidade de streamers que está criando conteúdo mais envolvente com o CS2 Bits.",
     "button": "Candidate-se como Parceiro"
   },
   "benefits": {
@@ -487,7 +520,10 @@
     "failed_to_process_payment": "Erro ao processar pagamento",
     "payment_status_not_found": "Status de pagamento não encontrado",
     "invalid_payment_id": "ID de pagamento inválido",
-    "payment_creation_failed": "Erro ao criar pagamento, tente novamente mais tarde"
+    "payment_creation_failed": "Erro ao criar pagamento, tente novamente mais tarde",
+    "authentication_needed": "É necessário autenticar-se para realizar esta ação",
+    "user_email_not_found": "Email do usuário não encontrado, acesse o perfil para atualizar",
+    "internal_error": "Erro interno, tente novamente mais tarde"
   },
   "match": {
     "offline": "OFFLINE",

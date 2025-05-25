@@ -1,6 +1,6 @@
 "use server";
 import { getCurrentUserAction } from "./get-current-user-action";
-import { ActionResponse } from "@/types/action-responde";
+import { ActionResponse } from "@/types/action-response";
 
 const BASE_ID = BigInt("76561197960265728");
 

@@ -1,5 +1,5 @@
 "use server";
-import { ActionResponse } from "@/types/action-responde";
+import { ActionResponse } from "@/types/action-response";
 import { getCurrentUserAction } from "./get-current-user-action";
 import { validateTradeLinkAction } from "./validate-user-trade-link-action";
 import { prisma } from "@/lib/prisma";

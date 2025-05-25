@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,6 +33,9 @@ import {
 import { TransactionType } from "@/schemas/user-transaction.schema";
 import { UserPayment } from "@/schemas/user-payment.schema";
 import { UserPrediction } from "@/schemas/prediction.schema";
+import i18next from "i18next";
+// React Query imports
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const getTransactionIcon = (type: TransactionType) => {
   switch (type) {
@@ -70,47 +72,35 @@ const getTransactionColor = (type: TransactionType) => {
 };
 
 export function TransactionHistory() {
-  const [data, setData] = useState<GetUserTransactionsActionResponse | null>(
-    null,
-  );
-  const [loading, setLoading] = useState(true);
+  // Estados apenas para filtro e página
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<TransactionType | undefined>(undefined);
-  const [loadingPage, setLoadingPage] = useState(false);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  const fetchTransactions = async (page: number, type?: TransactionType) => {
-    try {
-      setLoadingPage(true);
-      const result = await getUserTransactionsAction(
-        {
-          page,
-          limit: 20,
-        },
-        type ? [type] : [],
-      );
-      setData(result.data ?? null);
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-    } finally {
-      setLoading(false);
-      setLoadingPage(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTransactions(1, filter);
-    setCurrentPage(1);
-  }, [filter]);
+  // React Query para buscar transações
+  const { data, isLoading, isFetching } =
+    useQuery<GetUserTransactionsActionResponse | null>({
+      queryKey: ["user-transactions", currentPage, filter],
+      queryFn: async () => {
+        const result = await getUserTransactionsAction(
+          {
+            page: currentPage,
+            limit: 20,
+          },
+          filter ? [filter] : [],
+        );
+        return result.data ?? null;
+      },
+    });
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    fetchTransactions(page, filter);
   };
 
   const handleFilterChange = (value: string) => {
     const newFilter = value === "all" ? undefined : (value as TransactionType);
     setFilter(newFilter);
+    setCurrentPage(1);
   };
 
   const formatAmount = (amount: number, type: TransactionType) => {
@@ -161,7 +151,7 @@ export function TransactionHistory() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <TransactionHistorySkeleton />;
   }
 
@@ -224,7 +214,7 @@ export function TransactionHistory() {
         </>
       ) : null}
 
-      {loadingPage && transactionsData.length > 0 ? (
+      {isFetching && transactionsData.length > 0 ? (
         <TransactionListSkeleton />
       ) : (
         <ScrollArea className="h-[500px] w-full">
@@ -255,9 +245,6 @@ export function TransactionHistory() {
                         {format(
                           data.transaction.created_at,
                           "dd/MM/yyyy HH:mm",
-                          {
-                            locale: ptBR,
-                          },
                         )}
                       </p>
                     </div>
@@ -300,7 +287,7 @@ export function TransactionHistory() {
               variant="outline"
               size="sm"
               onClick={() => handlePageChange(currentPage - 1)}
-              disabled={!pagination.hasPrev || loadingPage}
+              disabled={!pagination.hasPrev || isFetching}
             >
               <ChevronLeft className="h-4 w-4" />
               {t("pagination.previous")}
@@ -329,7 +316,7 @@ export function TransactionHistory() {
                       }
                       size="sm"
                       onClick={() => handlePageChange(pageNumber)}
-                      disabled={loadingPage}
+                      disabled={isFetching}
                       className="w-8 h-8 p-0"
                     >
                       {pageNumber}
@@ -343,7 +330,7 @@ export function TransactionHistory() {
               variant="outline"
               size="sm"
               onClick={() => handlePageChange(currentPage + 1)}
-              disabled={!pagination.hasNext || loadingPage}
+              disabled={!pagination.hasNext || isFetching}
             >
               {t("pagination.next")}
               <ChevronRight className="h-4 w-4" />

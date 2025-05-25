@@ -18,7 +18,7 @@ import {
   PaginationSchema,
 } from "@/schemas/pagination.schema";
 import { getCurrentUserAction } from "./get-current-user-action";
-import { ActionResponse } from "@/types/action-responde";
+import { ActionResponse } from "@/types/action-response";
 import { ActionError } from "@/types/action-error";
 
 export type GetUserTransactionsActionResponse = {
@@ -36,6 +36,10 @@ export async function getUserTransactionsAction(
 ): Promise<ActionResponse<GetUserTransactionsActionResponse>> {
   try {
     const user = await getCurrentUserAction();
+
+    if (!user) {
+      return { success: false, error_message: "error.user_not_found" };
+    }
 
     // Validar e aplicar valores padrão aos parâmetros
     let page = 1;
