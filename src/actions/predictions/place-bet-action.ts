@@ -2,104 +2,63 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
-import { getCurrentUserAction } from "../user/get-current-user-action";
-import { getUserBalanceAction } from "../user/get-user-balance-action";
-import {
-  type PlaceBetResponse,
-  PlaceBetResponseSchema,
-} from "@/schemas/prediction.schema";
-import { option_label } from "@prisma/client";
+import { PlaceBetInput, PlaceBetSchema } from "@/schemas/prediction.schema";
 import { redis } from "@/lib/redis";
+import { getCurrentUser } from "../user/get-current-user";
+import { ActionResponse } from "@/types/action-response";
+import { getUserBalance } from "../user/get-user-balance";
+import { ActionError } from "@/types/action-error";
 
-const PlaceBetSchema = z.object({
-  predictionId: z.string(),
-  optionId: z.nativeEnum(option_label),
-  amount: z.number().min(0.01),
-});
-
-type PlaceBetInput = z.infer<typeof PlaceBetSchema>;
-
-export async function placeBetAction({
-  predictionId,
-  optionLabel,
-  amount,
-}: {
-  predictionId: string;
-  optionLabel: option_label;
-  amount: number;
-}): Promise<PlaceBetResponse> {
-  const validatedFields = PlaceBetSchema.safeParse({
-    predictionId,
-    optionId: optionLabel,
-    amount,
-  });
-
-  if (!validatedFields.success) {
-    return PlaceBetResponseSchema.parse({
-      success: false,
-      message: "Invalid bet data",
-    });
-  }
-
-  const {
-    predictionId: validPredictionId,
-    optionId,
-    amount: validAmount,
-  } = validatedFields.data;
-
+export async function placeBetAction(
+  data: PlaceBetInput,
+): Promise<ActionResponse<boolean>> {
   try {
-    // Get current user
-    const currentUser = await getCurrentUserAction();
+    const validatedFields = PlaceBetSchema.parse(data);
+
+    const currentUser = await getCurrentUser();
     if (!currentUser) {
-      return PlaceBetResponseSchema.parse({
+      return {
         success: false,
-        message: "You must be logged in to place a bet",
-      });
+        error_message: "error.user_not_authenticated",
+      };
     }
 
-    // Check user balance
-    const userBalance = await getUserBalanceAction();
-    if (!userBalance || Number(userBalance.balance) < validAmount) {
-      return PlaceBetResponseSchema.parse({
+    const userBalance = await getUserBalance();
+
+    if (!userBalance) {
+      return {
         success: false,
-        message: "Insufficient balance",
-      });
+        error_message: "error.user_balance_not_found",
+      };
     }
 
-    // Get prediction with its template to check if it's still open and get min_bet_amount
+    if (userBalance.balance < validatedFields.amount) {
+      return {
+        success: false,
+        error_message: "error.insufficient_balance",
+      };
+    }
+
     const prediction = await prisma.predictions.findUnique({
       where: {
-        id: validPredictionId,
-      },
-      include: {
-        prediction_templates: true,
-        stream_matches: {
-          include: {
-            streamers: true,
+        id: validatedFields.predictionId,
+        state: "Open",
+        prediction_templates: {
+          min_bet_amount: {
+            gte: validatedFields.amount,
           },
         },
       },
+      include: {
+        prediction_templates: true,
+        stream_matches: true,
+      },
     });
     if (!prediction) {
-      return PlaceBetResponseSchema.parse({
+      return {
         success: false,
-        message: "Prediction not found",
-      });
-    }
-
-    if (prediction.state !== "Open") {
-      return PlaceBetResponseSchema.parse({
-        success: false,
-        message: "This prediction is no longer accepting bets",
-      });
-    }
-
-    if (validAmount < Number(prediction.prediction_templates.min_bet_amount)) {
-      return PlaceBetResponseSchema.parse({
-        success: false,
-        message: `Minimum bet amount is ${prediction.prediction_templates.min_bet_amount}`,
-      });
+        error_message: "error.prediction_not_found",
+      };
     }
 
     // Start a transaction to ensure all operations succeed or fail together
@@ -108,9 +67,9 @@ export async function placeBetAction({
       const userPrediction = await tx.user_predictions.create({
         data: {
           user_id: currentUser.id,
-          prediction_id: validPredictionId,
-          option_label: optionId,
-          amount: validAmount,
+          prediction_id: prediction.id,
+          option_label: validatedFields.optionLabel,
+          amount: validatedFields.amount,
         },
       });
 
@@ -121,7 +80,7 @@ export async function placeBetAction({
         },
         data: {
           balance: {
-            decrement: validAmount,
+            decrement: validatedFields.amount,
           },
         },
       });
@@ -130,7 +89,7 @@ export async function placeBetAction({
       const transaction = await tx.user_transactions.create({
         data: {
           user_id: currentUser.id,
-          amount: -validAmount,
+          amount: -validatedFields.amount,
           description: `Bet on prediction ${prediction.prediction_templates.kind}`,
           type: "Predict",
         },
@@ -160,15 +119,21 @@ export async function placeBetAction({
 
     // Revalidate paths to update UI
     revalidatePath("/[streamer]");
-    return PlaceBetResponseSchema.parse({
+    return {
       success: true,
-      message: "Bet placed successfully",
-    });
+      data: true,
+    };
   } catch (error) {
     console.error("Error placing bet:", error);
-    return PlaceBetResponseSchema.parse({
+    if (error instanceof ActionError) {
+      return {
+        success: false,
+        error_message: error.message,
+      };
+    }
+    return {
       success: false,
-      message: "An error occurred while placing your bet",
-    });
+      error_message: "error.unexpected_error",
+    };
   }
 }

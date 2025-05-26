@@ -93,12 +93,6 @@ export const PredictionDetailSchema = z.object({
   user_bets: z.array(UserPredictionSchema).optional(),
 });
 
-// Response schemas for server actions
-export const PlaceBetResponseSchema = z.object({
-  success: z.boolean(),
-  message: z.string(),
-});
-
 // Type exports
 export type Prediction = z.infer<typeof PredictionSchema>;
 export type PredictionOption = z.infer<typeof PredictionOptionSchema>;
@@ -110,6 +104,13 @@ export type EnhancedPredictionOption = z.infer<
 >;
 
 export type PredictionDetail = z.infer<typeof PredictionDetailSchema>;
-export type PlaceBetResponse = z.infer<typeof PlaceBetResponseSchema>;
 
 export type OptionLabel = option_label;
+
+export const PlaceBetSchema = z.object({
+  predictionId: z.string(),
+  optionLabel: z.nativeEnum(option_label),
+  amount: z.number().min(0.01),
+});
+
+export type PlaceBetInput = z.infer<typeof PlaceBetSchema>;

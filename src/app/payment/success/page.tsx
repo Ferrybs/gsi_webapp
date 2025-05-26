@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, CircleX, Loader2 } from "lucide-react";
 import { PaymentStatus } from "@/schemas/user-payment.schema";
 import { useTranslation } from "react-i18next";
-import { getUserPaymentData } from "@/actions/payments/get-user-payment-data";
+import { getUserPaymentDataAction } from "@/actions/payments/get-user-payment-data-action";
 
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
@@ -53,8 +53,9 @@ export default function PaymentSuccessPage() {
     }
 
     const fetchPaymentData = async () => {
-      const payment = await getUserPaymentData(paymentId);
-      if (payment) {
+      const response = await getUserPaymentDataAction(paymentId);
+      if (response.success && response.data) {
+        const payment = response.data;
         if (payment.status === "Completed") {
           setParms({
             status: "Completed",
@@ -80,24 +81,25 @@ export default function PaymentSuccessPage() {
 
     const processPayment = async () => {
       try {
-        const result = await processUserPaymentSuccessAction(paymentId);
-        if (!result.payment_status) {
+        const response = await processUserPaymentSuccessAction(paymentId);
+        if (!response.success || !response.data) {
+          setIsProcessing(false);
           setParms({
             status: "Pending",
             message: "error.failed_to_process_payment",
           });
           return;
         }
-        setParms({
-          status: result.payment_status,
-          message: result.message || "error.failed_to_process_payment",
-        });
+        const result = response.data;
+        if (result.payment_status === "Pending") {
+          setParms({
+            status: "Pending",
+            message: "error.failed_to_process_payment",
+          });
+          return;
+        }
       } catch (error) {
         console.error("Error processing payment:", error);
-        setParms({
-          status: "Failed",
-          message: "error.failed_to_process_payment",
-        });
       } finally {
         setIsProcessing(false);
       }

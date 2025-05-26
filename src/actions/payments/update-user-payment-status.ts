@@ -1,25 +1,24 @@
 "use server";
 
-import { getCurrentUserAction } from "../user/get-current-user-action";
 import paymentStatusChangedEvent from "../stream/payment-status-changed-event";
-import { ActionResponse } from "@/types/action-response";
 import {
   UpdatePaymentStatus,
   UpdatePaymentStatusSchema,
 } from "@/schemas/handle-payment.schema";
 import { ActionError } from "@/types/action-error";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "../user/get-current-user";
 
 export async function updateUserPaymentStatus({
   paymentId,
   paymentStatus,
-}: UpdatePaymentStatus): Promise<ActionResponse<boolean>> {
+}: UpdatePaymentStatus): Promise<boolean> {
   try {
     const data = UpdatePaymentStatusSchema.parse({
       paymentId,
       paymentStatus,
     });
-    const user = await getCurrentUserAction();
+    const user = await getCurrentUser();
 
     if (!user) {
       throw new ActionError("error.user_not_authenticated");
@@ -41,18 +40,12 @@ export async function updateUserPaymentStatus({
       new_status: paymentStatus,
     });
 
-    return { success: true, data: true };
+    return true;
   } catch (error) {
     console.error(`Error updating payment status to ${paymentStatus}:`, error);
     if (error instanceof ActionError) {
-      return {
-        success: false,
-        error_message: error.message,
-      };
+      throw error;
     }
-    return {
-      success: false,
-      error_message: "error.payment_status_update_failed",
-    };
+    throw new ActionError("error.update_payment_status_failed");
   }
 }

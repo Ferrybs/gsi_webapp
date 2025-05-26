@@ -17,9 +17,9 @@ import {
   PaginationParamsSchema,
   PaginationSchema,
 } from "@/schemas/pagination.schema";
-import { getCurrentUserAction } from "./get-current-user-action";
 import { ActionResponse } from "@/types/action-response";
 import { ActionError } from "@/types/action-error";
+import { getCurrentUser } from "./get-current-user";
 
 export type GetUserTransactionsActionResponse = {
   transactionsData: {
@@ -35,13 +35,12 @@ export async function getUserTransactionsAction(
   transactionsTypes?: TransactionType[],
 ): Promise<ActionResponse<GetUserTransactionsActionResponse>> {
   try {
-    const user = await getCurrentUserAction();
+    const user = await getCurrentUser();
 
     if (!user) {
       return { success: false, error_message: "error.user_not_found" };
     }
 
-    // Validar e aplicar valores padrão aos parâmetros
     let page = 1;
     let limit = 20;
     if (paginationParams) {
@@ -49,7 +48,6 @@ export async function getUserTransactionsAction(
     }
     const skip = (page - 1) * limit;
 
-    // Construir filtros
     const where = {
       user_id: user.id,
       AND: transactionsTypes?.map((type) => ({ type })),

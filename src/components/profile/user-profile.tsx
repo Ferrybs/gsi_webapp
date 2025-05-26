@@ -21,7 +21,13 @@ import { TransactionHistory } from "./transaction-history";
 export function UserProfile() {
   const [userData, setUser] = useState<Users | null>(null);
   useEffect(() => {
-    getCurrentUserAction().then((user) => setUser(UsersSchema.parse(user)));
+    getCurrentUserAction().then((response) => {
+      if (response.success && response.data) {
+        setUser(UsersSchema.parse(response.data));
+      } else {
+        setUser(null);
+      }
+    });
   }, []);
   const { t } = useTranslation();
 

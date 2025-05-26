@@ -1,5 +1,5 @@
 "use server";
-import { getCurrentUserAction } from "./get-current-user-action";
+import { getCurrentUser } from "./get-current-user";
 import { ActionResponse } from "@/types/action-response";
 
 const BASE_ID = BigInt("76561197960265728");
@@ -10,7 +10,7 @@ const TRADE_LINK_REGEX =
 export async function validateTradeLinkAction(
   link: string,
 ): Promise<ActionResponse<boolean>> {
-  const user = await getCurrentUserAction();
+  const user = await getCurrentUser();
   if (!user) return { success: false, error_message: "error.user_not_found" };
 
   const match = TRADE_LINK_REGEX.exec(link);

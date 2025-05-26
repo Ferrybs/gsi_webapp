@@ -70,8 +70,10 @@ export function PredictionCard({
   const { data: predictionDetailsData, isRefetching } = useQuery({
     queryKey: ["predictionDetails", prediction.id],
     queryFn: async () => {
-      const d = await getPredictionsDetailsAction(prediction.id);
-      return PredictionDetailSchema.parse(d);
+      const response = await getPredictionsDetailsAction(prediction.id);
+      if (response.data) {
+        return PredictionDetailSchema.parse(response.data);
+      }
     },
     enabled: !!prediction.id,
     refetchOnWindowFocus: false,
@@ -129,9 +131,9 @@ export function PredictionCard({
   // Fetch user balance
   useEffect(() => {
     if (session) {
-      getUserBalanceAction().then((balance) => {
-        if (balance) {
-          setUserBalance(balance);
+      getUserBalanceAction().then((response) => {
+        if (response.success && response.data) {
+          setUserBalance(response.data);
         }
       });
     }
@@ -177,21 +179,17 @@ export function PredictionCard({
     setIsSubmitting(false);
 
     if (result.success) {
-      toast.success(t("predictions.bet_placed"), {
-        description: result.message,
-      });
+      toast.success(t("predictions.bet_placed"));
       form.reset({ amount: "" });
       setSelectedOptionLabel(null);
 
       // Update user balance after successful bet
-      const updatedBalance = await getUserBalanceAction();
-      if (updatedBalance) {
-        setUserBalance(updatedBalance);
+      const response = await getUserBalanceAction();
+      if (response.data) {
+        setUserBalance(response.data);
       }
     } else {
-      toast.error(t("predictions.bet_failed"), {
-        description: result.message,
-      });
+      toast.error(t("predictions.bet_failed"));
     }
   };
 

@@ -1,9 +1,10 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserAction } from "../user/get-current-user-action";
 import jwt from "jsonwebtoken";
 import { Users } from "@/schemas/users.schema";
+import { getCurrentUser } from "../user/get-current-user";
+import { ActionResponse } from "@/types/action-response";
 
 interface StreamerGSIAuth {
   id: string;
@@ -16,10 +17,10 @@ interface StreamerGSIAuth {
 
 export async function getCurrentUserGSIAction(
   authToken?: string,
-): Promise<StreamerGSIAuth | null> {
+): Promise<ActionResponse<StreamerGSIAuth>> {
   var user: Users | null = null;
   if (!authToken) {
-    user = await getCurrentUserAction();
+    user = await getCurrentUser();
   } else {
     const payload = jwt.verify(authToken, process.env.GSI_SECRET as string) as {
       id: string;
@@ -36,7 +37,7 @@ export async function getCurrentUserGSIAction(
   }
 
   if (!user) {
-    return null;
+    return { success: false, error_message: "error.user_not_authenticated" };
   }
 
   const streamer = await prisma.streamers.findUnique({
@@ -46,7 +47,7 @@ export async function getCurrentUserGSIAction(
   });
 
   if (!streamer) {
-    return null;
+    return { success: false, error_message: "error.streamer_not_found" };
   }
 
   const token = jwt.sign(
@@ -58,11 +59,14 @@ export async function getCurrentUserGSIAction(
   );
 
   return {
-    id: user.steam_id,
-    name: streamer.username_id,
-    avatar: user.avatar_url ?? "https://placehold.co/80x80?text=U",
-    roles: user.user_roles.map((role) => role.role_name),
-    valid_until: Math.floor(Date.now() / 1000) + 2 * 18 * 60 * 60, // 1.5 day in seconds
-    token,
+    success: true,
+    data: {
+      id: user.steam_id,
+      name: streamer.username_id,
+      avatar: user.avatar_url ?? "https://placehold.co/80x80?text=U",
+      roles: user.user_roles.map((role) => role.role_name),
+      valid_until: Math.floor(Date.now() / 1000) + 2 * 18 * 60 * 60, // 1.5 day in seconds
+      token,
+    },
   };
 }

@@ -1,42 +1,26 @@
 "use server";
 
-import { UserBalanceSchema } from "@/schemas/user-balance.schema";
-import { getCurrentUserAction } from "./get-current-user-action";
-import { prisma } from "@/lib/prisma";
+import { UserBalance, UserBalanceSchema } from "@/schemas/user-balance.schema";
+import { ActionResponse } from "@/types/action-response";
+import { getUserBalance } from "./get-user-balance";
+import { ActionError } from "@/types/action-error";
 
-export async function getUserBalanceAction() {
-  const user = await getCurrentUserAction();
-
-  if (!user?.id) {
-    return null;
-  }
-
+export async function getUserBalanceAction(): Promise<
+  ActionResponse<UserBalance>
+> {
   try {
-    const userBalance = await prisma.user_balances.findUnique({
-      where: {
-        user_id: user.id,
-      },
-    });
+    const userBalance = await getUserBalance();
 
     if (!userBalance) {
-      const newUserBalance = await prisma.user_balances.create({
-        data: {
-          user_id: user.id,
-          balance: 0,
-          event_balance: 0,
-        },
-      });
-
-      return UserBalanceSchema.parse(newUserBalance);
+      return { success: false, error_message: "error.user_not_authenticated" };
     }
 
-    if (!userBalance) {
-      return null;
-    }
-
-    return UserBalanceSchema.parse(userBalance);
+    return { success: true, data: UserBalanceSchema.parse(userBalance) };
   } catch (error) {
+    if (error instanceof ActionError) {
+      return { success: false, error_message: error.message };
+    }
     console.error("Error fetching user balance:", error);
-    return null;
+    return { success: false, error_message: "error.fetching_user_balance" };
   }
 }

@@ -11,7 +11,6 @@ import {
 import { useRouter } from "next/navigation";
 import { User, LogOut, Plus } from "lucide-react";
 import { MdOutlineAccountBalanceWallet } from "react-icons/md";
-import { VscSymbolEvent } from "react-icons/vsc";
 import { Skeleton } from "../../ui/skeleton";
 import { useTranslation } from "react-i18next";
 import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
@@ -39,7 +38,11 @@ export default function HomeUserHeader() {
     queryFn: getUserBalanceAction,
   });
   useEffect(() => {
-    getCurrentUserAction().then((user) => setUserData(UsersSchema.parse(user)));
+    getCurrentUserAction().then((response) => {
+      if (response.success && response.data) {
+        setUserData(UsersSchema.parse(response.data));
+      }
+    });
     if (balance) {
       setUserBalance(UserBalanceSchema.parse(balance));
     }

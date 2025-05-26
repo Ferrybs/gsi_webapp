@@ -1,9 +1,9 @@
 "use server";
 import { transporter } from "@/lib/nodemailer";
 import { z } from "zod";
-import { getCurrentUserAction } from "../user/get-current-user-action";
 import { ActionResponse } from "@/types/action-response";
 import { redis } from "@/lib/redis";
+import { getCurrentUser } from "../user/get-current-user";
 
 const requestEmailOtpSchema = z.object({
   email: z.string().email(),
@@ -12,7 +12,7 @@ const requestEmailOtpSchema = z.object({
 export async function requestEmailOtpAction(
   email: string,
 ): Promise<ActionResponse<boolean>> {
-  const user = await getCurrentUserAction();
+  const user = await getCurrentUser();
 
   if (!user) {
     return { success: false, error_message: "error.user_not_found" };

@@ -11,9 +11,9 @@ export const GET = async (req: Request) => {
     });
   }
 
-  const user = await getCurrentUserGSIAction(token);
+  const response = await getCurrentUserGSIAction(token);
 
-  if (!user) {
+  if (!response.success || !response.data) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: {
@@ -22,7 +22,7 @@ export const GET = async (req: Request) => {
     });
   }
 
-  return new Response(JSON.stringify(user), {
+  return new Response(JSON.stringify(response.data), {
     status: 200,
     headers: {
       "Content-Type": "application/json",

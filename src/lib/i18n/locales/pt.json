@@ -505,6 +505,7 @@
     "match_stats_update": "Erro ao receber estatísticas da partida",
     "websocket_connection": "Erro ao conectar com o servidor",
     "user_not_found": "Usuário não encontrado",
+    "streamer_not_found": "Streamer não encontrado",
     "invalid_otp": "OTP inválido",
     "otp_not_found": "OTP não encontrado",
     "invalid_email": "Email inválido",
@@ -526,7 +527,10 @@
     "internal_error": "Erro interno, tente novamente mais tarde",
     "package_not_found": "Pacote de CS2Bits não encontrado",
     "invalid_coinbase_response": "Resposta inválida do Coinbase Commerce",
-    "invalid_stripe_response": "Resposta inválida do Stripe"
+    "invalid_stripe_response": "Resposta inválida do Stripe",
+    "fetching_user_balance": "Erro ao buscar saldo do usuário",
+    "prediction_not_found": "Previsão não encontrada",
+    "fetch_failed": "Erro ao buscar dados"
   },
   "match": {
     "offline": "OFFLINE",

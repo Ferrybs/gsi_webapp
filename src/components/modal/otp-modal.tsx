@@ -58,6 +58,13 @@ export function OtpModal({
     }
   }
 
+  useEffect(() => {
+    if (code.length === 6 && !isSubmitting) {
+      setError(null);
+      handleConfirm();
+    }
+  }, [code]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>

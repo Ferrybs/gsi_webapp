@@ -1,27 +1,25 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserAction } from "../user/get-current-user-action";
 import stripe from "@/lib/stripe";
 import { payment_status, user_payments } from "@prisma/client";
 import { CoinbaseTimelineStatusSchema } from "@/schemas/coinbase-payment-status.schema";
 import { coinbaseGetLastEvent } from "@/lib/utils";
 import paymentStatusChangedEvent from "../stream/payment-status-changed-event";
 import { revalidatePath } from "next/cache";
-
-interface ProcessPaymentResponse {
-  payment_status?: payment_status;
-  message: string;
-}
+import { ActionResponse } from "@/types/action-response";
+import { ProcessPaymentResponse } from "@/schemas/handle-payment.schema";
+import { ActionError } from "@/types/action-error";
+import { getCurrentUser } from "../user/get-current-user";
 
 export async function processUserPaymentSuccessAction(
   paymentId: string,
-): Promise<ProcessPaymentResponse> {
+): Promise<ActionResponse<ProcessPaymentResponse>> {
   try {
-    const user = await getCurrentUserAction();
+    const user = await getCurrentUser();
 
     if (!user?.id) {
-      throw new Error("User not authenticated");
+      throw new ActionError("error.user_not_authenticated");
     }
 
     const payment = await prisma.user_payments.findUnique({
@@ -38,11 +36,14 @@ export async function processUserPaymentSuccessAction(
     if (payment.status !== "Pending") {
       revalidatePath("/payment/success");
       return {
-        payment_status: payment.status,
-        message:
-          payment.status === "Processing"
-            ? "payment.processing_description"
-            : "payment.already_processed",
+        success: true,
+        data: {
+          payment_status: payment.status,
+          message:
+            payment.status === "Processing"
+              ? "payment.processing_description"
+              : "payment.already_processed",
+        },
       };
     }
 
@@ -61,7 +62,8 @@ export async function processUserPaymentSuccessAction(
 
     if (!paymentStatus) {
       return {
-        message: "error.payment_status_not_found",
+        success: false,
+        error_message: "error.payment_status_not_found",
       };
     }
 
@@ -73,13 +75,17 @@ export async function processUserPaymentSuccessAction(
     revalidatePath("/payment/success");
 
     return {
-      payment_status: "Processing",
-      message: "payment.processing_description",
+      success: true,
+      data: {
+        payment_status: "Processing",
+        message: "payment.processing_description",
+      },
     };
   } catch (error) {
     console.error("Error processing payment success:", error);
     return {
-      message: "error.failed_to_process_payment",
+      success: false,
+      error_message: "error.failed_to_process_payment",
     };
   }
 }

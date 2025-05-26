@@ -1,12 +1,12 @@
 "use server";
 import { ActionResponse } from "@/types/action-response";
-import { getCurrentUserAction } from "./get-current-user-action";
 import { validateTradeLinkAction } from "./validate-user-trade-link-action";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "./get-current-user";
 export async function updateTradeLinkAction(
   link: string,
 ): Promise<ActionResponse<boolean>> {
-  const user = await getCurrentUserAction();
+  const user = await getCurrentUser();
   if (!user) return { success: false, error_message: "error.user_not_found" };
   const res = await validateTradeLinkAction(link);
   if (!res.success) return res;

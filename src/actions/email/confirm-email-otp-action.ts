@@ -1,9 +1,9 @@
 "use server";
 import { z } from "zod";
-import { getCurrentUserAction } from "../user/get-current-user-action";
 import { prisma } from "@/lib/prisma";
 import { ActionResponse } from "@/types/action-response";
 import { redis } from "@/lib/redis";
+import { getCurrentUser } from "../user/get-current-user";
 
 const bodySchema = z.object({ otp: z.string().length(6) });
 
@@ -15,7 +15,7 @@ const redisEmailSchema = z.object({
 export async function confirmEmailOtpAction(
   otp: string,
 ): Promise<ActionResponse<boolean>> {
-  const user = await getCurrentUserAction();
+  const user = await getCurrentUser();
 
   if (!user) {
     return { success: false, error_message: "error.user_not_found" };

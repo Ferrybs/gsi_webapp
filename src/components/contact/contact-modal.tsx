@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { submitContactForm } from "@/actions/contact/contact-action";
+import { submitContactFormAction } from "@/actions/contact/contact-action";
 import { ActionResponse } from "@/types/action-response";
 import { z } from "zod";
 import { stream_provider } from "@prisma/client";
@@ -69,7 +69,7 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
   const onSubmit = (data: FormData) => {
     startTransition(async () => {
       try {
-        const result = await submitContactForm(data);
+        const result = await submitContactFormAction(data);
         setSubmitResult(result);
 
         if (result.success) {

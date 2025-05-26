@@ -4,13 +4,13 @@ import { transporter } from "@/lib/nodemailer";
 import { redis } from "@/lib/redis";
 import { ContactFormData, contactFormSchema } from "@/schemas/contact-schema";
 import { ActionResponse } from "@/types/action-response";
-import { getCurrentUserAction } from "../user/get-current-user-action";
+import { getCurrentUser } from "../user/get-current-user";
 
-export async function submitContactForm(
+export async function submitContactFormAction(
   data: ContactFormData,
 ): Promise<ActionResponse<boolean>> {
   try {
-    const user = await getCurrentUserAction();
+    const user = await getCurrentUser();
 
     if (!user) {
       return { success: false, error_message: "error.authentication_needed" };

@@ -14,10 +14,10 @@ export function useSteamRedirect() {
     const handleRedirect = async () => {
       if (status === "authenticated" && redirect && user) {
         try {
-          const token = await getCurrentUserGSITokenAction();
+          const response = await getCurrentUserGSITokenAction();
 
-          if (token) {
-            const url = `${redirect}?token=${encodeURIComponent(token)}`;
+          if (response.success && response.data) {
+            const url = `${redirect}?token=${encodeURIComponent(response.data)}`;
             window.location.href = url;
           } else {
             console.error("Error fetching GSI token");

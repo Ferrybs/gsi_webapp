@@ -1,16 +1,18 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserAction } from "../user/get-current-user-action";
 import {
   PredictionDetail,
   PredictionDetailSchema,
   UserPrediction,
 } from "@/schemas/prediction.schema";
+import { ActionResponse } from "@/types/action-response";
+import { getCurrentUser } from "../user/get-current-user";
+import { ActionError } from "@/types/action-error";
 
 export async function getPredictionsDetailsAction(
   predictionId: string,
-): Promise<PredictionDetail | null> {
+): Promise<ActionResponse<PredictionDetail>> {
   try {
     // Get predictions for the match with their templates and options
     const prediction = await prisma.predictions.findUnique({
@@ -28,11 +30,14 @@ export async function getPredictionsDetailsAction(
     });
 
     if (!prediction) {
-      return null;
+      return {
+        success: false,
+        error_message: "error.prediction_not_found",
+      };
     }
 
     // Get current user
-    const currentUser = await getCurrentUserAction();
+    const currentUser = await getCurrentUser();
 
     // Process predictions with or without user data
     let userPredictions: UserPrediction[] = [];
@@ -110,10 +115,21 @@ export async function getPredictionsDetailsAction(
       user_bets: userPredictions,
     };
 
-    // Validate with Zod schema
-    return PredictionDetailSchema.parse(predictionDetail);
+    return {
+      success: true,
+      data: PredictionDetailSchema.parse(predictionDetail),
+    };
   } catch (error) {
     console.error("Error fetching predictions:", error);
-    return null;
+    if (error instanceof ActionError) {
+      return {
+        success: false,
+        error_message: error.message,
+      };
+    }
+    return {
+      success: false,
+      error_message: "error.fetch_failed",
+    };
   }
 }

@@ -10,13 +10,13 @@ import {
 } from "@/schemas/handle-payment.schema";
 import { createCoinbasePayment } from "./create-coinbase-payment";
 import { createStripePayment } from "./create-stripe-payment";
-import { getCurrentUserAction } from "../user/get-current-user-action";
+import { getCurrentUser } from "../user/get-current-user";
 
 export default async function createPaymentAction(
   data: CreatePayment,
 ): Promise<ActionResponse<CreatePaymentResponse>> {
   try {
-    const user = await getCurrentUserAction();
+    const user = await getCurrentUser();
 
     if (!user) {
       return {

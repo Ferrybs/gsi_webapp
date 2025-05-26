@@ -1,28 +1,20 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { getServerSteamUser } from "@/lib/session";
-import { UsersSchema } from "@/schemas/users.schema";
-import { ActionError } from "@/types/action-error";
+import { Users, UsersSchema } from "@/schemas/users.schema";
+import { ActionResponse } from "@/types/action-response";
+import { getCurrentUser } from "./get-current-user";
 
-export async function getCurrentUserAction() {
-  const steamUser = await getServerSteamUser();
-
-  if (!steamUser) {
-    return null;
-  }
-
-  const user = await prisma.users.findUnique({
-    where: {
-      steam_id: steamUser.id,
-    },
-    include: {
-      user_roles: true,
-    },
-  });
-
+export async function getCurrentUserAction(): Promise<ActionResponse<Users>> {
+  const user = await getCurrentUser();
   if (!user) {
-    return null;
+    return {
+      success: false,
+      error_message: "error.user_not_authenticated",
+    };
   }
-
-  return UsersSchema.parse(user);
+  return {
+    success: true,
+    data: UsersSchema.parse(user),
+  };
 }

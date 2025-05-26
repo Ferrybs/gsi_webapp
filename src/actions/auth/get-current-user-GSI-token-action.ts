@@ -1,11 +1,17 @@
 "use server";
-import { getCurrentUserAction } from "../user/get-current-user-action";
+import { ActionResponse } from "@/types/action-response";
 import jwt from "jsonwebtoken";
-export async function getCurrentUserGSITokenAction() {
-  const user = await getCurrentUserAction();
+import { getCurrentUser } from "../user/get-current-user";
+export async function getCurrentUserGSITokenAction(): Promise<
+  ActionResponse<string>
+> {
+  const user = await getCurrentUser();
 
   if (!user) {
-    return null;
+    return {
+      success: false,
+      error_message: "error.user_not_authenticated",
+    };
   }
   const token = jwt.sign(
     {
@@ -14,5 +20,5 @@ export async function getCurrentUserGSITokenAction() {
     process.env.GSI_SECRET as string,
     { expiresIn: "2d" },
   );
-  return token;
+  return { success: true, data: token };
 }

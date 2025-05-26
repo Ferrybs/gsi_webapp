@@ -1,11 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Flame } from "lucide-react";
-import { getPredictionsAction } from "@/actions/predictions/get-predictions-action";
 import { Prediction } from "@/schemas/prediction.schema";
 import { PredictionCard } from "./prediction-card";
 import { Streamer } from "@/schemas/streamer.schema";
