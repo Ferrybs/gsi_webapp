@@ -136,27 +136,27 @@
         },
         "step3": {
           "title": "Comece a transmitir",
-          "description": "Inicie sua live com o CS2 Bits habilitado e seus espectadores poderão interagir imediatamente."
+          "description": "Inicie sua live com o CS2 Bits Client ligado e seus espectadores poderão interagir imediatamente."
         }
       },
       "requirements": {
         "title": "Requisitos Técnicos",
         "items": {
           "cs2Game": {
-            "name": "Jogo CS 2",
+            "name": "Counter-Strike 2",
             "description": "Última versão do Counter-Strike 2"
           },
           "competitiveMode": {
-            "name": "Premier, Competitivo, GC ou FACEIT",
-            "description": "Jogar no modo competitivo no Counter-Strike 2"
+            "name": "Jogar no modo competitivo no Counter-Strike 2 ",
+            "description": "Premier, Competitivo, GC ou FACEIT"
           },
           "streamingPlatform": {
             "name": "Plataforma de Streaming",
             "description": "Conta ativa no Twitch ou YouTube Gaming com permissões de transmissão"
           },
           "gameStateIntegration": {
-            "name": "Integração de Estado de Jogo",
-            "description": "Integração de estado de jogo leve que nos permite ler eventos do jogo"
+            "name": "CS2 Bits Client",
+            "description": "CS2 Bits Client instalado e ligado, que nos permite ler eventos do jogo"
           }
         }
       }
@@ -530,7 +530,8 @@
     "invalid_stripe_response": "Resposta inválida do Stripe",
     "fetching_user_balance": "Erro ao buscar saldo do usuário",
     "prediction_not_found": "Previsão não encontrada",
-    "fetch_failed": "Erro ao buscar dados"
+    "fetch_failed": "Erro ao buscar dados",
+    "point_package_limit_reached": "Limite de pacotes de pontos atingido, não é possível comprar mais"
   },
   "match": {
     "offline": "OFFLINE",
