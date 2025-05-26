@@ -35,7 +35,9 @@ export default function HomeUserHeader() {
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const { data: balance, isLoading } = useQuery({
     queryKey: ["userBalance"],
-    queryFn: getUserBalanceAction,
+    queryFn: async () => {
+      return (await getUserBalanceAction()).data;
+    },
   });
   useEffect(() => {
     getCurrentUserAction().then((response) => {

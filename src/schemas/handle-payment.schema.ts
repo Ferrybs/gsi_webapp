@@ -23,7 +23,7 @@ export const UpdatePaymentStatusSchema = z.object({
 export type UpdatePaymentStatus = z.infer<typeof UpdatePaymentStatusSchema>;
 
 export const ProcessPaymentResponseSchema = z.object({
-  payment_status: z.nativeEnum(payment_status).optional(),
+  payment_status: z.nativeEnum(payment_status),
   message: z.string(),
 });
 export type ProcessPaymentResponse = z.infer<

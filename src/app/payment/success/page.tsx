@@ -9,6 +9,7 @@ import { CheckCircle, CircleX, Loader2 } from "lucide-react";
 import { PaymentStatus } from "@/schemas/user-payment.schema";
 import { useTranslation } from "react-i18next";
 import { getUserPaymentDataAction } from "@/actions/payments/get-user-payment-data-action";
+import { ProcessPaymentResponse } from "@/schemas/handle-payment.schema";
 
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
@@ -82,22 +83,17 @@ export default function PaymentSuccessPage() {
     const processPayment = async () => {
       try {
         const response = await processUserPaymentSuccessAction(paymentId);
-        if (!response.success || !response.data) {
-          setIsProcessing(false);
-          setParms({
-            status: "Pending",
-            message: "error.failed_to_process_payment",
-          });
-          return;
+        let result: ProcessPaymentResponse = {
+          payment_status: "Pending",
+          message: "error.failed_to_process_payment",
+        };
+        if (response.success && response.data) {
+          result = response.data;
         }
-        const result = response.data;
-        if (result.payment_status === "Pending") {
-          setParms({
-            status: "Pending",
-            message: "error.failed_to_process_payment",
-          });
-          return;
-        }
+        setParms({
+          status: result.payment_status,
+          message: result.message,
+        });
       } catch (error) {
         console.error("Error processing payment:", error);
       } finally {

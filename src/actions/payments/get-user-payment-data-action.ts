@@ -17,6 +17,7 @@ export async function getUserPaymentDataAction(
   });
 
   if (!payment) {
+    return { success: false, error_message: "error.payment_not_found" };
   }
 
   return { success: true, data: UserPaymentSchema.parse(payment) };
