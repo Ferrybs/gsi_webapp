@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { XCircle } from "lucide-react";
 import { useEffect } from "react";
-import { updateUserPaymentStatusAction } from "@/actions/payments/update-user-payment-status-action";
 import { useTranslation } from "react-i18next";
+import cancelUserPaymentAction from "@/actions/payments/cancel-user-payment-action";
 
 export default function PaymentCancelPage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function PaymentCancelPage() {
     const paymentId = searchParams.get("payment_id");
 
     if (paymentId) {
-      updateUserPaymentStatusAction(paymentId, "Canceled").catch((error) => {
+      cancelUserPaymentAction(paymentId).catch((error) => {
         console.error("Error updating payment status:", error);
       });
     }

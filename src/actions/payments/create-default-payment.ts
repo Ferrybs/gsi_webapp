@@ -1,22 +1,12 @@
 import { prisma } from "@/lib/prisma";
-import { z } from "zod";
-import { getCurrentUserAction } from "../user/get-current-user-action";
-import { payment_provider } from "@prisma/client";
+import {
+  CreatePayment,
+  CreatePaymentSchema,
+} from "@/schemas/handle-payment.schema";
+import { ActionError } from "@/types/action-error";
+import { Users } from "@/schemas/users.schema";
 
-const CreatePaymentSchema = z.object({
-  packageId: z.number(),
-  provider: z.nativeEnum(payment_provider),
-});
-
-export type CreateDefaultPayment = z.infer<typeof CreatePaymentSchema>;
-
-export async function createDefaultPayment(data: CreateDefaultPayment) {
-  const user = await getCurrentUserAction();
-
-  if (!user?.id) {
-    throw new Error("User not authenticated");
-  }
-
+export async function createDefaultPayment(user: Users, data: CreatePayment) {
   const validatedData = CreatePaymentSchema.parse(data);
 
   // Get the package
@@ -28,21 +18,17 @@ export async function createDefaultPayment(data: CreateDefaultPayment) {
   });
 
   if (!pointPackage) {
-    throw new Error("Package not found or inactive");
+    throw new ActionError("error.package_not_found");
   }
-
-  let totalPoints = pointPackage.points_amount.plus(pointPackage.bonus_points);
 
   const payment = await prisma.user_payments.create({
     data: {
       user_id: user.id,
       provider: validatedData.provider,
-      fiat_amount: pointPackage.price,
-      currency_name: pointPackage.currency,
-      points_amount: totalPoints,
+      package_id: pointPackage.id,
       status: "Pending",
     },
   });
 
-  return { user, payment, pointPackage };
+  return { payment, pointPackage };
 }

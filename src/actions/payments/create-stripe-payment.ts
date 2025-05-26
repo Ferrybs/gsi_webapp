@@ -2,14 +2,20 @@
 
 import { prisma } from "@/lib/prisma";
 import stripe from "@/lib/stripe";
+import { createDefaultPayment } from "./create-default-payment";
 import {
-  createDefaultPayment,
-  CreateDefaultPayment,
-} from "./create-default-payment";
+  CreatePayment,
+  CreatePaymentResponse,
+} from "@/schemas/handle-payment.schema";
+import { ActionError } from "@/types/action-error";
+import { Users } from "@/schemas/users.schema";
 
-export async function createStripePaymentAction(data: CreateDefaultPayment) {
+export async function createStripePayment(
+  user: Users,
+  data: CreatePayment,
+): Promise<CreatePaymentResponse> {
   try {
-    const { user, payment, pointPackage } = await createDefaultPayment(data);
+    const { payment, pointPackage } = await createDefaultPayment(user, data);
     // Map currency codes to Stripe currency codes
     if (pointPackage.currency === "USDC") {
       throw new Error("USDC payments are not supported with Stripe");
@@ -50,9 +56,15 @@ export async function createStripePaymentAction(data: CreateDefaultPayment) {
       },
     });
 
-    return { success: true, url: session.url, paymentId: payment.id };
+    if (!session.url) {
+      throw new ActionError("error.stripe_session_creation_failed");
+    }
+    return { url: session.url, paymentId: payment.id };
   } catch (error) {
     console.error("Error creating Stripe payment:", error);
-    return { success: false, error: "error.payment_creation_failed" };
+    if (error instanceof ActionError) {
+      throw error;
+    }
+    throw new ActionError("error.payment_creation_failed");
   }
 }

@@ -1,16 +1,22 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import {
-  CreateDefaultPayment,
-  createDefaultPayment,
-} from "./create-default-payment";
-import { updateUserPaymentStatusAction } from "./update-user-payment-status-action";
+import { createDefaultPayment } from "./create-default-payment";
 import { CoinbaseTimelineStatusSchema } from "@/schemas/coinbase-payment-status.schema";
+import {
+  CreatePayment,
+  CreatePaymentResponse,
+} from "@/schemas/handle-payment.schema";
+import { ActionError } from "@/types/action-error";
+import { updateUserPaymentStatus } from "./update-user-payment-status";
+import { Users } from "@/schemas/users.schema";
 
-export async function createCoinbasePaymentAction(data: CreateDefaultPayment) {
+export async function createCoinbasePayment(
+  user: Users,
+  data: CreatePayment,
+): Promise<CreatePaymentResponse> {
   try {
-    const { payment, pointPackage } = await createDefaultPayment(data);
+    const { payment, pointPackage } = await createDefaultPayment(user, data);
 
     const coinbaseResponse = await fetch(
       "https://api.commerce.coinbase.com/charges",
@@ -45,8 +51,11 @@ export async function createCoinbasePaymentAction(data: CreateDefaultPayment) {
         "Failed to create Coinbase payment",
         await coinbaseResponse.json(),
       );
-      await updateUserPaymentStatusAction(payment.id, "Failed");
-      throw new Error("Failed to create Coinbase payment");
+      await updateUserPaymentStatus({
+        paymentId: payment.id,
+        paymentStatus: "Failed",
+      });
+      throw new ActionError("error.payment_creation_failed");
     }
     const coinbaseData = await coinbaseResponse.json();
     const coinBasePaymentStatus = CoinbaseTimelineStatusSchema.safeParse(
@@ -54,8 +63,11 @@ export async function createCoinbasePaymentAction(data: CreateDefaultPayment) {
     );
 
     if (!coinBasePaymentStatus.success) {
-      await updateUserPaymentStatusAction(payment.id, "Failed");
-      throw new Error("Failed to create Coinbase payment");
+      await updateUserPaymentStatus({
+        paymentId: payment.id,
+        paymentStatus: "Failed",
+      });
+      throw new ActionError("error.invalid_coinbase_response");
     }
 
     // Update payment with provider transaction ID
@@ -69,12 +81,14 @@ export async function createCoinbasePaymentAction(data: CreateDefaultPayment) {
     });
 
     return {
-      success: true,
       url: coinBasePaymentStatus.data.hosted_url,
       paymentId: payment.id,
     };
   } catch (error) {
     console.error("Error creating Coinbase payment:", error);
-    return { success: false, error: "error.payment_creation_failed" };
+    if (error instanceof ActionError) {
+      throw error;
+    }
+    throw new ActionError("error.payment_creation_failed");
   }
 }

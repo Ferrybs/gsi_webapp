@@ -13,7 +13,6 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Streamer } from "@/schemas/streamer.schema";
-import { useMatchData } from "@/hooks/use-current-match-data";
 import { formatMapName } from "@/types/map-name";
 import { formatMatchPhase } from "@/types/map-phase";
 import { useTranslation } from "react-i18next";

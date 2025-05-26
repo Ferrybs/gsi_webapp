@@ -81,15 +81,17 @@ model matches {
 }
 
 model point_packages {
-  id            Int      @id @default(autoincrement())
-  name          String
-  points_amount Decimal  @db.Decimal(20, 4)
-  price         Decimal  @db.Decimal(20, 4)
-  currency      currency
-  bonus_points  Decimal  @default(0) @db.Decimal(20, 4)
-  active        Boolean  @default(true)
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+  id             Int             @id @default(autoincrement())
+  name           String
+  points_amount  Decimal         @db.Decimal(20, 4)
+  price          Decimal         @db.Decimal(20, 4)
+  currency       currency
+  bonus_points   Decimal         @default(0) @db.Decimal(20, 4)
+  active         Boolean         @default(true)
+  limit_per_user Int?
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime        @default(now()) @db.Timestamptz(6)
+  user_payments  user_payments[]
 }
 
 model prediction_options {
@@ -169,6 +171,7 @@ model streamers {
   id                               String                             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   user_id                          String                             @unique @db.Uuid
   username_id                      String                             @unique @db.VarChar(26)
+  user_status                      user_status                        @default(Active)
   affiliate_balance                Decimal                            @default(0) @db.Decimal(20, 4)
   affiliate_fee_pct                Decimal                            @default(0) @db.Decimal(5, 4)
   display_name                     String?                            @db.VarChar(30)
@@ -222,13 +225,12 @@ model user_payments {
   user_id                   String                      @db.Uuid
   provider                  payment_provider
   provider_transaction_id   String?
-  fiat_amount               Decimal                     @db.Decimal(20, 4)
-  currency_name             currency                    @default(BRL)
-  points_amount             Decimal                     @db.Decimal(20, 4)
+  package_id                Int
   status                    payment_status              @default(Pending)
   created_at                DateTime                    @default(now()) @db.Timestamp(6)
   updated_at                DateTime                    @default(now()) @db.Timestamp(6)
   user_payment_transactions user_payment_transactions[]
+  point_packages            point_packages              @relation(fields: [package_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 

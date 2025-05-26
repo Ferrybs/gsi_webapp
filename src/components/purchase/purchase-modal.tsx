@@ -9,8 +9,6 @@ import {
 import { useState, useEffect } from "react";
 import { getPointPackagesAction } from "@/actions/packages/get-point-packages-action";
 import type { PointPackage } from "@/schemas/point-package.schema";
-import { createStripePaymentAction } from "@/actions/payments/create-stripe-payment-action";
-import { createCoinbasePaymentAction } from "@/actions/payments/create-coinbase-payment-action";
 import { Loader2, ArrowRight, CheckCircle } from "lucide-react";
 import { formatCurrency, formatPrice } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -27,7 +25,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { updateUserPaymentStatusAction } from "@/actions/payments/update-user-payment-status-action";
+import createPaymentAction from "@/actions/payments/create-payment-action";
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -86,24 +84,16 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
         provider: paymentMethod,
       };
 
-      let result;
-      // Use Coinbase for USDC, Stripe for other currencies
-      if (selectedPackage.currency === "USDC" || paymentMethod === "Coinbase") {
-        result = await createCoinbasePaymentAction(paymentData);
-      } else {
-        result = await createStripePaymentAction(paymentData);
-      }
+      const result = await createPaymentAction(paymentData);
 
-      if (result.success && result.url) {
-        window.location.href = result.url;
+      if (result.success && result.data) {
+        window.location.href = result.data.url;
       } else {
         toast.error(
-          result.error ? t(result.error) : t("purchase.payment_error"),
+          result.error_message
+            ? t(result.error_message)
+            : t("purchase.payment_error"),
         );
-        // Update payment status to Failed if there was an error creating the payment link
-        if (result.paymentId) {
-          await updateUserPaymentStatusAction(result.paymentId, "Failed");
-        }
       }
     } catch (error) {
       console.error("Error creating payment:", error);

@@ -523,7 +523,10 @@
     "payment_creation_failed": "Erro ao criar pagamento, tente novamente mais tarde",
     "authentication_needed": "É necessário autenticar-se para realizar esta ação",
     "user_email_not_found": "Email do usuário não encontrado, acesse o perfil para atualizar",
-    "internal_error": "Erro interno, tente novamente mais tarde"
+    "internal_error": "Erro interno, tente novamente mais tarde",
+    "package_not_found": "Pacote de CS2Bits não encontrado",
+    "invalid_coinbase_response": "Resposta inválida do Coinbase Commerce",
+    "invalid_stripe_response": "Resposta inválida do Stripe"
   },
   "match": {
     "offline": "OFFLINE",
