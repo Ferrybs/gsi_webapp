@@ -21,7 +21,7 @@ export function useCurrentMatchData(streamerUserId: string) {
     useMatchWebSocket(streamerUserId);
 
   useEffect(() => {
-    if (matchWebSocketData === null) {
+    if (matchWebSocketData === null || matchData === null) {
       getCurrentMatchByStreamerId(streamerUserId).then((match) => {
         const result = MatchSchema.safeParse(match);
         if (result.success) {
@@ -34,7 +34,7 @@ export function useCurrentMatchData(streamerUserId: string) {
   }, [streamerUserId, matchWebSocketData]);
 
   useEffect(() => {
-    if (statsWebSocketData === null) {
+    if (statsWebSocketData === null || statsData === null) {
       getMatchStatsByMatchId(matchData?.id || null).then((stats) => {
         const result = MatchPlayerStatsSchema.safeParse(stats);
         if (result.success) {
@@ -47,14 +47,13 @@ export function useCurrentMatchData(streamerUserId: string) {
   }, [matchData, statsWebSocketData]);
 
   useEffect(() => {
-    if (roundsWebSocketData === null) {
+    if (roundsWebSocketData === null || roundsData === null) {
       getMatchRounds(statsData?.id || null).then((rounds) => {
         if (rounds) {
           setRoundsData(rounds);
         }
       });
     } else if (roundsWebSocketData) {
-      // roundsWebSocketData is a single round, append/update it
       const roundsDataFilter = roundsData?.filter(
         (round) => round.round_number !== roundsWebSocketData.round_number,
       );

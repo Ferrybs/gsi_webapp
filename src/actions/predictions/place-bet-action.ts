@@ -43,21 +43,27 @@ export async function placeBetAction(
       where: {
         id: validatedFields.predictionId,
         state: "Open",
-        prediction_templates: {
-          min_bet_amount: {
-            gte: validatedFields.amount,
-          },
-        },
       },
       include: {
         prediction_templates: true,
         stream_matches: true,
       },
     });
+
     if (!prediction) {
       return {
         success: false,
         error_message: "error.prediction_not_found",
+      };
+    }
+
+    if (
+      Number(prediction.prediction_templates.min_bet_amount) >
+      validatedFields.amount
+    ) {
+      return {
+        success: false,
+        error_message: "error.bet_amount_too_low",
       };
     }
 

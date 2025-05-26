@@ -97,6 +97,9 @@ export function useMatchWebSocket(streamerUserId: string) {
           queryKey: ["predictionDetails", eventPayload.data],
         });
       } else if (eventPayload.match_event === "end") {
+        qc.invalidateQueries({
+          queryKey: ["prediction", "predictionDetails"],
+        });
         setInterval(() => location.reload(), 4000);
       }
     });
