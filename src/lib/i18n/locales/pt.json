@@ -648,5 +648,11 @@
       "over": "Acima",
       "under": "Abaixo"
     }
+  },
+  "notFound": {
+    "title": "Headshot Perdido!",
+    "description": "Parece que você errou o alvo desta vez.",
+    "page_not_found": "A página que você procura não foi encontrada no mapa.",
+    "go_home": "Voltar ao Início"
   }
 }

@@ -20,11 +20,18 @@ import {
 import { ActionResponse } from "@/types/action-response";
 import { ActionError } from "@/types/action-error";
 import { getCurrentUser } from "./get-current-user";
+import {
+  PointPackage,
+  PointPackageSchema,
+} from "@/schemas/point-package.schema";
 
 export type GetUserTransactionsActionResponse = {
   transactionsData: {
     transaction: UserTransaction;
-    user_payments: UserPayment[];
+    user_payments_data: {
+      user_payment: UserPayment;
+      point_package: PointPackage;
+    }[];
     user_predictions: UserPrediction[];
   }[];
   pagination: Pagination;
@@ -64,7 +71,11 @@ export async function getUserTransactionsAction(
       include: {
         user_payment_transactions: {
           include: {
-            user_payments: true,
+            user_payments: {
+              include: {
+                point_packages: true,
+              },
+            },
           },
         },
         user_prediction_transactions: {
@@ -86,9 +97,14 @@ export async function getUserTransactionsAction(
 
     const transactionsData = transactions.map((transaction) => ({
       transaction: UserTransactionSchema.parse(transaction),
-      user_payments: transaction.user_payment_transactions.map((pt) =>
-        UserPaymentSchema.parse(pt.user_payments),
-      ),
+      user_payments_data: transaction.user_payment_transactions.map((pt) => {
+        return {
+          user_payment: UserPaymentSchema.parse(pt.user_payments),
+          point_package: PointPackageSchema.parse(
+            pt.user_payments.point_packages,
+          ),
+        };
+      }),
       user_predictions: transaction.user_prediction_transactions.map((pt) =>
         UserPredictionSchema.parse(pt.user_predictions),
       ),

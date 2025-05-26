@@ -36,6 +36,7 @@ import { UserPrediction } from "@/schemas/prediction.schema";
 import i18next from "i18next";
 // React Query imports
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { PointPackage } from "@/schemas/point-package.schema";
 
 const getTransactionIcon = (type: TransactionType) => {
   switch (type) {
@@ -110,19 +111,25 @@ export function TransactionHistory() {
 
   const getTransactionDescription = (
     type: TransactionType,
-    user_payments?: UserPayment[],
+    user_payments_data?: {
+      user_payment: UserPayment;
+      point_package: PointPackage;
+    }[],
     user_predictions?: UserPrediction[],
   ) => {
     // Gerar descrição baseada no tipo
     switch (type) {
       case "Deposit":
-        if (user_payments && user_payments.length > 0) {
-          const user_payment = user_payments[0];
+        if (user_payments_data && user_payments_data.length > 0) {
+          const user_payment = user_payments_data[0].user_payment;
+          const point_package = user_payments_data[0].point_package;
+          const totalAmount =
+            point_package.points_amount + point_package.bonus_points;
           return t("transactions.descriptions.deposit", {
             provider: user_payment.provider,
-            amount: user_payment.fiat_amount.toLocaleString("pt-BR", {
+            amount: totalAmount.toLocaleString("pt-BR", {
               style: "currency",
-              currency: user_payment.currency_name,
+              currency: point_package.currency,
             }),
           });
         }
@@ -238,7 +245,7 @@ export function TransactionHistory() {
                       <p className="text-sm text-muted-foreground">
                         {getTransactionDescription(
                           data.transaction.type,
-                          data.user_payments,
+                          data.user_payments_data,
                         )}
                       </p>
                       <p className="text-xs text-muted-foreground">

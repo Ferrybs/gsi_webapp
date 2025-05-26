@@ -15,9 +15,15 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { streamer: streamerUsername } = await params;
   const streamer = await getStreamerByUsernameAction(streamerUsername);
+  if (!streamer) {
+    return {
+      title: "404 | CS2 Bits",
+      description: " CS2 Bits",
+    };
+  }
   return {
-    title: `${streamer?.username_id} | CS2 Bits`,
-    description: `CS2 Bits - ${streamer?.username_id}`,
+    title: `${streamer.username_id} | CS2 Bits`,
+    description: `CS2 Bits - ${streamer.username_id}`,
   };
 }
 
