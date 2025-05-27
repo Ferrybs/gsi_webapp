@@ -5,20 +5,29 @@ import { MatchHeader } from "./match-header";
 import { Streamer } from "@/schemas/streamer.schema";
 import { useEffect, useState } from "react";
 import { PredictionsList } from "@/components/predictions/predictions-list";
-import { useCurrentMatchData } from "@/hooks/use-current-match-data";
 import { useQuery } from "@tanstack/react-query";
 import { Prediction, PredictionSchema } from "@/schemas/prediction.schema";
 import { getPredictionsAction } from "@/actions/predictions/get-predictions-action";
+import { Match } from "@/schemas/match.schema";
+import { MatchPlayerStats } from "@/schemas/match-player-stats.schema";
+import { MatchPlayerRounds } from "@/schemas/match-player-rounds.schema";
 
 interface MatchDetailsPageProps {
   streamer: Streamer | null;
+  matchData: Match | null;
+  statsData: MatchPlayerStats | null;
+  roundsData: MatchPlayerRounds[] | null;
 }
 
-export default function MatchDetailsPage({ streamer }: MatchDetailsPageProps) {
+export default function MatchDetailsPage({
+  streamer,
+  matchData,
+  statsData,
+  roundsData,
+}: MatchDetailsPageProps) {
   if (!streamer) {
     return <MatchDetailsLoading />;
   }
-  const { matchData, statsData, roundsData } = useCurrentMatchData(streamer.id);
   const [predictionsData, setPredictionsData] = useState<Prediction[]>([]);
 
   const {

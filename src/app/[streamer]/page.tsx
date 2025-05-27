@@ -4,6 +4,7 @@ import MatchDetailsPage from "@/components/matches/match-detail/match-details-pa
 import { Metadata, ResolvingMetadata } from "next";
 import { getStreamerByUsernameAction } from "@/actions/streamer/get-streamer-by-username-action";
 import { Suspense } from "react";
+import { useCurrentMatchData } from "@/hooks/use-current-match-data";
 
 interface MatchPageProps {
   params: Promise<{ streamer: string }>;
@@ -40,10 +41,17 @@ export default async function MatchPage({ params }: MatchPageProps) {
     return redirect(`/${streamer.username_id}`);
   }
 
+  const { matchData, statsData, roundsData } = useCurrentMatchData(streamer.id);
+
   return (
     <main className="container py-6">
       <Suspense fallback={<MatchDetailsSkeleton />}>
-        <MatchDetailsPage streamer={streamer} />
+        <MatchDetailsPage
+          streamer={streamer}
+          matchData={matchData}
+          statsData={statsData}
+          roundsData={roundsData}
+        />
       </Suspense>
     </main>
   );
