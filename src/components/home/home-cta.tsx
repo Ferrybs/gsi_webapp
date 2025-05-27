@@ -1,13 +1,11 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import { useTranslation } from "react-i18next";
-import { GoMail } from "react-icons/go";
-import { useState } from "react";
-import { ContactModal } from "../contact/contact-modal";
 
 function HomeCTA() {
   const { t } = useTranslation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const router = useRouter();
   return (
     <>
       <section className="container mx-auto px-4 py-16">
@@ -21,15 +19,13 @@ function HomeCTA() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center align-middle">
             <Button
               className="bg-primary hover:bg-primary/90 text-foreground text-lg px-8 py-6"
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => router.push("/streamers-guide")}
             >
-              <GoMail />
               {t("cta.begin_now")}
             </Button>
           </div>
         </div>
       </section>
-      <ContactModal open={isModalOpen} onOpenChange={setIsModalOpen} />
     </>
   );
 }

@@ -1,4 +1,4 @@
-enum MapName {
+export enum MapName {
   de_dust2 = "Dust 2",
   de_inferno = "Inferno",
   de_mirage = "Mirage",
@@ -12,8 +12,33 @@ enum MapName {
   de_community = "Community",
 }
 
-type MapKey = keyof typeof MapName; 
+export type MapKey = keyof typeof MapName;
 
-export function formatMapName(key: MapKey): string {
-  return MapName[key];
+export function formatMapName(keyOrValue: MapKey | string): string {
+  // If it's already a valid enum key, use it directly
+  if (keyOrValue in MapName) {
+    return MapName[keyOrValue as MapKey];
+  }
+
+  // If it's a display name, find the corresponding key
+  const entry = Object.entries(MapName).find(
+    ([_, value]) => value === keyOrValue,
+  );
+  if (entry) {
+    return entry[1];
+  }
+
+  // Fallback: return the input as-is
+  return keyOrValue;
+}
+
+export function isValidMapKey(key: string): key is MapKey {
+  return key in MapName;
+}
+
+export function getMapKey(value: string): MapKey | undefined {
+  const entry = Object.entries(MapName).find(
+    ([_, mapValue]) => mapValue === value,
+  );
+  return entry ? (entry[0] as MapKey) : undefined;
 }

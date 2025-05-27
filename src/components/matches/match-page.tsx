@@ -1,1 +1,0 @@
-// Usando seu conhecimento do projeto elabore uma pagina de partidas. Essa pagina deve conter, partidas em andamento (em destaque) e historico de partidas com filtros de data e por streamer. Lembre-se do estilo da pagina

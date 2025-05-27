@@ -1,3 +1,4 @@
+"use client";
 // src/hooks/use-match-websocket.ts
 import { useEffect, useState } from "react";
 import { Match, MatchSchema } from "@/schemas/match.schema";

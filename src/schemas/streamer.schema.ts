@@ -8,7 +8,7 @@ export const StreamUrlSchema = z.object({
 });
 
 export const StreamerSchema = z.object({
-  stream_urls: z.array(StreamUrlSchema),
+  stream_urls: z.array(StreamUrlSchema).optional(),
   id: z.string(),
   user_id: z.string(),
   username_id: z.string(),

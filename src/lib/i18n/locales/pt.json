@@ -94,7 +94,7 @@
   "cta": {
     "new_expirence": "Streamer, pronto para uma nova experiência?",
     "watch_expirence": "Junte-se para transmitir Counter Strike 2 de uma forma totalmente nova.",
-    "begin_now": "Agende uma demonstração",
+    "begin_now": "Acesse o Guia para Streamers",
     "title": "Pronto para Transformar sua Transmissão?",
     "description": "Junte-se à nossa comunidade de streamers que está criando conteúdo mais envolvente com o CS2 Bits.",
     "button": "Candidate-se como Parceiro"
@@ -656,5 +656,58 @@
     "description": "Parece que você errou o alvo desta vez.",
     "page_not_found": "A página que você procura não foi encontrada no mapa.",
     "go_home": "Voltar ao Início"
+  },
+  "matches": {
+    "title": "Partidas",
+    "description": "Visualize e filtre partidas ao vivo e finalizadas do CS2 dos seus streamers favoritos",
+    "filters": {
+      "title": "Filtros",
+      "clear": "Limpar Tudo",
+      "status": "Status da Partida",
+      "allStatus": "Todas as Partidas",
+      "dateRange": "Período",
+      "pickDate": "Selecione um período",
+      "streamers": "Streamers",
+      "maps": "Mapas"
+    },
+    "status": {
+      "live": "Ao Vivo",
+      "finished": "Finalizada"
+    },
+    "table": {
+      "title": "Resultados das Partidas",
+      "showing": "Mostrando {{start}}-{{end}} de {{total}} partidas",
+      "streamer": "Streamer",
+      "status": "Status",
+      "map": "Mapa",
+      "round": "Round",
+      "score": "Placar",
+      "startTime": "Iniciada"
+    },
+    "pagination": {
+      "page": "Página {{current}} de {{total}}",
+      "previous": "Anterior",
+      "next": "Próxima"
+    },
+    "empty": {
+      "title": "Nenhuma partida encontrada",
+      "description": "Tente ajustar seus filtros para ver mais resultados",
+      "suggestion": "Volte mais tarde para novas partidas ou tente diferentes combinações de filtros"
+    },
+    "error": {
+      "title": "Falha ao carregar partidas",
+      "description": "Tente novamente mais tarde"
+    },
+    "card": {
+      "streaming": "Transmitindo",
+      "streamed": "Transmitiu",
+      "round": "Round",
+      "kills": "K",
+      "deaths": "M",
+      "assists": "A"
+    },
+    "results": {
+      "title": "Resultados das Partidas"
+    }
   }
 }

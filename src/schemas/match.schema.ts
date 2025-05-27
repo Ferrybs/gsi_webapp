@@ -9,11 +9,13 @@ export const MatchSchema = z.object({
   phase_name: z.nativeEnum(match_phase),
   status_name: z.nativeEnum(match_status),
   started_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    (arg) =>
+      typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
     z.date(),
   ),
   updated_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    (arg) =>
+      typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
     z.date(),
   ),
   ended_at: z.preprocess(

@@ -1,10 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import MatchDetailsPage from "@/components/matches/match-detail/match-details-page";
 import { Metadata, ResolvingMetadata } from "next";
 import { getStreamerByUsernameAction } from "@/actions/streamer/get-streamer-by-username-action";
 import { Suspense } from "react";
-import { useCurrentMatchData } from "@/hooks/use-current-match-data";
+import StreamMatch from "@/components/matches/match-detail/stream-match";
 
 interface MatchPageProps {
   params: Promise<{ streamer: string }>;
@@ -41,17 +40,10 @@ export default async function MatchPage({ params }: MatchPageProps) {
     return redirect(`/${streamer.username_id}`);
   }
 
-  const { matchData, statsData, roundsData } = useCurrentMatchData(streamer.id);
-
   return (
     <main className="container py-6">
       <Suspense fallback={<MatchDetailsSkeleton />}>
-        <MatchDetailsPage
-          streamer={streamer}
-          matchData={matchData}
-          statsData={statsData}
-          roundsData={roundsData}
-        />
+        <StreamMatch streamer={streamer} />
       </Suspense>
     </main>
   );

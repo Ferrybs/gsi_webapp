@@ -12,11 +12,13 @@ export const MatchPlayerStatsSchema = z.object({
   deaths: z.number(),
   assists: z.number(),
   started_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    (arg) =>
+      typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
     z.date(),
   ),
   updated_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
+    (arg) =>
+      typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
     z.date(),
   ),
 });
