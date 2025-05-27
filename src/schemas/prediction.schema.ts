@@ -33,6 +33,7 @@ export const PredictionTemplateSchema = z.object({
   id: z.number(),
   total_fee_pct: decimalToNumber,
   min_bet_amount: decimalToNumber,
+  max_bet_amount: decimalToNumber,
   kind: z.nativeEnum(prediction_kind),
   template_status: z.nativeEnum(template_status).default("Active"),
   threshold_round: z.number(),

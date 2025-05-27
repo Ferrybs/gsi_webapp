@@ -67,6 +67,16 @@ export async function placeBetAction(
       };
     }
 
+    if (
+      validatedFields.amount >
+      Number(prediction.prediction_templates.max_bet_amount)
+    ) {
+      return {
+        success: false,
+        error_message: "error.bet_amount_too_high",
+      };
+    }
+
     // Start a transaction to ensure all operations succeed or fail together
     await prisma.$transaction(async (tx) => {
       // Create the user prediction

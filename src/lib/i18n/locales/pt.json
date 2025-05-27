@@ -531,7 +531,9 @@
     "fetching_user_balance": "Erro ao buscar saldo do usuário",
     "prediction_not_found": "Previsão não encontrada",
     "fetch_failed": "Erro ao buscar dados",
-    "point_package_limit_reached": "Limite de pacotes de pontos atingido, não é possível comprar mais"
+    "point_package_limit_reached": "Limite de pacotes de pontos atingido, não é possível comprar mais",
+    "bet_amount_too_low": "Valor da aposta muito baixo",
+    "bet_amount_too_high": "Valor da aposta muito alto"
   },
   "match": {
     "offline": "OFFLINE",

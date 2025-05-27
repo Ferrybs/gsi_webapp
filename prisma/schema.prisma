@@ -107,6 +107,7 @@ model prediction_templates {
   id                 Int                  @id @default(autoincrement())
   total_fee_pct      Decimal              @default(0) @db.Decimal(5, 4)
   min_bet_amount     Decimal              @default(0) @db.Decimal(20, 4)
+  max_bet_amount     Decimal              @default(250000) @db.Decimal(20, 4)
   kind               prediction_kind      @unique
   template_status    template_status      @default(Active)
   threshold_round    Int

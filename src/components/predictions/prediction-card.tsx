@@ -38,7 +38,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { UserBalance } from "@/schemas/user-balance.schema";
+import { UserBalance, UserBalanceSchema } from "@/schemas/user-balance.schema";
 import { Streamer } from "@/schemas/streamer.schema";
 import { Skeleton } from "../ui/skeleton";
 import { getPredictionsDetailsAction } from "@/actions/predictions/get-predictions-details-action";
@@ -61,11 +61,23 @@ export function PredictionCard({
     useState<OptionLabel | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userHasBet, setUserHasBet] = useState(false);
-  const [userBalance, setUserBalance] = useState<UserBalance | null>(null);
   const [predictionDetails, setPredictionDetails] =
     useState<PredictionDetail | null>(null);
 
   const qc = useQueryClient();
+
+  const { data: userBalance } = useQuery({
+    queryKey: ["userBalance"],
+    queryFn: async () => {
+      const response = await getUserBalanceAction();
+      if (response.success && response.data) {
+        return UserBalanceSchema.parse(response.data);
+      }
+      return null;
+    },
+    enabled: !!session,
+    refetchOnWindowFocus: false,
+  });
 
   const { data: predictionDetailsData, isRefetching } = useQuery({
     queryKey: ["predictionDetails", prediction.id],
@@ -105,6 +117,14 @@ export function PredictionCard({
         { message: t("predictions.enter_valid_amount") },
       )
       .refine(
+        (val) => Number(val) <= prediction.prediction_templates.max_bet_amount,
+        {
+          message: t("predictions.minimum_bet_description", {
+            amount: prediction.prediction_templates.min_bet_amount,
+          }),
+        },
+      )
+      .refine(
         (val) => Number(val) >= prediction.prediction_templates.min_bet_amount,
         {
           message: t("predictions.minimum_bet_description", {
@@ -127,18 +147,6 @@ export function PredictionCard({
       amount: "",
     },
   });
-
-  // Fetch user balance
-  useEffect(() => {
-    if (session) {
-      getUserBalanceAction().then((response) => {
-        if (response.success && response.data) {
-          setUserBalance(response.data);
-        }
-      });
-    }
-  }, [session]);
-
   // Reset selected option and bet amount when prediction state changes
   useEffect(() => {
     if (!isOpen) {
@@ -182,12 +190,6 @@ export function PredictionCard({
       toast.success(t("predictions.bet_placed"));
       form.reset({ amount: "" });
       setSelectedOptionLabel(null);
-
-      // Update user balance after successful bet
-      const response = await getUserBalanceAction();
-      if (response.data) {
-        setUserBalance(response.data);
-      }
     } else {
       toast.error(t("predictions.bet_failed"));
     }
