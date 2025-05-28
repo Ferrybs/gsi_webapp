@@ -18,6 +18,8 @@ import { formatMatchPhase } from "@/types/map-phase";
 import { useTranslation } from "react-i18next";
 import { Match } from "@/schemas/match.schema";
 import { MatchPlayerStats } from "@/schemas/match-player-stats.schema";
+import { formatDistance } from "date-fns";
+import { ptBR } from "date-fns/locale";
 interface MatchHeaderProps {
   streamer: Streamer;
   matchData: Match | null;
@@ -224,7 +226,7 @@ export function MatchHeader({
                     label={t("match.duration")}
                     value={
                       <span className="font-medium">
-                        {formatTimeSince(matchData.started_at)}
+                        {formatDistance(matchData.started_at,matchData.ended_at || new Date(),{locale: ptBR})}
                       </span>
                     }
                   />

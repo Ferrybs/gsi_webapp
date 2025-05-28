@@ -30,7 +30,12 @@ export default function HomeHeader() {
             <HomeUserHeader />
           ) : (
             <Button
-              onClick={() => signIn("steam")}
+              onClick={() =>
+                signIn("steam", {
+                  callbackUrl: window.location.href,
+                  redirect: true,
+                })
+              }
               className="bg-primary hover:bg-primary/90 text-foreground"
             >
               <Image

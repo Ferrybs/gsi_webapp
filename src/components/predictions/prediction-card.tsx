@@ -43,6 +43,8 @@ import { Streamer } from "@/schemas/streamer.schema";
 import { Skeleton } from "../ui/skeleton";
 import { getPredictionsDetailsAction } from "@/actions/predictions/get-predictions-details-action";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatDistance } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface PredictionCardProps {
   streamer: Streamer;
@@ -235,7 +237,7 @@ export function PredictionCard({
         <CardDescription>{t(`predictions.select_description`)}</CardDescription>
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
           <Clock size={14} />
-          <span>{formatTimeSince(prediction.created_at)}</span>
+          <span>{formatDistance(prediction.created_at,new Date(),{locale: ptBR})}</span>
           {isOpen && !isRoundThresholdReached && (
             <>
               <span className="mx-1">•</span>

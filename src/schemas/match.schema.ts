@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { map_mode, map_name, match_phase, match_status } from "@prisma/client";
+import { stringToDate } from "./helper.schema";
 
 export const MatchSchema = z.object({
   id: z.string(),
@@ -8,25 +9,9 @@ export const MatchSchema = z.object({
   mode_name: z.nativeEnum(map_mode),
   phase_name: z.nativeEnum(match_phase),
   status_name: z.nativeEnum(match_status),
-  started_at: z.preprocess(
-    (arg) =>
-      typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
-    z.date(),
-  ),
-  updated_at: z.preprocess(
-    (arg) =>
-      typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
-    z.date(),
-  ),
-  ended_at: z.preprocess(
-    (arg) =>
-      typeof arg === "string"
-        ? new Date(arg)
-        : typeof arg === "undefined"
-          ? null
-          : arg,
-    z.date().nullable(),
-  ),
+  started_at: stringToDate,
+  updated_at: stringToDate,
+  ended_at: stringToDate.nullable(),
 });
 
 export type Match = z.infer<typeof MatchSchema>;

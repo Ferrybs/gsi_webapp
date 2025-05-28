@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { round_conclusion, team_side } from "@prisma/client";
+import { stringToDate } from "./helper.schema";
 
 export const MatchPlayerRoundsSchema = z.object({
   stats_id: z.string().uuid(),
@@ -10,14 +11,8 @@ export const MatchPlayerRoundsSchema = z.object({
   health: z.number().int(),
   equipment_val: z.number().int(),
   round_conclusion_name: z.nativeEnum(round_conclusion).nullable(),
-  created_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date(),
-  ),
-  updated_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date(),
-  ),
+  created_at: stringToDate,
+  updated_at: stringToDate,
 });
 
 export type MatchPlayerRounds = z.infer<typeof MatchPlayerRoundsSchema>;

@@ -28,6 +28,8 @@ import type { MatchPlayerRounds } from "@/schemas/match-player-rounds.schema";
 import type { Streamer } from "@/schemas/streamer.schema";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
+import { formatDistance } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface RoundListProps {
   rounds: MatchPlayerRounds[];
@@ -136,7 +138,7 @@ export function RoundList({ rounds, streamer }: RoundListProps) {
               >
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Clock size={14} />
-                  {formatTimestamp(round.created_at)}
+                  {formatDistance(round.created_at,round.updated_at,{locale: ptBR})}
                 </div>
                 {/* Cabeçalho do round */}
                 <div className="flex items-center gap-2 mb-1">

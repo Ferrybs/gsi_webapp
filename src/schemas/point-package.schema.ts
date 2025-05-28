@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CurrencyEnum } from "./user-payment.schema";
-import { decimalToNumber } from "./helper.schema";
+import { decimalToNumber, stringToDate } from "./helper.schema";
 
 export const PointPackageSchema = z.object({
   id: z.number(),
@@ -10,8 +10,8 @@ export const PointPackageSchema = z.object({
   currency: CurrencyEnum,
   bonus_points: decimalToNumber,
   active: z.boolean().default(true),
-  created_at: z.string().or(z.date()),
-  updated_at: z.string().or(z.date()),
+  created_at: stringToDate,
+  updated_at: stringToDate,
 });
 
 export type PointPackage = z.infer<typeof PointPackageSchema>;

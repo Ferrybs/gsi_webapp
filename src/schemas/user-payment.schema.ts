@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { currency, payment_provider, payment_status } from "@prisma/client";
+import { stringToDate } from "./helper.schema";
 
 export const PaymentProviderEnum = z.nativeEnum(payment_provider);
 export const CurrencyEnum = z.nativeEnum(currency);
@@ -12,8 +13,8 @@ export const UserPaymentSchema = z.object({
   provider_transaction_id: z.string().nullable(),
   package_id: z.number(),
   status: PaymentStatusEnum.default("Pending"),
-  created_at: z.string().or(z.date()),
-  updated_at: z.string().or(z.date()),
+  created_at: stringToDate,
+  updated_at: stringToDate,
 });
 
 export type UserPayment = z.infer<typeof UserPaymentSchema>;

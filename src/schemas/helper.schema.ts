@@ -12,10 +12,6 @@ export const decimalToNumber = z.preprocess((val) => {
 
 export const stringToDate = z.preprocess(
   (arg) =>
-    typeof arg === "string"
-      ? new Date(arg)
-      : typeof arg === "undefined"
-        ? null
-        : arg,
+    typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
   z.date(),
 );

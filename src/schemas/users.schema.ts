@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { role_type, user_status } from "@prisma/client";
+import { stringToDate } from "./helper.schema";
 
 export const UserRoleSchema = z.object({
   user_id: z.string(),
@@ -22,12 +23,7 @@ export const UsersSchema = z.object({
     .nullable(),
   avatar_url: z.string().nullable(),
   user_status_name: z.nativeEnum(user_status),
-  created_at: z.preprocess((arg) => {
-    if (typeof arg === "string" || typeof arg === "number") {
-      return new Date(arg);
-    }
-    return arg;
-  }, z.date()),
+  created_at: stringToDate,
 });
 
 export const userEditSchema = UsersSchema.pick({

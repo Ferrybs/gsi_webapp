@@ -5,7 +5,7 @@ import {
   prediction_kind,
   template_status,
 } from "@prisma/client";
-import { decimalToNumber } from "./helper.schema";
+import { decimalToNumber, stringToDate } from "./helper.schema";
 
 // Base schemas for database entities
 export const PredictionOptionSchema = z.object({
@@ -37,14 +37,8 @@ export const PredictionTemplateSchema = z.object({
   kind: z.nativeEnum(prediction_kind),
   template_status: z.nativeEnum(template_status).default("Active"),
   threshold_round: z.number(),
-  created_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date(),
-  ),
-  updated_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date(),
-  ),
+  created_at: stringToDate,
+  updated_at: stringToDate,
   prediction_options: z.array(PredictionOptionSchema).optional(),
 });
 
@@ -57,14 +51,8 @@ export const PredictionSchema = z.object({
   site_fees_collected: decimalToNumber.nullable(),
   winning_option_label: z.string().nullable(),
   state: z.nativeEnum(bet_state).default("Open"),
-  created_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date(),
-  ),
-  updated_at: z.preprocess(
-    (arg) => (typeof arg === "string" ? new Date(arg) : arg),
-    z.date(),
-  ),
+  created_at: stringToDate,
+  updated_at: stringToDate,
   user_predictions: z.array(UserPredictionSchema).optional(),
   prediction_templates: PredictionTemplateSchema,
 });

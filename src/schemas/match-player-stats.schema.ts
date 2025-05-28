@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { team_side } from "@prisma/client";
+import { stringToDate } from "./helper.schema";
 
 export const MatchPlayerStatsSchema = z.object({
   id: z.string(),
@@ -11,16 +12,8 @@ export const MatchPlayerStatsSchema = z.object({
   kills: z.number(),
   deaths: z.number(),
   assists: z.number(),
-  started_at: z.preprocess(
-    (arg) =>
-      typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
-    z.date(),
-  ),
-  updated_at: z.preprocess(
-    (arg) =>
-      typeof arg === "string" ? new Date(arg) : arg instanceof Date ? arg : arg,
-    z.date(),
-  ),
+  started_at: stringToDate,
+  updated_at: stringToDate,
 });
 
 export type MatchPlayerStats = z.infer<typeof MatchPlayerStatsSchema>;
