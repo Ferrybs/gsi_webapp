@@ -2,7 +2,7 @@
 
 import { transporter } from "@/lib/nodemailer";
 import { redis } from "@/lib/redis";
-import { ContactFormData, contactFormSchema } from "@/schemas/contact-schema";
+import { ContactFormData, contactFormSchema } from "@/schemas/contact.schema";
 import { ActionResponse } from "@/types/action-response";
 import { getCurrentUser } from "../user/get-current-user";
 
