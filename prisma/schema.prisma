@@ -7,13 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model inventory_stocks {
+  skin_id   BigInt
+  steam_id  String   @unique
+  quantity  Int      @default(0)
+  last_sync DateTime @default(now()) @db.Timestamptz(6)
+  skins     skins    @relation(fields: [skin_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([skin_id, steam_id])
+}
+
 model match_player_deaths {
   id                 Int
   stats_id           String             @db.Uuid
   round_number       Int
   team_side_name     team_side
   hp_before          Int
-  created_at         DateTime           @default(now()) @db.Timestamp(6)
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
   match_player_stats match_player_stats @relation(fields: [stats_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@id([id, stats_id])
@@ -25,7 +35,7 @@ model match_player_kills {
   round_number       Int
   team_side_name     team_side
   is_headshot        Boolean            @default(false)
-  created_at         DateTime           @default(now()) @db.Timestamp(6)
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
   match_player_stats match_player_stats @relation(fields: [stats_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@id([id, stats_id])
@@ -40,8 +50,8 @@ model match_player_rounds {
   health                Int
   equipment_val         Int
   round_conclusion_name round_conclusion?
-  created_at            DateTime           @default(now()) @db.Timestamp(6)
-  updated_at            DateTime           @default(now()) @db.Timestamp(6)
+  created_at            DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime           @default(now()) @db.Timestamptz(6)
   match_player_stats    match_player_stats @relation(fields: [stats_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@id([stats_id, round_number])
@@ -57,8 +67,8 @@ model match_player_stats {
   kills               Int                   @default(0)
   deaths              Int                   @default(0)
   assists             Int                   @default(0)
-  started_at          DateTime              @default(now()) @db.Timestamp(6)
-  updated_at          DateTime              @default(now()) @db.Timestamp(6)
+  started_at          DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime              @default(now()) @db.Timestamptz(6)
   match_player_deaths match_player_deaths[]
   match_player_kills  match_player_kills[]
   match_player_rounds match_player_rounds[]
@@ -72,9 +82,9 @@ model matches {
   mode_name          map_mode
   phase_name         match_phase
   status_name        match_status
-  started_at         DateTime            @default(now()) @db.Timestamp(6)
-  updated_at         DateTime            @default(now()) @db.Timestamp(6)
-  ended_at           DateTime?           @db.Timestamp(6)
+  started_at         DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime            @default(now()) @db.Timestamptz(6)
+  ended_at           DateTime?           @db.Timestamptz(6)
   match_player_stats match_player_stats?
   streamers          streamers           @relation(fields: [streamer_user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   stream_matches     stream_matches?
@@ -97,7 +107,7 @@ model point_packages {
 model prediction_options {
   label                option_label
   template_id          Int
-  created_at           DateTime             @default(now()) @db.Timestamp(6)
+  created_at           DateTime             @default(now()) @db.Timestamptz(6)
   prediction_templates prediction_templates @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@id([label, template_id])
@@ -111,8 +121,8 @@ model prediction_templates {
   kind               prediction_kind      @unique
   template_status    template_status      @default(Active)
   threshold_round    Int
-  created_at         DateTime             @default(now()) @db.Timestamp(6)
-  updated_at         DateTime             @default(now()) @db.Timestamp(6)
+  created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime             @default(now()) @db.Timestamptz(6)
   prediction_options prediction_options[]
   predictions        predictions[]
 }
@@ -126,8 +136,8 @@ model predictions {
   site_fees_collected              Decimal?                           @db.Decimal(20, 4)
   winning_option_label             option_label?
   state                            bet_state                          @default(Open)
-  created_at                       DateTime                           @default(now()) @db.Timestamp(6)
-  updated_at                       DateTime                           @default(now()) @db.Timestamp(6)
+  created_at                       DateTime                           @default(now()) @db.Timestamptz(6)
+  updated_at                       DateTime                           @default(now()) @db.Timestamptz(6)
   stream_matches                   stream_matches                     @relation(fields: [stream_match_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   prediction_templates             prediction_templates               @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   streamer_prediction_transactions streamer_prediction_transactions[]
@@ -136,13 +146,53 @@ model predictions {
   @@unique([template_id, stream_match_id])
 }
 
+model raffle_tickets {
+  id                              BigInt                            @id @default(autoincrement())
+  raffle_id                       String                            @db.Uuid
+  created_at                      DateTime                          @default(now()) @db.Timestamptz(6)
+  raffles                         raffles                           @relation(fields: [raffle_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_raffle_ticket_transactions user_raffle_ticket_transactions[]
+}
+
+model raffles {
+  id             String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  skin_id        BigInt
+  ticket_price   Decimal            @db.Decimal(20, 4)
+  status         raffle_status_enum @default(active)
+  winner_user_id String?            @db.Uuid
+  drawn_at       DateTime?          @db.Timestamptz(6)
+  end_at         DateTime           @db.Timestamptz(6)
+  created_at     DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime           @default(now()) @db.Timestamptz(6)
+  raffle_tickets raffle_tickets[]
+  skins          skins              @relation(fields: [skin_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users          users?             @relation(fields: [winner_user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model skins {
+  id                   BigInt              @id @default(autoincrement())
+  market_hash_name     String              @unique
+  type                 String
+  image_url            String?
+  tradable             Boolean             @default(true)
+  exterior             exterior
+  currency             currency            @default(USD)
+  estimated_fiat_value Decimal             @db.Decimal(20, 4)
+  fee_pct              Decimal             @db.Decimal(5, 4)
+  created_at           DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime            @default(now()) @db.Timestamptz(6)
+  inventory_stocks     inventory_stocks[]
+  raffles              raffles[]
+  trade_offer_items    trade_offer_items[]
+}
+
 model stream_matches {
   id           String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   match_id     String              @unique @db.Uuid
   streamer_id  String              @db.Uuid
   match_status stream_match_status @default(Preparing)
-  created_at   DateTime            @default(now()) @db.Timestamp(6)
-  updated_at   DateTime            @default(now()) @db.Timestamp(6)
+  created_at   DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime            @default(now()) @db.Timestamptz(6)
   predictions  predictions[]
   matches      matches             @relation(fields: [match_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   streamers    streamers           @relation(fields: [streamer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -163,7 +213,7 @@ model streamer_prediction_transactions {
   prediction_id String           @db.Uuid
   amount        Decimal          @db.Decimal(20, 4)
   type          transaction_type
-  created_at    DateTime         @default(now()) @db.Timestamp(6)
+  created_at    DateTime         @default(now()) @db.Timestamptz(6)
   predictions   predictions      @relation(fields: [prediction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   streamers     streamers        @relation(fields: [streamer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
@@ -182,6 +232,24 @@ model streamers {
   stream_urls                      stream_urls[]
   streamer_prediction_transactions streamer_prediction_transactions[]
   users                            users                              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model trade_offer_items {
+  id             String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  trade_offer_id String       @db.Uuid
+  skin_id        BigInt
+  asset_id       String
+  skins          skins        @relation(fields: [skin_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  trade_offers   trade_offers @relation(fields: [trade_offer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model trade_offers {
+  id                String                  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  trade_offer_id    String                  @unique
+  status            trade_offer_status_enum
+  created_at        DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime                @default(now()) @db.Timestamptz(6)
+  trade_offer_items trade_offer_items[]
 }
 
 model trigger_audit_logs {
@@ -228,8 +296,8 @@ model user_payments {
   provider_transaction_id   String?
   package_id                Int
   status                    payment_status              @default(Pending)
-  created_at                DateTime                    @default(now()) @db.Timestamp(6)
-  updated_at                DateTime                    @default(now()) @db.Timestamp(6)
+  created_at                DateTime                    @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                    @default(now()) @db.Timestamptz(6)
   user_payment_transactions user_payment_transactions[]
   point_packages            point_packages              @relation(fields: [package_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -250,7 +318,7 @@ model user_predictions {
   prediction_id                String                         @db.Uuid
   option_label                 option_label
   amount                       Decimal                        @db.Decimal(20, 4)
-  created_at                   DateTime                       @default(now()) @db.Timestamp(6)
+  created_at                   DateTime                       @default(now()) @db.Timestamptz(6)
   user_prediction_transactions user_prediction_transactions[]
   predictions                  predictions                    @relation(fields: [prediction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users                        users                          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -263,6 +331,15 @@ model user_preferences {
   users          users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
+model user_raffle_ticket_transactions {
+  raffle_ticket_id    BigInt
+  user_transaction_id String            @db.Uuid
+  raffle_tickets      raffle_tickets    @relation(fields: [raffle_ticket_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_transactions   user_transactions @relation(fields: [user_transaction_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([raffle_ticket_id, user_transaction_id])
+}
+
 model user_roles {
   user_id   String    @db.Uuid
   role_name role_type
@@ -272,16 +349,17 @@ model user_roles {
 }
 
 model user_transactions {
-  id                           String                         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id                      String                         @db.Uuid
-  amount                       Decimal                        @db.Decimal(20, 4)
-  type                         transaction_type
-  description                  String?
-  created_at                   DateTime                       @default(now()) @db.Timestamp(6)
-  user_balance_transactions    user_balance_transactions[]
-  user_payment_transactions    user_payment_transactions[]
-  user_prediction_transactions user_prediction_transactions[]
-  users                        users                          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                              String                            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id                         String                            @db.Uuid
+  amount                          Decimal                           @db.Decimal(20, 4)
+  type                            transaction_type
+  description                     String?
+  created_at                      DateTime                          @default(now()) @db.Timestamptz(6)
+  user_balance_transactions       user_balance_transactions[]
+  user_payment_transactions       user_payment_transactions[]
+  user_prediction_transactions    user_prediction_transactions[]
+  user_raffle_ticket_transactions user_raffle_ticket_transactions[]
+  users                           users                             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model users {
@@ -293,7 +371,8 @@ model users {
   trade_link        String?
   steam_token       String?
   user_status_name  user_status         @default(Active)
-  created_at        DateTime            @default(now()) @db.Timestamp(6)
+  created_at        DateTime            @default(now()) @db.Timestamptz(6)
+  raffles           raffles[]
   streamers         streamers?
   user_balances     user_balances?
   user_payments     user_payments[]
@@ -319,6 +398,14 @@ enum currency {
   BRL
   USD
   USDC
+}
+
+enum exterior {
+  FactoryNew
+  MinimalWear
+  FieldTested
+  WellWorn
+  BattleScarred
 }
 
 enum map_mode {
@@ -388,6 +475,12 @@ enum prediction_kind {
   FourKillsOneRound
 }
 
+enum raffle_status_enum {
+  active
+  closed
+  cancelled
+}
+
 enum role_type {
   EventsLog
   Streamer
@@ -403,6 +496,11 @@ enum round_conclusion {
   ct_win_defuse
   ct_win_rescue
   ct_win_time
+}
+
+enum shop_item_status_enum {
+  available
+  out_of_stock
 }
 
 enum stream_match_status {
@@ -428,9 +526,19 @@ enum template_status {
   Deprecated
 }
 
+enum trade_offer_status_enum {
+  new
+  pending
+  accepted
+  declined
+  cancelled
+  expired
+}
+
 enum transaction_type {
   Deposit
   Reward
+  RaffleTicket
   Predict
   Exchange
   Refund

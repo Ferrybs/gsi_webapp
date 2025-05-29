@@ -52,38 +52,27 @@ export default function RafflesPage() {
     );
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-[1200px]">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">{t("raffle.title")}</h1>
-        <p className="text-muted-foreground">{t("raffle.subtitle")}</p>
-      </div>
-
+    <div className="container mx-auto px-4 py-6 max-w-[1200px]">
       {/* Active Raffles */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-6">
-          {t("raffle.active_raffles")}
-        </h2>
-
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 3 }).map((_, index) => (
-              <RaffleCardSkeleton key={index} />
-            ))}
-          </div>
-        ) : activeRaffles.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {activeRaffles.map((raffle) => (
-              <RaffleCard
-                key={raffle.id}
-                raffle={raffle}
-                isExpanded={expandedRaffleId === raffle.id}
-                onToggleExpansion={handleToggleExpansion}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
+      <section className="mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <RaffleCardSkeleton key={index} />
+              ))
+            : activeRaffles.length > 0
+              ? activeRaffles.map((raffle) => (
+                  <RaffleCard
+                    key={raffle.id}
+                    raffle={raffle}
+                    isExpanded={expandedRaffleId === raffle.id}
+                    onToggleExpansion={handleToggleExpansion}
+                  />
+                ))
+              : null}
+        </div>
+        {!isLoading && activeRaffles.length === 0 && (
+          <div className="text-center py-8">
             <p className="text-muted-foreground">
               {t("raffle.no_active_raffles")}
             </p>
@@ -93,24 +82,24 @@ export default function RafflesPage() {
 
       {/* Recent Results */}
       <section>
-        <h2 className="text-2xl font-semibold mb-6">
+        <h2 className="text-xl font-semibold mb-4">
           {t("raffle.recent_results")}
         </h2>
 
         {isLoading ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, index) => (
               <ClosedRaffleItemSkeleton key={index} />
             ))}
           </div>
         ) : closedRaffles.length > 0 ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {closedRaffles.map((raffle) => (
               <ClosedRaffleItem key={raffle.id} raffle={raffle} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
+          <div className="text-center py-8">
             <p className="text-muted-foreground">
               {t("raffle.no_recent_results")}
             </p>

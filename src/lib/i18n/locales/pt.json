@@ -1,5 +1,11 @@
 {
-  "common": { "points": "CS2Bits" },
+  "common": {
+    "points": "CS2Bits",
+    "cancel": "Cancelar",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso"
+  },
   "callback": {
     "loading": "Carregando...",
     "redirect": "Redirecionando...",
@@ -571,6 +577,7 @@
   },
   "purchase": {
     "title": "Comprar CS2Bits",
+    "quantity": "Quantidade",
     "select_package": "Selecione um Pacote",
     "points": "Pontos",
     "points_label": "pontos",
@@ -590,7 +597,20 @@
     "processing": "Processando...",
     "select_package_error": "Por favor, selecione um pacote",
     "payment_error": "Falha ao criar pagamento",
-    "unexpected_error": "Ocorreu um erro inesperado"
+    "unexpected_error": "Ocorreu um erro inesperado",
+    "buy_tickets": "Comprar Bilhetes",
+    "decrease_quantity": "Diminuir quantidade",
+    "increase_quantity": "Aumentar quantidade",
+    "ticket_price": "Preço por bilhete",
+    "total": "Total",
+    "balance": "Saldo",
+    "insufficient_balance": "Saldo insuficiente",
+    "confirm_purchase": "Confirmar Compra",
+    "success": "Compra realizada com sucesso!",
+    "tickets_purchased": "{{count}} bilhete(s) comprado(s)",
+    "tickets_purchased_plural": "{{count}} bilhetes comprados",
+    "failed": "Falha na compra",
+    "unknown_error": "Ocorreu um erro inesperado. Tente novamente."
   },
   "payment": {
     "cancelled": "Pagamento Cancelado",
@@ -710,5 +730,24 @@
     "results": {
       "title": "Resultados das Partidas"
     }
+  },
+  "raffle": {
+    "title": "Sorteios",
+    "subtitle": "Participe dos sorteios e ganhe skins incríveis do CS2",
+    "active_raffles": "Sorteios Ativos",
+    "recent_results": "Resultados Recentes",
+    "no_active_raffles": "Nenhum sorteio ativo no momento",
+    "no_recent_results": "Nenhum resultado recente",
+    "error_title": "Erro ao carregar sorteios",
+    "error_message": "Não foi possível carregar os sorteios. Tente novamente mais tarde.",
+    "ticket_price": "Preço do bilhete",
+    "buy_tickets": "Comprar Bilhetes",
+    "ended": "Encerrado",
+    "ends_in_hours_minutes": "Termina em {{hours}}h {{minutes}}m",
+    "ends_in_minutes": "Termina em {{minutes}}m",
+    "winner": "Vencedor",
+    "drawn_on": "Sorteado em",
+    "closed": "Encerrado",
+    "view_result": "Ver Resultado"
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -8,12 +8,7 @@ import { Clock, Ticket, Minus, Plus, X } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { purchaseTicketsAction } from "@/actions/raffles/purchase-tickets-action";
@@ -32,6 +27,8 @@ export function RaffleCard({
 }: RaffleCardProps) {
   const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
+  const [expandedHeight, setExpandedHeight] = useState(0);
+  const expandedContentRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
   const purchaseMutation = useMutation({
@@ -56,6 +53,13 @@ export function RaffleCard({
       });
     },
   });
+
+  // Calculate the height of expanded content for smooth animation
+  useEffect(() => {
+    if (expandedContentRef.current) {
+      setExpandedHeight(expandedContentRef.current.scrollHeight);
+    }
+  }, [isExpanded, quantity]);
 
   const getTimeRemaining = (endAt: string) => {
     const now = new Date().getTime();
@@ -96,93 +100,137 @@ export function RaffleCard({
     }
   };
 
+  // Determine the exterior color class based on the skin's exterior/rarity
+  const getRarityGradient = () => {
+    switch (raffle.skin.exterior) {
+      case "FactoryNew":
+        return "from-blue-500/25 via-blue-400/20 to-blue-600/30";
+      case "MinimalWear":
+        return "from-purple-500/25 via-purple-400/20 to-purple-600/30";
+      case "FieldTested":
+        return "from-green-500/25 via-green-400/20 to-green-600/30";
+      case "WellWorn":
+        return "from-yellow-500/25 via-yellow-400/20 to-yellow-600/30";
+      case "BattleScarred":
+        return "from-red-500/25 via-red-400/20 to-red-600/30";
+      default:
+        return "from-gray-500/25 via-gray-400/20 to-gray-600/30";
+    }
+  };
+
   return (
     <Card
-      className={`overflow-hidden transition-all duration-300 ${isExpanded ? "shadow-lg ring-2 ring-primary/20" : "hover:shadow-lg"}`}
+      className={`overflow-hidden transition-all duration-300 ${
+        isExpanded ? "shadow-lg ring-2 ring-primary/20" : "hover:shadow-md"
+      }`}
     >
-      <CardHeader className="p-0">
-        <div className="relative aspect-square">
-          <Image
-            src={
-              raffle.skin.image_url || "/placeholder.svg?height=200&width=200"
-            }
-            alt={raffle.skin.market_hash_name}
-            fill
-            className="object-cover"
-            crossOrigin="anonymous"
-          />
-          <Badge className="absolute top-2 right-2" variant="secondary">
-            {raffle.skin.type}
-          </Badge>
-        </div>
-      </CardHeader>
+      <div className="flex flex-col h-full">
+        {/* Card Content with Image and Info */}
+        <CardContent className="p-0 flex-1 flex flex-col">
+          {/* Image Section with Rarity Gradient Background */}
+          <div className="relative w-full h-32 overflow-hidden rounded-t-lg">
+            {/* Base background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-background/50 to-muted/80"></div>
 
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-sm mb-2 line-clamp-2">
-          {raffle.skin.market_hash_name}
-        </h3>
+            {/* Rarity gradient overlay */}
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${getRarityGradient()}`}
+            ></div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              {t("raffle.ticket_price")}
-            </span>
-            <span className="font-medium">
-              {raffle.ticket_price} {t("common.points")}
-            </span>
+            {/* Subtle pattern overlay for texture */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[length:20px_20px] opacity-30"></div>
+
+            {/* Image container */}
+            <div className="absolute inset-0 flex items-center justify-center p-3 z-10">
+              <Image
+                src={
+                  raffle.skin.image_url ||
+                  "/placeholder.svg?height=200&width=200"
+                }
+                alt={raffle.skin.market_hash_name}
+                width={160}
+                height={120}
+                className="object-contain max-h-28 drop-shadow-lg filter brightness-105"
+                crossOrigin="anonymous"
+              />
+            </div>
+
+            {/* Type badge */}
+            <Badge
+              className="absolute top-2 right-2 z-20 backdrop-blur-sm bg-background/80"
+              variant="secondary"
+            >
+              {raffle.skin.type}
+            </Badge>
           </div>
 
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Clock className="h-3 w-3" />
-            <span>{getTimeRemaining(raffle.end_at)}</span>
-          </div>
-        </div>
-      </CardContent>
-
-      <CardFooter className="p-4 pt-0">
-        <Button
-          className="w-full"
-          onClick={handleToggle}
-          size="sm"
-          variant={isExpanded ? "outline" : "default"}
-        >
-          {isExpanded ? (
-            <>
-              <X className="h-4 w-4 mr-2" />
-              {t("common.cancel")}
-            </>
-          ) : (
-            <>
-              <Ticket className="h-4 w-4 mr-2" />
-              {t("raffle.buy_tickets")}
-            </>
-          )}
-        </Button>
-      </CardFooter>
-
-      {/* Purchase Expansion */}
-      <div
-        className={`transition-all duration-300 ease-in-out ${isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"} overflow-hidden`}
-      >
-        <div className="px-4 pb-4">
-          <Separator className="mb-4" />
-
-          {/* Item Details */}
-          <div className="mb-4">
-            <h4 className="font-medium text-sm mb-1">
+          {/* Info Section */}
+          <div className="p-3 flex-1 flex flex-col bg-gradient-to-b from-background to-background/95">
+            <h3 className="font-medium text-sm mb-1 line-clamp-1">
               {raffle.skin.market_hash_name}
-            </h4>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>{raffle.skin.exterior}</span>
-              <Badge variant="outline" className="text-xs">
-                {raffle.skin.type}
-              </Badge>
+            </h3>
+            <p className="text-xs text-muted-foreground mb-2 font-medium">
+              {raffle.skin.exterior}
+            </p>
+
+            <div className="mt-auto space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">
+                  {t("raffle.ticket_price")}
+                </span>
+                <span className="font-semibold">
+                  {raffle.ticket_price} {t("common.points")}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                <span>{getTimeRemaining(raffle.end_at)}</span>
+              </div>
             </div>
           </div>
+        </CardContent>
+
+        {/* Card Footer */}
+        <CardFooter className="p-3 pt-0 bg-gradient-to-b from-background/95 to-background">
+          <Button
+            className="w-full transition-all duration-200"
+            onClick={handleToggle}
+            size="sm"
+            variant={isExpanded ? "outline" : "default"}
+          >
+            {isExpanded ? (
+              <>
+                <X className="h-4 w-4 mr-1.5" />
+                {t("common.cancel")}
+              </>
+            ) : (
+              <>
+                <Ticket className="h-4 w-4 mr-1.5" />
+                {t("raffle.buy_tickets")}
+              </>
+            )}
+          </Button>
+        </CardFooter>
+      </div>
+
+      {/* Purchase Expansion with Dynamic Height */}
+      <div
+        className="transition-all duration-300 ease-in-out overflow-hidden"
+        style={{
+          height: isExpanded ? `${expandedHeight}px` : "0px",
+          opacity: isExpanded ? 1 : 0,
+        }}
+      >
+        <div
+          ref={expandedContentRef}
+          className="px-3 pb-3 bg-gradient-to-b from-background to-muted/20"
+        >
+          <Separator className="mb-3" />
 
           {/* Balance and Price Info */}
-          <div className="bg-muted/50 rounded-lg p-3 mb-4 space-y-2">
-            <div className="flex justify-between text-sm">
+          <div className="bg-muted/50 backdrop-blur-sm rounded-lg p-2.5 mb-3 space-y-1.5 border border-border/50">
+            <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">
                 {t("purchase.ticket_price")}
               </span>
@@ -190,7 +238,7 @@ export function RaffleCard({
                 {ticketPrice} {t("common.points")}
               </span>
             </div>
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">
                 {t("purchase.balance")}
               </span>
@@ -201,15 +249,15 @@ export function RaffleCard({
           </div>
 
           {/* Quantity Selector */}
-          <div className="mb-4">
-            <label className="text-sm font-medium mb-2 block">
+          <div className="mb-3">
+            <label className="text-xs font-medium mb-1.5 block">
               {t("purchase.quantity")}
             </label>
             <div className="flex items-center justify-center gap-3">
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 rounded-full"
+                className="h-7 w-7 rounded-full transition-all duration-200 hover:scale-105"
                 onClick={decrementQuantity}
                 disabled={quantity <= 1}
                 aria-label={t("purchase.decrease_quantity")}
@@ -217,14 +265,14 @@ export function RaffleCard({
                 <Minus className="h-3 w-3" />
               </Button>
 
-              <div className="bg-background border rounded-lg px-4 py-2 min-w-[3rem] text-center font-semibold">
+              <div className="bg-background border rounded-lg px-3 py-1.5 min-w-[2.5rem] text-center font-semibold text-sm shadow-sm">
                 {quantity}
               </div>
 
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8 rounded-full"
+                className="h-7 w-7 rounded-full transition-all duration-200 hover:scale-105"
                 onClick={incrementQuantity}
                 aria-label={t("purchase.increase_quantity")}
               >
@@ -234,10 +282,10 @@ export function RaffleCard({
           </div>
 
           {/* Total Cost */}
-          <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 mb-4">
+          <div className="bg-primary/5 border border-primary/20 rounded-lg p-2.5 mb-3 backdrop-blur-sm">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">{t("purchase.total")}</span>
-              <span className="text-lg font-bold text-primary">
+              <span className="text-xs font-medium">{t("purchase.total")}</span>
+              <span className="text-base font-bold text-primary">
                 {totalPrice} {t("common.points")}
               </span>
             </div>
@@ -245,8 +293,8 @@ export function RaffleCard({
 
           {/* Insufficient Balance Warning */}
           {!canPurchase && userBalance < totalPrice && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 mb-4">
-              <p className="text-sm text-destructive font-medium">
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-2.5 mb-3 backdrop-blur-sm">
+              <p className="text-xs text-destructive font-medium">
                 {t("purchase.insufficient_balance")}
               </p>
             </div>
@@ -254,11 +302,15 @@ export function RaffleCard({
 
           {/* Action Buttons */}
           <div className="flex gap-2">
-            <Button variant="outline" className="flex-1" onClick={handleToggle}>
+            <Button
+              variant="outline"
+              className="flex-1 text-xs py-2 transition-all duration-200 hover:bg-muted"
+              onClick={handleToggle}
+            >
               {t("common.cancel")}
             </Button>
             <Button
-              className="flex-1"
+              className="flex-1 text-xs py-2 transition-all duration-200 hover:shadow-md"
               onClick={handlePurchase}
               disabled={!canPurchase || purchaseMutation.isPending}
               aria-busy={purchaseMutation.isPending}
