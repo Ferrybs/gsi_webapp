@@ -7,6 +7,8 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { RaffleWithSkin } from "@/actions/raffles/get-all-raffles-action";
+import { formatDate, formatRelative } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface ClosedRaffleItemProps {
   raffle: RaffleWithSkin;
@@ -15,26 +17,24 @@ interface ClosedRaffleItemProps {
 export function ClosedRaffleItem({ raffle }: ClosedRaffleItemProps) {
   const { t } = useTranslation();
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
-
   // Determine the exterior color class based on the skin's exterior
   const getExteriorColorClass = () => {
-    switch (raffle.skin.exterior) {
-      case "FactoryNew":
-        return "from-blue-500/10 to-blue-600/20";
-      case "MinimalWear":
-        return "from-purple-500/10 to-purple-600/20";
-      case "FieldTested":
-        return "from-green-500/10 to-green-600/20";
-      case "WellWorn":
-        return "from-yellow-500/10 to-yellow-600/20";
-      case "BattleScarred":
-        return "from-red-500/10 to-red-600/20";
-      default:
-        return "from-gray-500/10 to-gray-600/20";
+    if (raffle.skin.type.includes("Contraband")) {
+      return "from-yellow-500/25 via-yellow-400/20 to-yellow-600/30";
     }
+    if (raffle.skin.type.includes("Covert")) {
+      return "from-red-500/25 via-red-400/20 to-red-600/30";
+    }
+    if (raffle.skin.type.includes("Classified")) {
+      return "from-purple-500/25 via-purple-400/20 to-purple-600/30";
+    }
+    if (raffle.skin.type.includes("Restricted")) {
+      return "from-green-500/25 via-green-400/20 to-green-600/30";
+    }
+    if (raffle.skin.type.includes("Mil-Spec")) {
+      return "from-blue-500/25 via-blue-400/20 to-blue-600/30";
+    }
+    return "from-gray-500/25 via-gray-400/20 to-gray-600/30";
   };
 
   return (
@@ -66,11 +66,12 @@ export function ClosedRaffleItem({ raffle }: ClosedRaffleItemProps) {
             <div className="flex items-center gap-1.5 mt-0.5">
               <Trophy className="h-3 w-3 text-yellow-500" />
               <span className="text-xs text-muted-foreground truncate">
-                {t("raffle.winner")}: {raffle.winner_username}
+                {t("raffle.winner")}: {raffle.winner?.username}
               </span>
             </div>
             <div className="text-xs text-muted-foreground mt-0.5">
-              {t("raffle.drawn_on")}: {formatDate(raffle.drawn_at!)}
+              {t("raffle.drawn_on")}:{" "}
+              {formatRelative(raffle.drawn_at!, new Date(), { locale: ptBR })}
             </div>
           </div>
 

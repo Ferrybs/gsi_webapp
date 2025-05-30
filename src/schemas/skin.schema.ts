@@ -1,9 +1,9 @@
 import { currency, exterior } from "@prisma/client";
 import { z } from "zod";
-import { decimalToNumber } from "./helper.schema";
+import { decimalToNumber, stringToDate } from "./helper.schema";
 
 export const SkinSchema = z.object({
-  id: z.number(),
+  id: z.bigint(),
   market_hash_name: z.string(),
   type: z.string(),
   image_url: z.string().url().optional(),
@@ -11,8 +11,8 @@ export const SkinSchema = z.object({
   exterior: z.nativeEnum(exterior),
   currency: z.nativeEnum(currency).default("USD"),
   fiat_value: decimalToNumber, // estimated_fiat_value.mult(1+fee_pct)
-  created_at: z.string().refine((val) => !isNaN(Date.parse(val))),
-  updated_at: z.string().refine((val) => !isNaN(Date.parse(val))),
+  created_at: stringToDate,
+  updated_at: stringToDate,
 });
 
 export type Skin = z.infer<typeof SkinSchema>;

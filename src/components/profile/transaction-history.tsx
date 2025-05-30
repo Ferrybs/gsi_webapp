@@ -25,6 +25,7 @@ import {
   History,
   ChevronLeft,
   ChevronRight,
+  Ticket,
 } from "lucide-react";
 import {
   getUserTransactionsAction,
@@ -46,6 +47,8 @@ const getTransactionIcon = (type: TransactionType) => {
       return <Gift className="h-4 w-4 text-yellow-500" />;
     case "Predict":
       return <Target className="h-4 w-4 text-blue-500" />;
+    case "RaffleTicket":
+      return <Ticket className="h-4 w-4 text-blue-500" />;
     case "Exchange":
       return <RefreshCw className="h-4 w-4 text-purple-500" />;
     case "Refund":
@@ -62,6 +65,8 @@ const getTransactionColor = (type: TransactionType) => {
     case "Reward":
       return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
     case "Predict":
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+    case "RaffleTicket":
       return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
     case "Exchange":
       return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
@@ -105,7 +110,7 @@ export function TransactionHistory() {
   };
 
   const formatAmount = (amount: number, type: TransactionType) => {
-    const sign = type === "Predict" ? "" : "+";
+    const sign = type === "Predict" || type === "RaffleTicket" ? "" : "+";
     return `${sign}${amount.toLocaleString("pt-BR")} ${t("common.points")}`;
   };
 
@@ -146,6 +151,9 @@ export function TransactionHistory() {
 
       case "Reward":
         return t("transactions.descriptions.reward");
+
+      case "RaffleTicket":
+        return t("transactions.descriptions.raffleTicket");
 
       case "Exchange":
         return t("transactions.descriptions.exchange");
@@ -199,6 +207,9 @@ export function TransactionHistory() {
             </SelectItem>
             <SelectItem value="Exchange">
               {t("transactions.types.exchange")}
+            </SelectItem>
+            <SelectItem value="RaffleTicket">
+              {t("transactions.types.raffleticket")}
             </SelectItem>
             <SelectItem value="Refund">
               {t("transactions.types.refund")}
@@ -259,7 +270,8 @@ export function TransactionHistory() {
                   <div className="text-right">
                     <p
                       className={`font-medium ${
-                        data.transaction.type === "Predict"
+                        data.transaction.type === "Predict" ||
+                        data.transaction.type === "RaffleTicket"
                           ? "text-orange-600 dark:text-orange-400"
                           : "text-green-600 dark:text-green-400"
                       }`}

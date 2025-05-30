@@ -13,9 +13,13 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { purchaseTicketsAction } from "@/actions/raffles/purchase-tickets-action";
 import type { RaffleWithSkin } from "@/actions/raffles/get-all-raffles-action";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { UserBalance } from "@/schemas/user-balance.schema";
 
 interface RaffleCardProps {
   raffle: RaffleWithSkin;
+  userBalance?: UserBalance; // Optional prop for user balance
   isExpanded: boolean;
   onToggleExpansion: (raffleId: string) => void;
 }
@@ -23,6 +27,7 @@ interface RaffleCardProps {
 export function RaffleCard({
   raffle,
   isExpanded,
+  userBalance,
   onToggleExpansion,
 }: RaffleCardProps) {
   const { t } = useTranslation();
@@ -39,6 +44,7 @@ export function RaffleCard({
           description: t("purchase.tickets_purchased", { count: quantity }),
         });
         queryClient.invalidateQueries({ queryKey: ["raffles"] });
+        queryClient.invalidateQueries({ queryKey: ["userBalance"] });
         onToggleExpansion(raffle.id);
         setQuantity(1);
       } else {
@@ -64,26 +70,10 @@ export function RaffleCard({
     }
   }, [isExpanded, quantity]);
 
-  const getTimeRemaining = (endAt: string) => {
-    const now = new Date().getTime();
-    const end = new Date(endAt).getTime();
-    const diff = end - now;
-
-    if (diff <= 0) return t("raffle.ended");
-
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-    if (hours > 0) {
-      return t("raffle.ends_in_hours_minutes", { hours, minutes });
-    }
-    return t("raffle.ends_in_minutes", { minutes });
-  };
-
-  const ticketPrice = Number.parseFloat(raffle.ticket_price);
+  const ticketPrice = raffle.ticket_price;
   const totalPrice = quantity * ticketPrice;
-  const userBalance = 5000; // Mock user balance
-  const canPurchase = quantity >= 1 && userBalance >= totalPrice;
+  const currentBalance = userBalance?.balance || 0;
+  const canPurchase = quantity >= 1 && currentBalance >= totalPrice;
 
   const handlePurchase = () => {
     if (!canPurchase) return;
@@ -105,20 +95,22 @@ export function RaffleCard({
 
   // Determine the exterior color class based on the skin's exterior/rarity
   const getRarityGradient = () => {
-    switch (raffle.skin.exterior) {
-      case "FactoryNew":
-        return "from-blue-500/25 via-blue-400/20 to-blue-600/30";
-      case "MinimalWear":
-        return "from-purple-500/25 via-purple-400/20 to-purple-600/30";
-      case "FieldTested":
-        return "from-green-500/25 via-green-400/20 to-green-600/30";
-      case "WellWorn":
-        return "from-yellow-500/25 via-yellow-400/20 to-yellow-600/30";
-      case "BattleScarred":
-        return "from-red-500/25 via-red-400/20 to-red-600/30";
-      default:
-        return "from-gray-500/25 via-gray-400/20 to-gray-600/30";
+    if (raffle.skin.type.includes("Contraband")) {
+      return "from-yellow-500/25 via-yellow-400/20 to-yellow-600/30";
     }
+    if (raffle.skin.type.includes("Covert")) {
+      return "from-red-500/25 via-red-400/20 to-red-600/30";
+    }
+    if (raffle.skin.type.includes("Classified")) {
+      return "from-purple-500/25 via-purple-400/20 to-purple-600/30";
+    }
+    if (raffle.skin.type.includes("Restricted")) {
+      return "from-green-500/25 via-green-400/20 to-green-600/30";
+    }
+    if (raffle.skin.type.includes("Mil-Spec")) {
+      return "from-blue-500/25 via-blue-400/20 to-blue-600/30";
+    }
+    return "from-gray-500/25 via-gray-400/20 to-gray-600/30";
   };
 
   return (
@@ -127,18 +119,19 @@ export function RaffleCard({
         isExpanded ? "shadow-lg" : "hover:shadow-md"
       }`}
       style={{
-        borderColor:
-          raffle.skin.exterior === "FactoryNew"
-            ? "#3b82f6"
-            : raffle.skin.exterior === "MinimalWear"
-              ? "#8b5cf6"
-              : raffle.skin.exterior === "FieldTested"
-                ? "#10b981"
-                : raffle.skin.exterior === "WellWorn"
-                  ? "#f59e0b"
-                  : raffle.skin.exterior === "BattleScarred"
-                    ? "#ef4444"
-                    : "#6b7280",
+        borderColor: raffle.skin.type.includes("Contraband")
+          ? "#ef9e1f"
+          : raffle.skin.type.includes("Covert")
+            ? "#eb4b4b"
+            : raffle.skin.type.includes("Classified")
+              ? "#d32be3"
+              : raffle.skin.type.includes("Restricted")
+                ? "#8a43fa"
+                : raffle.skin.type.includes("Mil-Spec")
+                  ? "#4a6afa"
+                  : raffle.skin.type.includes("Industrial")
+                    ? "#5a9ada"
+                    : "#b0c2da",
       }}
     >
       <div className="flex flex-col h-full">
@@ -184,7 +177,7 @@ export function RaffleCard({
               {raffle.skin.market_hash_name}
             </h3>
             <p className="text-xs text-muted-foreground mb-2 font-medium">
-              {raffle.skin.exterior}
+              {t("skin." + raffle.skin.exterior)}
             </p>
 
             <div className="mt-auto space-y-1.5">
@@ -199,7 +192,10 @@ export function RaffleCard({
 
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                <span>{getTimeRemaining(raffle.end_at)}</span>
+                <span>
+                  {t("raffle.ends_on")}{" "}
+                  {formatDistanceToNow(raffle.end_at, { locale: ptBR })}
+                </span>
               </div>
             </div>
           </div>
@@ -253,7 +249,7 @@ export function RaffleCard({
                   {t("purchase.balance")}
                 </span>
                 <span className="font-medium text-green-600">
-                  {userBalance} {t("common.points")}
+                  {currentBalance} {t("common.points")}
                 </span>
               </div>
             </div>
@@ -304,7 +300,7 @@ export function RaffleCard({
             </div>
 
             {/* Insufficient Balance Warning */}
-            {!canPurchase && userBalance < totalPrice && (
+            {!canPurchase && currentBalance < totalPrice && (
               <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-2.5 mb-3 backdrop-blur-sm">
                 <p className="text-xs text-destructive font-medium">
                   {t("purchase.insufficient_balance")}

@@ -64,7 +64,9 @@ export async function getCurrentUserGSIAction(
       id: user.steam_id,
       name: streamer.username_id,
       avatar: user.avatar_url ?? "https://placehold.co/80x80?text=U",
-      roles: user.user_roles.map((role) => role.role_name),
+      roles: user.user_roles
+        ? user.user_roles.map((role) => role.role_name)
+        : [],
       valid_until: Math.floor(Date.now() / 1000) + 2 * 18 * 60 * 60, // 1.5 day in seconds
       token,
     },

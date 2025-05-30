@@ -13,9 +13,8 @@ import { User, LogOut, Plus } from "lucide-react";
 import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import { Skeleton } from "../../ui/skeleton";
 import { useTranslation } from "react-i18next";
-import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
-import { type Users, UsersSchema } from "@/schemas/users.schema";
-import { useEffect, useState } from "react";
+import { type Users } from "@/schemas/users.schema";
+import { useState } from "react";
 import { getUserBalanceAction } from "@/actions/user/get-user-balance-action";
 import {
   type UserBalance,
@@ -24,32 +23,31 @@ import {
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PurchaseModal } from "@/components/purchase/purchase-modal";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import { get } from "http";
+import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
 
 export default function HomeUserHeader() {
   const router = useRouter();
   const { t } = useTranslation();
 
-  const [userData, setUserData] = useState<Users | null>(null);
-  const [userBalance, setUserBalance] = useState<UserBalance | null>(null);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
-  const { data: balance, isLoading } = useQuery({
-    queryKey: ["userBalance"],
-    queryFn: async () => {
-      return (await getUserBalanceAction()).data;
-    },
-  });
-  useEffect(() => {
-    getCurrentUserAction().then((response) => {
-      if (response.success && response.data) {
-        setUserData(UsersSchema.parse(response.data));
-      }
-    });
-    if (balance) {
-      setUserBalance(UserBalanceSchema.parse(balance));
-    }
-  }, [balance]);
 
+  const { data: userResponse } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: getCurrentUserAction,
+    refetchOnWindowFocus: false,
+  });
+  const userData = userResponse?.data;
+
+  const { data: balanceResponse, isLoading } = useQuery({
+    queryKey: ["userBalance"],
+    queryFn: getUserBalanceAction,
+    refetchOnWindowFocus: false,
+  });
+  const userBalance = balanceResponse?.data
+    ? UserBalanceSchema.parse(balanceResponse.data)
+    : null;
   const handleOpenPurchaseModal = () => {
     setIsPurchaseModalOpen(true);
   };

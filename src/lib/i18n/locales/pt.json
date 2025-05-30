@@ -468,12 +468,14 @@
       "predict": "Previsão",
       "deposit": "Compra",
       "exchange": "Troca",
+      "raffleticket": "Bilhete de Sorteio",
       "refund": "Reembolso"
     },
     "descriptions": {
       "reward": "Recompesa de CS2Bits",
       "predictGeneric": "Cobrança de CS2Bits",
-      "deposit": "Compra de CS2Bits"
+      "deposit": "Compra de CS2Bits",
+      "raffleTicket": "Compra de bilhete de sorteio"
     },
     "filter": {
       "all": "Todos"
@@ -736,18 +738,28 @@
     "subtitle": "Participe dos sorteios e ganhe skins incríveis do CS2",
     "active_raffles": "Sorteios Ativos",
     "recent_results": "Resultados Recentes",
+    "no_active_raffles_title": "Nenhum Sorteio Ativo",
     "no_active_raffles": "Nenhum sorteio ativo no momento",
-    "no_recent_results": "Nenhum resultado recente",
+    "no_recent_results_title": "Nenhum Resultado Recente",
+    "no_recent_results": "Ainda não há resultados de sorteios para exibir.",
     "error_title": "Erro ao carregar sorteios",
     "error_message": "Não foi possível carregar os sorteios. Tente novamente mais tarde.",
     "ticket_price": "Preço do bilhete",
     "buy_tickets": "Comprar Bilhetes",
     "ended": "Encerrado",
-    "ends_in_hours_minutes": "Termina em {{hours}}h {{minutes}}m",
-    "ends_in_minutes": "Termina em {{minutes}}m",
+    "ends_on": "Termina em",
     "winner": "Vencedor",
     "drawn_on": "Sorteado em",
     "closed": "Encerrado",
-    "view_result": "Ver Resultado"
+    "view_result": "Ver Resultado",
+    "insufficient_funds": "Saldo insuficiente para comprar bilhetes",
+    "raffle_not_found": "Sorteio não encontrado"
+  },
+  "skin": {
+    "FactoryNew": "Fábrica Nova",
+    "MinimalWear": "Pouco Usada",
+    "FieldTested": "Testada em Campo",
+    "WellWorn": "Bem Usada",
+    "BattleScarred": "Veterana de Guerra"
   }
 }

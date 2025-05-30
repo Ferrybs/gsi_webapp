@@ -1,16 +1,17 @@
 import { raffle_status_enum } from "@prisma/client";
 import { z } from "zod";
+import { decimalToNumber, stringToDate } from "./helper.schema";
 
 export const RaffleSchema = z.object({
   id: z.string().uuid(),
-  skin_id: z.number(),
-  ticket_price: z.string(),
+  skin_id: z.bigint(),
+  ticket_price: decimalToNumber,
   status: z.nativeEnum(raffle_status_enum),
   winner_user_id: z.string().uuid().nullable(),
-  drawn_at: z.string().nullable(),
-  end_at: z.string().refine((val) => !isNaN(Date.parse(val))),
-  created_at: z.string().refine((val) => !isNaN(Date.parse(val))),
-  updated_at: z.string().refine((val) => !isNaN(Date.parse(val))),
+  drawn_at: stringToDate.nullable(),
+  end_at: stringToDate,
+  created_at: stringToDate,
+  updated_at: stringToDate,
 });
 
 export type Raffle = z.infer<typeof RaffleSchema>;

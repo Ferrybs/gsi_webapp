@@ -35,7 +35,7 @@ export function UserProfile() {
     return <UserProfileSkeleton />;
   }
 
-  const user_roles = userData.user_roles.map((i) => i.role_name);
+  const user_roles = userData.user_roles?.map((i) => i.role_name);
   return (
     <div className="container py-8">
       <div className="grid gap-8">
@@ -44,7 +44,7 @@ export function UserProfile() {
           <div className="space-y-2">
             <h2 className="text-2xl font-bold">{userData.username}</h2>
             <p className="text-muted-foreground flex items-center gap-1">
-              {user_roles.includes(
+              {user_roles?.includes(
                 UserRoleSchema.shape.role_name.enum.Streamer,
               ) ? (
                 <>
@@ -81,7 +81,7 @@ export function UserProfile() {
                 <CardContent>
                   <div className="space-y-6">
                     <UserInfo userData={userData} />
-                    {user_roles.includes(
+                    {user_roles?.includes(
                       UserRoleSchema.shape.role_name.enum.Streamer,
                     ) ? (
                       <StreamerInfo userData={userData} />

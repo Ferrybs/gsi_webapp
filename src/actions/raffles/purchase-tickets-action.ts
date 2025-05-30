@@ -5,27 +5,87 @@ import {
   type PurchaseTicketsInput,
   PurchaseTicketsSchema,
 } from "@/schemas/raffle.schema";
+import { prisma } from "@/lib/prisma";
+import { raffle_status_enum, transaction_type } from "@prisma/client";
+import { getUserBalance } from "../user/get-user-balance";
+import { revalidatePath } from "next/cache";
 
 export async function purchaseTicketsAction(
   input: PurchaseTicketsInput,
 ): Promise<ActionResponse<{ tickets_purchased: number }>> {
   try {
-    // Validate input
-    const validatedInput = PurchaseTicketsSchema.parse(input);
-
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Mock user balance check (simulate insufficient funds 20% of the time)
-    const hasInsufficientFunds = Math.random() < 0.2;
-
-    if (hasInsufficientFunds) {
+    const balance = await getUserBalance();
+    if (!balance) {
       return {
         success: false,
-        error_message: "Insufficient balance to purchase tickets",
+        error_message: "error.user_not_authenticated",
+      };
+    }
+    const validatedInput = PurchaseTicketsSchema.parse(input);
+
+    const raffle = await prisma.raffles.findUnique({
+      where: {
+        id: validatedInput.raffle_id,
+        status: raffle_status_enum.active,
+      },
+    });
+
+    if (!raffle) {
+      return {
+        success: false,
+        error_message: "raffle.raffle_not_found",
+      };
+    }
+    const totalCost = raffle.ticket_price.mul(validatedInput.quantity);
+    if (totalCost.gt(balance.balance) || totalCost.lte(0)) {
+      return {
+        success: false,
+        error_message: "raffle.insufficient_funds",
       };
     }
 
+    await prisma.$transaction(async (tx) => {
+      // Update user balance
+      for (let i = 0; i < validatedInput.quantity; i++) {
+        const raffleTicket = await tx.raffle_tickets.create({
+          data: {
+            user_id: balance.user_id,
+            raffle_id: raffle.id,
+          },
+        });
+        await tx.user_balances.update({
+          where: {
+            user_id: balance.user_id,
+          },
+          data: {
+            balance: {
+              decrement: raffle.ticket_price,
+            },
+          },
+        });
+        const user_transaction = await tx.user_transactions.create({
+          data: {
+            user_id: balance.user_id,
+            amount: raffle.ticket_price.neg(),
+            type: transaction_type.RaffleTicket,
+            description: `Purchase raffle ${raffle.id} ticket`,
+          },
+        });
+        await tx.user_raffle_ticket_transactions.create({
+          data: {
+            user_transaction_id: user_transaction.id,
+            raffle_ticket_id: raffleTicket.id,
+          },
+        });
+        await tx.user_balance_transactions.create({
+          data: {
+            user_transaction_id: user_transaction.id,
+            user_balance_id: balance.user_id,
+          },
+        });
+      }
+    });
+    revalidatePath("/raffles");
     return {
       success: true,
       data: {
@@ -35,7 +95,7 @@ export async function purchaseTicketsAction(
   } catch (error) {
     return {
       success: false,
-      error_message: "Failed to purchase tickets",
+      error_message: "error.internal_error",
     };
   }
 }

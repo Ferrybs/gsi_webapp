@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { Ticket, Trophy } from "lucide-react";
 
 import { getAllRafflesAction } from "@/actions/raffles/get-all-raffles-action";
 import { RaffleCard } from "@/components/raffles/raffle-card";
@@ -11,6 +12,7 @@ import {
   RaffleCardSkeleton,
   ClosedRaffleItemSkeleton,
 } from "@/components/raffles/raffle-skeleton";
+import { getUserBalanceAction } from "@/actions/user/get-user-balance-action";
 
 export default function RafflesPage() {
   const { t } = useTranslation();
@@ -23,6 +25,12 @@ export default function RafflesPage() {
   } = useQuery({
     queryKey: ["raffles"],
     queryFn: getAllRafflesAction,
+  });
+
+  const { data: balanceResponse } = useQuery({
+    queryKey: ["userBalance"],
+    queryFn: getUserBalanceAction,
+    refetchOnWindowFocus: false,
   });
 
   const handleToggleExpansion = (raffleId: string) => {
@@ -65,6 +73,7 @@ export default function RafflesPage() {
               ? activeRaffles.map((raffle) => (
                   <RaffleCard
                     key={raffle.id}
+                    userBalance={balanceResponse?.data}
                     raffle={raffle}
                     isExpanded={expandedRaffleId === raffle.id}
                     onToggleExpansion={handleToggleExpansion}
@@ -73,8 +82,14 @@ export default function RafflesPage() {
               : null}
         </div>
         {!isLoading && activeRaffles.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">
+          <div className="flex flex-col items-center justify-self-center py-16 px-6">
+            <div className="bg-muted/30 rounded-full p-6 mb-4">
+              <Ticket className="h-12 w-12 text-muted-foreground/60" />
+            </div>
+            <h3 className="text-lg font-medium text-foreground mb-2">
+              {t("raffle.no_active_raffles_title")}
+            </h3>
+            <p className="text-muted-foreground text-center max-w-md">
               {t("raffle.no_active_raffles")}
             </p>
           </div>
@@ -100,8 +115,14 @@ export default function RafflesPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">
+          <div className="flex flex-col items-center justify-center py-16 px-6">
+            <div className="bg-muted/30 rounded-full p-6 mb-4">
+              <Trophy className="h-12 w-12 text-muted-foreground/60" />
+            </div>
+            <h3 className="text-lg font-medium text-foreground mb-2">
+              {t("raffle.no_recent_results_title")}
+            </h3>
+            <p className="text-muted-foreground t ext-center max-w-md">
               {t("raffle.no_recent_results")}
             </p>
           </div>
