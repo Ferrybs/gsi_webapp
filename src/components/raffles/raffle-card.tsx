@@ -56,8 +56,11 @@ export function RaffleCard({
 
   // Calculate the height of expanded content for smooth animation
   useEffect(() => {
-    if (expandedContentRef.current) {
-      setExpandedHeight(expandedContentRef.current.scrollHeight);
+    if (expandedContentRef.current && isExpanded) {
+      const height = expandedContentRef.current.scrollHeight;
+      setExpandedHeight(height);
+    } else {
+      setExpandedHeight(0);
     }
   }, [isExpanded, quantity]);
 
@@ -120,15 +123,29 @@ export function RaffleCard({
 
   return (
     <Card
-      className={`overflow-hidden transition-all duration-300 ${
-        isExpanded ? "shadow-lg ring-2 ring-primary/20" : "hover:shadow-md"
+      className={`overflow-hidden transition-all duration-300 border-2 ${
+        isExpanded ? "shadow-lg" : "hover:shadow-md"
       }`}
+      style={{
+        borderColor:
+          raffle.skin.exterior === "FactoryNew"
+            ? "#3b82f6"
+            : raffle.skin.exterior === "MinimalWear"
+              ? "#8b5cf6"
+              : raffle.skin.exterior === "FieldTested"
+                ? "#10b981"
+                : raffle.skin.exterior === "WellWorn"
+                  ? "#f59e0b"
+                  : raffle.skin.exterior === "BattleScarred"
+                    ? "#ef4444"
+                    : "#6b7280",
+      }}
     >
       <div className="flex flex-col h-full">
         {/* Card Content with Image and Info */}
         <CardContent className="p-0 flex-1 flex flex-col">
           {/* Image Section with Rarity Gradient Background */}
-          <div className="relative w-full h-32 overflow-hidden rounded-t-lg">
+          <div className="relative w-full h-32 overflow-hidden rounded-lg">
             {/* Base background */}
             <div className="absolute inset-0 bg-gradient-to-br from-background/50 to-muted/80"></div>
 
@@ -155,16 +172,13 @@ export function RaffleCard({
               />
             </div>
 
-            {/* Type badge */}
-            <Badge
-              className="absolute top-2 right-2 z-20 backdrop-blur-sm bg-background/80"
-              variant="secondary"
-            >
+            {/* Type badge with better visibility */}
+            <Badge className="absolute top-2 right-2 z-20 bg-black/80 text-white border-white/20 backdrop-blur-sm hover:bg-black/90">
               {raffle.skin.type}
             </Badge>
           </div>
 
-          {/* Info Section */}
+          {/* Info Section - Fixed content that doesn't expand */}
           <div className="p-3 flex-1 flex flex-col bg-gradient-to-b from-background to-background/95">
             <h3 className="font-medium text-sm mb-1 line-clamp-1">
               {raffle.skin.market_hash_name}
@@ -191,7 +205,7 @@ export function RaffleCard({
           </div>
         </CardContent>
 
-        {/* Card Footer */}
+        {/* Card Footer - Fixed content that doesn't expand */}
         <CardFooter className="p-3 pt-0 bg-gradient-to-b from-background/95 to-background">
           <Button
             className="w-full transition-all duration-200"
@@ -212,113 +226,112 @@ export function RaffleCard({
             )}
           </Button>
         </CardFooter>
-      </div>
 
-      {/* Purchase Expansion with Dynamic Height */}
-      <div
-        className="transition-all duration-300 ease-in-out overflow-hidden"
-        style={{
-          height: isExpanded ? `${expandedHeight}px` : "0px",
-          opacity: isExpanded ? 1 : 0,
-        }}
-      >
+        {/* Purchase Expansion - Only expands below the button */}
         <div
-          ref={expandedContentRef}
-          className="px-3 pb-3 bg-gradient-to-b from-background to-muted/20"
+          className="transition-all duration-300 ease-in-out overflow-hidden bg-gradient-to-b from-background to-muted/20"
+          style={{
+            height: isExpanded ? `${expandedHeight}px` : "0px",
+            opacity: isExpanded ? 1 : 0,
+          }}
         >
-          <Separator className="mb-3" />
+          <div ref={expandedContentRef} className="px-3 pb-3">
+            <Separator className="mb-3" />
 
-          {/* Balance and Price Info */}
-          <div className="bg-muted/50 backdrop-blur-sm rounded-lg p-2.5 mb-3 space-y-1.5 border border-border/50">
-            <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">
-                {t("purchase.ticket_price")}
-              </span>
-              <span className="font-medium">
-                {ticketPrice} {t("common.points")}
-              </span>
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">
-                {t("purchase.balance")}
-              </span>
-              <span className="font-medium text-green-600">
-                {userBalance} {t("common.points")}
-              </span>
-            </div>
-          </div>
-
-          {/* Quantity Selector */}
-          <div className="mb-3">
-            <label className="text-xs font-medium mb-1.5 block">
-              {t("purchase.quantity")}
-            </label>
-            <div className="flex items-center justify-center gap-3">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-7 w-7 rounded-full transition-all duration-200 hover:scale-105"
-                onClick={decrementQuantity}
-                disabled={quantity <= 1}
-                aria-label={t("purchase.decrease_quantity")}
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-
-              <div className="bg-background border rounded-lg px-3 py-1.5 min-w-[2.5rem] text-center font-semibold text-sm shadow-sm">
-                {quantity}
+            {/* Balance and Price Info */}
+            <div className="bg-muted/50 backdrop-blur-sm rounded-lg p-2.5 mb-3 space-y-1.5 border border-border/50">
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">
+                  {t("purchase.ticket_price")}
+                </span>
+                <span className="font-medium">
+                  {ticketPrice} {t("common.points")}
+                </span>
               </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-muted-foreground">
+                  {t("purchase.balance")}
+                </span>
+                <span className="font-medium text-green-600">
+                  {userBalance} {t("common.points")}
+                </span>
+              </div>
+            </div>
 
+            {/* Quantity Selector */}
+            <div className="mb-3">
+              <label className="text-xs font-medium mb-1.5 block">
+                {t("purchase.quantity")}
+              </label>
+              <div className="flex items-center justify-center gap-3">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-7 w-7 rounded-full transition-all duration-200 hover:scale-105"
+                  onClick={decrementQuantity}
+                  disabled={quantity <= 1}
+                  aria-label={t("purchase.decrease_quantity")}
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+
+                <div className="bg-background border rounded-lg px-3 py-1.5 min-w-[2.5rem] text-center font-semibold text-sm shadow-sm">
+                  {quantity}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-7 w-7 rounded-full transition-all duration-200 hover:scale-105"
+                  onClick={incrementQuantity}
+                  aria-label={t("purchase.increase_quantity")}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Total Cost */}
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-2.5 mb-3 backdrop-blur-sm">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-medium">
+                  {t("purchase.total")}
+                </span>
+                <span className="text-base font-bold text-primary">
+                  {totalPrice} {t("common.points")}
+                </span>
+              </div>
+            </div>
+
+            {/* Insufficient Balance Warning */}
+            {!canPurchase && userBalance < totalPrice && (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-2.5 mb-3 backdrop-blur-sm">
+                <p className="text-xs text-destructive font-medium">
+                  {t("purchase.insufficient_balance")}
+                </p>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
               <Button
                 variant="outline"
-                size="icon"
-                className="h-7 w-7 rounded-full transition-all duration-200 hover:scale-105"
-                onClick={incrementQuantity}
-                aria-label={t("purchase.increase_quantity")}
+                className="flex-1 text-xs py-2 transition-all duration-200 hover:bg-muted"
+                onClick={handleToggle}
               >
-                <Plus className="h-3 w-3" />
+                {t("common.cancel")}
+              </Button>
+              <Button
+                className="flex-1 text-xs py-2 transition-all duration-200 hover:shadow-md"
+                onClick={handlePurchase}
+                disabled={!canPurchase || purchaseMutation.isPending}
+                aria-busy={purchaseMutation.isPending}
+              >
+                {purchaseMutation.isPending
+                  ? t("purchase.processing")
+                  : t("purchase.confirm_purchase")}
               </Button>
             </div>
-          </div>
-
-          {/* Total Cost */}
-          <div className="bg-primary/5 border border-primary/20 rounded-lg p-2.5 mb-3 backdrop-blur-sm">
-            <div className="flex justify-between items-center">
-              <span className="text-xs font-medium">{t("purchase.total")}</span>
-              <span className="text-base font-bold text-primary">
-                {totalPrice} {t("common.points")}
-              </span>
-            </div>
-          </div>
-
-          {/* Insufficient Balance Warning */}
-          {!canPurchase && userBalance < totalPrice && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-2.5 mb-3 backdrop-blur-sm">
-              <p className="text-xs text-destructive font-medium">
-                {t("purchase.insufficient_balance")}
-              </p>
-            </div>
-          )}
-
-          {/* Action Buttons */}
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="flex-1 text-xs py-2 transition-all duration-200 hover:bg-muted"
-              onClick={handleToggle}
-            >
-              {t("common.cancel")}
-            </Button>
-            <Button
-              className="flex-1 text-xs py-2 transition-all duration-200 hover:shadow-md"
-              onClick={handlePurchase}
-              disabled={!canPurchase || purchaseMutation.isPending}
-              aria-busy={purchaseMutation.isPending}
-            >
-              {purchaseMutation.isPending
-                ? t("purchase.processing")
-                : t("purchase.confirm_purchase")}
-            </Button>
           </div>
         </div>
       </div>

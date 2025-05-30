@@ -1,10 +1,9 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { Trophy, Eye } from "lucide-react";
+import { Trophy } from "lucide-react";
 import Image from "next/image";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { RaffleWithSkin } from "@/actions/raffles/get-all-raffles-action";
@@ -79,10 +78,6 @@ export function ClosedRaffleItem({ raffle }: ClosedRaffleItemProps) {
             <Badge variant="outline" className="text-xs">
               {t("raffle.closed")}
             </Badge>
-            <Button variant="ghost" size="sm" className="h-7 text-xs">
-              <Eye className="h-3 w-3 mr-1" />
-              {t("raffle.view_result")}
-            </Button>
           </div>
         </div>
       </CardContent>

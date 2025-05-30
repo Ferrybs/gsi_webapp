@@ -26,12 +26,13 @@ export default function RafflesPage() {
   });
 
   const handleToggleExpansion = (raffleId: string) => {
+    // Only allow one card to be expanded at a time
     setExpandedRaffleId(expandedRaffleId === raffleId ? null : raffleId);
   };
 
   if (isError) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-[1200px]">
+      <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">{t("raffle.error_title")}</h1>
           <p className="text-muted-foreground">{t("raffle.error_message")}</p>
@@ -52,10 +53,10 @@ export default function RafflesPage() {
     );
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-[1200px]">
+    <div className="container mx-auto px-4 py-6 ">
       {/* Active Raffles */}
-      <section className="mb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <section className="mb-10 justify-items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 ">
           {isLoading
             ? Array.from({ length: 3 }).map((_, index) => (
                 <RaffleCardSkeleton key={index} />
