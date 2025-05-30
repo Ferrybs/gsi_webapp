@@ -63,7 +63,7 @@ export async function getAllRafflesAction(): Promise<
     // Mock raffles data
     const mockRaffles: RaffleWithSkin[] = [
       {
-        id: "550e8400-e29b-41d4-a716-446655440001",
+        id: "1",
         skin_id: 1,
         ticket_price: "100",
         status: "active",
@@ -75,7 +75,7 @@ export async function getAllRafflesAction(): Promise<
         skin: mockSkins[0],
       },
       {
-        id: "550e8400-e29b-41d4-a716-446655440002",
+        id: "2",
         skin_id: 2,
         ticket_price: "500",
         status: "active",
@@ -87,7 +87,7 @@ export async function getAllRafflesAction(): Promise<
         skin: mockSkins[1],
       },
       {
-        id: "550e8400-e29b-41d4-a716-446655440003",
+        id: "3",
         skin_id: 3,
         ticket_price: "250",
         status: "closed",
@@ -99,7 +99,7 @@ export async function getAllRafflesAction(): Promise<
         skin: mockSkins[2],
       },
       {
-        id: "550e8400-e29b-41d4-a716-446655440004",
+        id: "4",
         skin_id: 1,
         ticket_price: "100",
         status: "closed",
@@ -112,7 +112,7 @@ export async function getAllRafflesAction(): Promise<
         winner_username: "ProGamer123",
       },
       {
-        id: "550e8400-e29b-41d4-a716-446655440005",
+        id: "5",
         skin_id: 2,
         ticket_price: "500",
         status: "closed",
