@@ -34,9 +34,7 @@ import {
 import { TransactionType } from "@/schemas/user-transaction.schema";
 import { UserPayment } from "@/schemas/user-payment.schema";
 import { UserPrediction } from "@/schemas/prediction.schema";
-import i18next from "i18next";
-// React Query imports
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { PointPackage } from "@/schemas/point-package.schema";
 
 const getTransactionIcon = (type: TransactionType) => {
@@ -81,7 +79,7 @@ export function TransactionHistory() {
   // Estados apenas para filtro e página
   const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<TransactionType | undefined>(undefined);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   // React Query para buscar transações
   const { data, isLoading, isFetching } =

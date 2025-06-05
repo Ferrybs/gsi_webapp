@@ -7,7 +7,7 @@ import { MatchFilters, MatchFiltersSchema } from "@/schemas/matches.schema";
 import { Streamer, StreamerSchema } from "@/schemas/streamer.schema";
 import { ActionResponse } from "@/types/action-response";
 import { prisma } from "@/lib/prisma";
-import { stream_match_status } from "@prisma/client";
+import { map_name, stream_match_status } from "@prisma/client";
 import { Pagination } from "@/schemas/pagination.schema";
 import {
   StreamMatch,
@@ -25,14 +25,32 @@ type MatchesActionResponse = {
   pagination: Pagination;
 };
 
+type StreamMatchWhereInput = {
+  match_status?: stream_match_status | { in: stream_match_status[] };
+  matches?: MatchWhereInput;
+};
+
+type MatchWhereInput = {
+  started_at?: {
+    gte?: Date;
+    lte?: Date;
+  };
+  streamer_user_id?: {
+    in: string[];
+  };
+  map_name?: {
+    in: map_name[];
+  };
+};
+
 export async function getMatchesAction(
   filters: MatchFilters,
 ): Promise<ActionResponse<MatchesActionResponse>> {
   try {
     const validatedFilters = MatchFiltersSchema.parse(filters);
 
-    const streamMatchWhere: any = {};
-    const matchWhere: any = {};
+    const streamMatchWhere: StreamMatchWhereInput = {};
+    const matchWhere: MatchWhereInput = {};
 
     // Apply stream match status filter
     if (validatedFilters.status === stream_match_status.Live) {
@@ -70,7 +88,9 @@ export async function getMatchesAction(
     // Apply map filter to matches
     if (validatedFilters.mapIds && validatedFilters.mapIds.length > 0) {
       matchWhere.map_name = {
-        in: validatedFilters.mapIds,
+        in: validatedFilters.mapIds.map((mapId) => {
+          return map_name[mapId as keyof typeof map_name];
+        }),
       };
     }
 

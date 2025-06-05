@@ -32,7 +32,7 @@ export function useCurrentMatchData(streamerUserId: string) {
     } else {
       setMatchData(matchWebSocketData);
     }
-  }, [streamerUserId, matchWebSocketData]);
+  }, [streamerUserId, matchWebSocketData, matchData]);
 
   useEffect(() => {
     if (statsWebSocketData === null || statsData === null) {
@@ -45,7 +45,7 @@ export function useCurrentMatchData(streamerUserId: string) {
     } else {
       setStatsData(statsWebSocketData);
     }
-  }, [matchData, statsWebSocketData]);
+  }, [matchData, statsWebSocketData, statsData]);
 
   useEffect(() => {
     if (roundsWebSocketData === null || roundsData === null) {
@@ -67,7 +67,7 @@ export function useCurrentMatchData(streamerUserId: string) {
         setRoundsData([roundsWebSocketData]);
       }
     }
-  }, [statsData, roundsWebSocketData]);
+  }, [statsData, roundsWebSocketData, roundsData]);
 
   return { matchData, statsData, roundsData };
 }

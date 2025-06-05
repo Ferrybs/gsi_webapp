@@ -18,7 +18,6 @@ export async function validateTradeLinkAction(
     return { success: false, error_message: "error.invalid_trade_link" };
 
   const accountIdStr = match[1];
-  const token = match[2];
 
   const accountId = BigInt(accountIdStr);
   const steamId64 = (BASE_ID + accountId).toString();

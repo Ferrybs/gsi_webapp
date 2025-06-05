@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { processStripeWebhookPayment } from "@/actions/payments/process-stripe-webhook-payment";
-import stripe from "@/lib/stripe";
+import { stripe } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -17,12 +17,16 @@ export async function POST(request: NextRequest) {
       signature,
       webhookSecret,
     );
-  } catch (err: any) {
+  } catch (err) {
     console.warn(
       "⚠️ [StripeWebhook] signature verification failed:",
-      err.message,
+      err ?? "Unknown error",
     );
-    return NextResponse.json({ error: err.message }, { status: 400 });
+    let message = "Webhook signature verification failed";
+    if (err instanceof Error) {
+      message = err.message;
+    }
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
@@ -30,9 +34,12 @@ export async function POST(request: NextRequest) {
   try {
     const result = await processStripeWebhookPayment(session, event.type);
     console.log("✅ [StripeWebhook] processed:", result);
-  } catch (err: any) {
-    console.error("❌ [StripeWebhook] Error processing:", err.message);
-    message = err.message;
+  } catch (err) {
+    message = "Error processing Stripe webhook";
+    if (err instanceof Error) {
+      message = err.message;
+    }
+    console.error("❌ [StripeWebhook] Error processing:", message);
   }
 
   return NextResponse.json({ received: true, message }, { status: 200 });

@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { RaffleWithSkin } from "@/actions/raffles/get-all-raffles-action";
-import { formatDate, formatRelative } from "date-fns";
+import { formatRelative } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 interface ClosedRaffleItemProps {

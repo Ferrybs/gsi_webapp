@@ -30,25 +30,11 @@ import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { LucideIcon } from "lucide-react";
 
 interface RoundListProps {
   rounds: MatchPlayerRounds[];
   streamer: Streamer;
-}
-
-function formatTimestamp(date: Date): string {
-  const now = new Date();
-  const diffInMinutes = Math.floor(
-    (now.getTime() - date.getTime()) / (1000 * 60),
-  );
-
-  if (diffInMinutes < 1) return "Agora";
-  if (diffInMinutes < 60) return `${diffInMinutes}m atrás`;
-
-  const hours = Math.floor(diffInMinutes / 60);
-  if (hours < 24) return `${hours}h atrás`;
-
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
 function getRoundConclusionInfo(conclusionName: string | null, t: TFunction) {
@@ -60,7 +46,7 @@ function getRoundConclusionInfo(conclusionName: string | null, t: TFunction) {
     };
   const conclusionMap: Record<
     string,
-    { icon: any; color: string; label: string }
+    { icon: LucideIcon; color: string; label: string }
   > = {
     ct_win_defuse: {
       icon: Shield,
@@ -138,7 +124,9 @@ export function RoundList({ rounds, streamer }: RoundListProps) {
               >
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 text-xs text-muted-foreground">
                   <Clock size={14} />
-                  {formatDistance(round.created_at,round.updated_at,{locale: ptBR})}
+                  {formatDistance(round.created_at, round.updated_at, {
+                    locale: ptBR,
+                  })}
                 </div>
                 {/* Cabeçalho do round */}
                 <div className="flex items-center gap-2 mb-1">

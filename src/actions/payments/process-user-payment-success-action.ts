@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import stripe from "@/lib/stripe";
+import { stripe } from "@/lib/stripe";
 import { payment_status, user_payments } from "@prisma/client";
 import { CoinbaseTimelineStatusSchema } from "@/schemas/coinbase-payment-status.schema";
 import { coinbaseGetLastEvent } from "@/lib/utils";

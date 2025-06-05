@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { processUserPaymentSuccessAction } from "@/actions/payments/process-user-payment-success-action";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

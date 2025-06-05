@@ -21,9 +21,11 @@ export function formatMapName(keyOrValue: MapKey | string): string {
   }
 
   // If it's a display name, find the corresponding key
-  const entry = Object.entries(MapName).find(
-    ([_, value]) => value === keyOrValue,
-  );
+  const entry = Object.entries(MapName).find(([key, value]) => {
+    if (key) {
+      return value === keyOrValue;
+    }
+  });
   if (entry) {
     return entry[1];
   }
@@ -37,8 +39,10 @@ export function isValidMapKey(key: string): key is MapKey {
 }
 
 export function getMapKey(value: string): MapKey | undefined {
-  const entry = Object.entries(MapName).find(
-    ([_, mapValue]) => mapValue === value,
-  );
+  const entry = Object.entries(MapName).find(([key, mapValue]) => {
+    if (key && mapValue) {
+      return key === value;
+    }
+  });
   return entry ? (entry[0] as MapKey) : undefined;
 }

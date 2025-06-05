@@ -13,7 +13,7 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { useTranslation } from "react-i18next";
@@ -45,25 +45,30 @@ export function OtpModal({
     }
   }, [open]);
 
-  async function handleConfirm() {
+  const handleConfirm = useCallback(async () => {
     setIsSubmitting(true);
     setError(null);
     try {
       await onConfirm(code);
       onOpenChange(false);
-    } catch (err: any) {
-      setError(err?.message || t("error.error_confirming_otp"));
+    } catch (err) {
+      let errorMessage = t("error.error_confirming_otp");
+      if (err instanceof Error) {
+        console.error("Error confirming OTP:", err);
+        errorMessage = err.message;
+      }
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
-  }
+  }, [code, onConfirm, onOpenChange, t]);
 
   useEffect(() => {
     if (code.length === 6 && !isSubmitting) {
       setError(null);
       handleConfirm();
     }
-  }, [code]);
+  }, [code, handleConfirm, isSubmitting]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

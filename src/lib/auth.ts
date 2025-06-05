@@ -51,6 +51,9 @@ export function authOptions(
             avatar_url: user.image,
           },
         });
+        if (userData.user_status_name !== "Active") {
+          throw new Error("User is not active");
+        }
         const userBalance = await prisma.user_balances.findUnique({
           where: { user_id: userData.id },
         });

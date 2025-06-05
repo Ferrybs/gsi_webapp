@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import stripe from "@/lib/stripe";
+import { stripe } from "@/lib/stripe";
 import { createDefaultPayment } from "./create-default-payment";
 import {
   CreatePayment,

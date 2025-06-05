@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "next-auth/react";
 import { placeBetAction } from "@/actions/predictions/place-bet-action";
 import { PredictionOption } from "./prediction-option";
-import { Clock, Trophy, AlertCircle, AlertTriangle, Users } from "lucide-react";
+import { Clock, Trophy, AlertCircle, Users } from "lucide-react";
 import { toast } from "sonner";
 import { getUserBalanceAction } from "@/actions/user/get-user-balance-action";
 import {
@@ -25,7 +25,6 @@ import {
   type Prediction,
   type PredictionDetail,
 } from "@/schemas/prediction.schema";
-import { formatTimeSince } from "@/lib/utils";
 
 // shadcn form + zod
 import { z } from "zod";
@@ -38,7 +37,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { UserBalance, UserBalanceSchema } from "@/schemas/user-balance.schema";
+import { UserBalanceSchema } from "@/schemas/user-balance.schema";
 import { Streamer } from "@/schemas/streamer.schema";
 import { Skeleton } from "../ui/skeleton";
 import { getPredictionsDetailsAction } from "@/actions/predictions/get-predictions-details-action";
@@ -155,7 +154,7 @@ export function PredictionCard({
       setSelectedOptionLabel(null);
       form.reset({ amount: "" });
     }
-  }, [isOpen]);
+  }, [isOpen, form]);
 
   const handleSelectOption = (optionId: OptionLabel) => {
     if (!isOpen || !userBalance) return;
@@ -237,7 +236,11 @@ export function PredictionCard({
         <CardDescription>{t(`predictions.select_description`)}</CardDescription>
         <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
           <Clock size={14} />
-          <span>{formatDistance(prediction.created_at,new Date(),{locale: ptBR})}</span>
+          <span>
+            {formatDistance(prediction.created_at, new Date(), {
+              locale: ptBR,
+            })}
+          </span>
           {isOpen && !isRoundThresholdReached && (
             <>
               <span className="mx-1">•</span>

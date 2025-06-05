@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { formatMapName } from "@/types/map-name";
 import { Streamer } from "@/schemas/streamer.schema";
 import { MatchFilters } from "@/schemas/matches.schema";
+import Image from "next/image";
 
 interface MatchFiltersProps {
   filters: MatchFilters;
@@ -216,7 +217,7 @@ export function StreamMatchFilters({
                   htmlFor={`streamer-${streamer.id}`}
                   className="flex items-center gap-2 cursor-pointer flex-1"
                 >
-                  <img
+                  <Image
                     src={streamer.avatar_url || "/placeholder.svg"}
                     alt={streamer.username_id}
                     className="w-6 h-6 rounded-full"

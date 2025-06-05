@@ -1,7 +1,7 @@
 "use client";
 
 import { useSteamRedirect } from "@/hooks/use-user-redirect";
-import { Suspense, use } from "react";
+import { Suspense } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function CallbackPage() {

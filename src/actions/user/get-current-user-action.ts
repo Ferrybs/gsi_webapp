@@ -1,6 +1,4 @@
 "use server";
-import { prisma } from "@/lib/prisma";
-import { getServerSteamUser } from "@/lib/session";
 import { Users, UsersSchema } from "@/schemas/users.schema";
 import { ActionResponse } from "@/types/action-response";
 import { getCurrentUser } from "./get-current-user";

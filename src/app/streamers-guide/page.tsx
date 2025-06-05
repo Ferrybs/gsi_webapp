@@ -18,8 +18,6 @@ export default function StreamerGuidePage() {
         <StremersGuideBenefits />
         {/* How It Works Section */}
         <StreamerGuideHowItWorks />
-        {/* Success Stories */}
-        {/* <StremersGuideSuccess /> */}
         {/* CTA Section */}
         <StreamersGuideCTA />
       </main>

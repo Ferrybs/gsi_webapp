@@ -13,18 +13,13 @@ import { User, LogOut, Plus } from "lucide-react";
 import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import { Skeleton } from "../../ui/skeleton";
 import { useTranslation } from "react-i18next";
-import { type Users } from "@/schemas/users.schema";
 import { useState } from "react";
 import { getUserBalanceAction } from "@/actions/user/get-user-balance-action";
-import {
-  type UserBalance,
-  UserBalanceSchema,
-} from "@/schemas/user-balance.schema";
+import { UserBalanceSchema } from "@/schemas/user-balance.schema";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PurchaseModal } from "@/components/purchase/purchase-modal";
-import { useQueries, useQuery } from "@tanstack/react-query";
-import { get } from "http";
+import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
 
 export default function HomeUserHeader() {

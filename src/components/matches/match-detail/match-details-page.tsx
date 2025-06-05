@@ -25,9 +25,6 @@ export default function MatchDetailsPage({
   statsData,
   roundsData,
 }: MatchDetailsPageProps) {
-  if (!streamer) {
-    return <MatchDetailsLoading />;
-  }
   const [predictionsData, setPredictionsData] = useState<Prediction[]>([]);
 
   const {
@@ -51,6 +48,9 @@ export default function MatchDetailsPage({
     }
   }, [predictionsDataQuery, isFetching, isRefetching]);
 
+  if (!streamer) {
+    return <MatchDetailsLoading />;
+  }
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       {/* Coluna principal */}

@@ -19,9 +19,11 @@ export async function processStripeWebhookPayment(
   let newStatus: payment_status | null = null;
   switch (eventType) {
     case "checkout.session.completed":
-      session.payment_status === "paid"
-        ? (newStatus = "Completed")
-        : (newStatus = "Failed");
+      if (session.payment_status === "paid") {
+        newStatus = "Completed";
+      } else {
+        newStatus = "Failed";
+      }
       break;
     case "checkout.session.async_payment_succeeded":
       newStatus = "Completed";
@@ -30,9 +32,11 @@ export async function processStripeWebhookPayment(
       newStatus = "Failed";
       break;
     case "checkout.session.expired":
-      session.payment_status === "paid"
-        ? (newStatus = "Completed")
-        : (newStatus = "Canceled");
+      if (session.payment_status === "paid") {
+        newStatus = "Completed";
+      } else {
+        newStatus = "Canceled";
+      }
       break;
     default:
       newStatus = null;

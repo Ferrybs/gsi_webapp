@@ -6,14 +6,13 @@ import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ComputerIcon as Steam } from "lucide-react";
 import { useTranslation, Trans } from "react-i18next";
+import Link from "next/link";
 
 export function SteamSignIn() {
   const [isLoading, setIsLoading] = useState(false);
@@ -73,12 +72,12 @@ export function SteamSignIn() {
         <Trans
           i18nKey="signInPage.agreement"
           components={[
-            <a
+            <Link
               key="0"
               href="/legal/terms-of-use"
               className="underline hover:text-foreground"
             />,
-            <a
+            <Link
               key="1"
               href="/legal/privacy"
               className="underline hover:text-foreground"

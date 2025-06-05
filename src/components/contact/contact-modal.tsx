@@ -80,6 +80,7 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
           }, 2000);
         }
       } catch (error) {
+        console.error("Error submitting contact form:", error);
         setSubmitResult({
           success: false,
           error_message: "error.internal_error",

@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { JSX } from "react";
 
 interface BenefitsCardProps {
   title: string;

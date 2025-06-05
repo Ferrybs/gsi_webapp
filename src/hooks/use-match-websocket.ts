@@ -103,7 +103,7 @@ export function useMatchWebSocket(streamerUserId: string) {
         setInterval(() => location.reload(), 4000);
       }
     });
-  }, [wssToken, streamerUserId]);
+  }, [wssToken, streamerUserId, qc, t]);
 
   return {
     matchWebSocketData,

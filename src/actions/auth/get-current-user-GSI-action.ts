@@ -12,13 +12,13 @@ interface StreamerGSIAuth {
   avatar: string;
   roles: string[];
   token: string;
-  valid_until: Number;
+  valid_until: number;
 }
 
 export async function getCurrentUserGSIAction(
   authToken?: string,
 ): Promise<ActionResponse<StreamerGSIAuth>> {
-  var user: Users | null = null;
+  let user: Users | null = null;
   if (!authToken) {
     user = await getCurrentUser();
   } else {

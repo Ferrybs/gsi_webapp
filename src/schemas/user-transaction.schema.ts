@@ -1,10 +1,4 @@
-import {
-  currency,
-  option_label,
-  payment_provider,
-  payment_status,
-  transaction_type,
-} from "@prisma/client";
+import { transaction_type } from "@prisma/client";
 import { z } from "zod";
 import { decimalToNumber, stringToDate } from "./helper.schema";
 

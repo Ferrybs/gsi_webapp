@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { getStreamerByUsernameAction } from "@/actions/streamer/get-streamer-by-username-action";
 import { Suspense } from "react";
 import StreamMatch from "@/components/matches/match-detail/stream-match";
@@ -9,10 +9,9 @@ interface MatchPageProps {
   params: Promise<{ streamer: string }>;
 }
 
-export async function generateMetadata(
-  { params }: MatchPageProps,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: MatchPageProps): Promise<Metadata> {
   const { streamer: streamerUsername } = await params;
   const streamer = await getStreamerByUsernameAction(streamerUsername);
   if (!streamer) {

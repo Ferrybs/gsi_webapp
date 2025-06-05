@@ -1,8 +1,14 @@
 import { z } from "zod";
 
 export const decimalToNumber = z.preprocess((val) => {
-  if (val != null && typeof (val as any).toNumber === "function") {
-    return (val as any).toNumber();
+  if (
+    val != null &&
+    typeof val === "object" &&
+    val !== null &&
+    "toNumber" in val &&
+    typeof (val as { toNumber: unknown }).toNumber === "function"
+  ) {
+    return (val as { toNumber: () => number }).toNumber();
   }
   if (typeof val === "string" && !isNaN(Number(val))) {
     return Number(val);

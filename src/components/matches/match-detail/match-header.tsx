@@ -8,7 +8,7 @@ import {
   Skull,
   Target,
 } from "lucide-react";
-import { cn, formatTimeSince } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -226,7 +226,11 @@ export function MatchHeader({
                     label={t("match.duration")}
                     value={
                       <span className="font-medium">
-                        {formatDistance(matchData.started_at,matchData.ended_at || new Date(),{locale: ptBR})}
+                        {formatDistance(
+                          matchData.started_at,
+                          matchData.ended_at || new Date(),
+                          { locale: ptBR },
+                        )}
                       </span>
                     }
                   />

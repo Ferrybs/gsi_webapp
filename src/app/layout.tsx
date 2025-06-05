@@ -1,7 +1,6 @@
 // app/layout.tsx
 
 import "./globals.css";
-import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import { SessionWrapper } from "@/components/providers/session-wrapper";
 import { ThemeProvider } from "@/components/theme/theme-provider";
@@ -14,8 +13,6 @@ import HomeHeader from "@/components/home/layout/home-header";
 import { cookies } from "next/headers";
 import { Toaster } from "sonner";
 import HomeFooter from "@/components/home/layout/home-footer";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "CS2 Bits - Challenge. Predict. Engage.",

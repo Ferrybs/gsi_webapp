@@ -9,6 +9,7 @@ import { prisma } from "@/lib/prisma";
 import { raffle_status_enum, transaction_type } from "@prisma/client";
 import { getUserBalance } from "../user/get-user-balance";
 import { revalidatePath } from "next/cache";
+import { ActionError } from "@/types/action-error";
 
 export async function purchaseTicketsAction(
   input: PurchaseTicketsInput,
@@ -93,6 +94,13 @@ export async function purchaseTicketsAction(
       },
     };
   } catch (error) {
+    console.error("Error purchasing raffle tickets:", error);
+    if (error instanceof ActionError) {
+      return {
+        success: false,
+        error_message: error.message,
+      };
+    }
     return {
       success: false,
       error_message: "error.internal_error",
