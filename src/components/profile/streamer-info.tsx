@@ -87,7 +87,7 @@ export function StreamerInfo({ userData }: { userData: Users }) {
           </FormLabel>
           <FormControl>
             <div className="flex flex-col gap-3">
-              {streamerData.stream_urls.map((urls, idx) => (
+              {streamerData.stream_urls?.map((urls, idx) => (
                 <div key={urls.url + idx} className="flex items-center gap-3">
                   {urls.stream_provider_name === "twitch" && (
                     <FaTwitch className="h-5 w-5 text-purple-500" />

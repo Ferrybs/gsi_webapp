@@ -105,7 +105,10 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col p-0">
+      <DialogContent
+        className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col p-0"
+        title=""
+      >
         <DialogHeader className="p-6 pb-2">
           <DialogTitle className="text-2xl font-bold text-center">
             {t("purchase.title")}

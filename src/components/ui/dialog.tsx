@@ -49,8 +49,8 @@ function DialogOverlay({
 function DialogContent({
   className,
   children,
-  title,
-  hideTitle = false,
+  title = "",
+  hideTitle = true,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   title: string;

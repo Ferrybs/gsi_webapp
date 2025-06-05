@@ -542,7 +542,8 @@
     "point_package_limit_reached": "Limite de pacotes de pontos atingido, não é possível comprar mais",
     "bet_amount_too_low": "Valor da aposta muito baixo",
     "bet_amount_too_high": "Valor da aposta muito alto",
-    "stream_match_not_found": "Partida não encontrada"
+    "stream_match_not_found": "Partida não encontrada",
+    "fetching_stream_match_details": "Erro ao carregar a partida"
   },
   "match": {
     "offline": "OFFLINE",

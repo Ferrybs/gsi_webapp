@@ -1,9 +1,8 @@
 "use server";
 import { Streamer, StreamerSchema } from "@/schemas/streamer.schema";
-import { MatchFilters } from "./matches";
 import { ActionResponse } from "@/types/action-response";
 import { prisma } from "@/lib/prisma";
-import { MatchFiltersSchema } from "@/schemas/matches.schema";
+import { MatchFilters, MatchFiltersSchema } from "@/schemas/matches.schema";
 import { user_status } from "@prisma/client";
 
 type MatchesStreamersResponse = {

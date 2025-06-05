@@ -76,10 +76,8 @@ export async function getStreamMatchDetailsAction(
 
     // Return null values on error
     return {
-      streamer: null,
-      matchData: null,
-      statsData: null,
-      roundsData: null,
+      error_message: "error.fetching_stream_match_details",
+      success: false,
     };
   }
 }

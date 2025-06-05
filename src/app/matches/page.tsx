@@ -6,11 +6,11 @@ import { useTranslation } from "react-i18next";
 import { stream_match_status } from "@prisma/client";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getStreamers, MatchFilters } from "@/actions/matches/matches";
 import { StreamMatchFilters } from "@/components/matches/components/match-filters";
 import { MatchCardList } from "@/components/matches/components/match-card-list";
 import { getMatchesAction } from "@/actions/matches/get-matches-action";
 import { getMatchesStreamersAction } from "@/actions/matches/get-matches-streamers-action";
+import { MatchFilters } from "@/schemas/matches.schema";
 
 export default function MatchesPage() {
   const { t } = useTranslation();

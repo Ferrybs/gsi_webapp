@@ -99,7 +99,7 @@ export function ContactModal({ open, onOpenChange }: ContactModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" title={t("contact.title")}>
         <DialogHeader>
           <DialogTitle>{t("contact.title")}</DialogTitle>
           <DialogDescription>{t("contact.description")}</DialogDescription>
