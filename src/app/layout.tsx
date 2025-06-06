@@ -15,7 +15,7 @@ import { Toaster } from "sonner";
 import HomeFooter from "@/components/home/layout/home-footer";
 
 export const metadata: Metadata = {
-  title: "CS2 Bits - Challenge. Predict. Engage.",
+  title: "CS2 Bits",
   description:
     "Uma nova forma de viver o CS2. Aposte, desafie e interaja enquanto assiste seu streamer favorito.",
 };
