@@ -21,11 +21,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import createPaymentAction from "@/actions/payments/create-payment-action";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { StripePaymentForm } from "./stripe-payment-form";
+import { PaymentMethodSelector } from "./payment-method-selector";
+import cancelUserPaymentAction from "@/actions/payments/cancel-user-payment-action";
+import { useQueryClient } from "@tanstack/react-query";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 interface PurchaseModalProps {
   isOpen: boolean;
@@ -34,14 +42,20 @@ interface PurchaseModalProps {
 
 export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
   const { t } = useTranslation();
+  const qc = useQueryClient();
   const [packages, setPackages] = useState<PointPackage[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<PointPackage | null>(
-    null,
+    null
   );
   const [paymentMethod, setPaymentMethod] = useState<"Stripe" | "Coinbase">(
-    "Stripe",
+    "Stripe"
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(
+    null
+  );
+  const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [showStripeForm, setShowStripeForm] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -53,7 +67,7 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
     const pointPackages = await getPointPackagesAction();
     setPackages(pointPackages);
     if (pointPackages.length > 0) {
-      setSelectedPackage(null); // Start with no package selected
+      setSelectedPackage(null);
     }
   };
 
@@ -87,12 +101,20 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
       const result = await createPaymentAction(paymentData);
 
       if (result.success && result.data) {
-        window.location.href = result.data.url;
+        if (result.data.provider === "Coinbase" && result.data.url) {
+          window.location.href = result.data.url;
+        }
+
+        if (result.data.provider === "Stripe" && result.data.clientSecret) {
+          setStripeClientSecret(result.data.clientSecret);
+          setPaymentId(result.data.paymentId);
+          setShowStripeForm(true);
+        }
       } else {
         toast.error(
           result.error_message
             ? t(result.error_message)
-            : t("purchase.payment_error"),
+            : t("purchase.payment_error")
         );
       }
     } catch (error) {
@@ -103,8 +125,41 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
     }
   };
 
+  const handleStripeSuccess = () => {
+    toast.success(t("payment.processed_successfully"));
+    onClose();
+    qc.invalidateQueries({ queryKey: ["userBalance"] });
+  };
+
+  const handleStripeCancel = () => {
+    setShowStripeForm(false);
+    setStripeClientSecret(null);
+    setPaymentId(null);
+  };
+
+  const onOpenChange = async (open: boolean) => {
+    if (!open) {
+      if (paymentId) {
+        const result = await cancelUserPaymentAction(paymentId);
+        if (result.success) {
+          toast.success(t("payment.cancelled_description"));
+        } else {
+          toast.error(
+            t(result.error_message || "purchase.payment_cancellation_failed")
+          );
+        }
+      }
+      onClose();
+      setSelectedPackage(null);
+      setPaymentMethod("Stripe");
+      setStripeClientSecret(null);
+      setPaymentId(null);
+      setShowStripeForm(false);
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
         className="sm:max-w-[900px] max-h-[90vh] overflow-hidden flex flex-col p-0"
         title=""
@@ -189,92 +244,118 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
 
           {/* Payment Methods - Right Side */}
           <div className="md:w-2/5 p-6 overflow-y-auto">
-            <h3 className="text-lg font-medium mb-4">
-              {t("purchase.payment_method")}
-            </h3>
+            {!showStripeForm ? (
+              <>
+                <PaymentMethodSelector
+                  selected={
+                    paymentMethod.toLowerCase() as "stripe" | "coinbase"
+                  }
+                  onSelect={(method) =>
+                    setPaymentMethod(
+                      method === "stripe" ? "Stripe" : "Coinbase"
+                    )
+                  }
+                />
 
-            <RadioGroup
-              value={paymentMethod}
-              onValueChange={(value) =>
-                setPaymentMethod(value as "Stripe" | "Coinbase")
-              }
-              className="space-y-4 mb-6"
-            >
-              <div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem
-                    value="Stripe"
-                    id="Stripe"
-                    disabled={selectedPackage?.currency === "USDC"}
-                  />
-                  <Label htmlFor="Stripe" className="font-medium">
-                    {t("purchase.credit_card")}
-                  </Label>
-                </div>
-                <div className="pl-6 mt-2 text-sm text-muted-foreground">
-                  {t("purchase.credit_card_description")}
-                </div>
-              </div>
+                {selectedPackage && (
+                  <div className="mt-6 p-4 bg-muted/30 rounded-lg">
+                    <h4 className="font-medium mb-2">
+                      {t("purchase.summary")}
+                    </h4>
+                    <div className="flex justify-between mb-1">
+                      <span>{t("purchase.selected_package")}:</span>
+                      <span className="font-bold">
+                        {formatCurrency(selectedPackage.points_amount)}
+                      </span>
+                    </div>
 
-              <div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Coinbase" id="Coinbase" />
-                  <Label htmlFor="Coinbase" className="font-medium">
-                    {t("purchase.crypto_usdc")}
-                  </Label>
-                </div>
-                <div className="pl-6 mt-2 text-sm text-muted-foreground">
-                  {t("purchase.crypto_description")}
-                </div>
-              </div>
-            </RadioGroup>
+                    {selectedPackage.bonus_points > 0 && (
+                      <div className="flex justify-between mb-1 text-green-500">
+                        <span>{t("purchase.package_bonus")}:</span>
+                        <span>
+                          +{formatCurrency(selectedPackage.bonus_points)}
+                        </span>
+                      </div>
+                    )}
 
-            {selectedPackage && (
-              <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-                <h4 className="font-medium mb-2">{t("purchase.summary")}</h4>
-                <div className="flex justify-between mb-1">
-                  <span>{t("purchase.selected_package")}:</span>
-                  <span className="font-bold">
-                    {formatCurrency(selectedPackage.points_amount)}
-                  </span>
-                </div>
-
-                {selectedPackage.bonus_points > 0 && (
-                  <div className="flex justify-between mb-1 text-green-500">
-                    <span>{t("purchase.package_bonus")}:</span>
-                    <span>+{formatCurrency(selectedPackage.bonus_points)}</span>
+                    <div className="border-t border-border mt-2 pt-2 flex justify-between font-bold">
+                      <span>{t("purchase.total_price")}:</span>
+                      <span>
+                        {formatPrice(
+                          selectedPackage.price,
+                          selectedPackage.currency
+                        )}
+                      </span>
+                    </div>
                   </div>
                 )}
 
-                <div className="border-t border-border mt-2 pt-2 flex justify-between font-bold">
-                  <span>{t("purchase.total_price")}:</span>
-                  <span>
-                    {formatPrice(
-                      selectedPackage.price,
-                      selectedPackage.currency,
-                    )}
-                  </span>
-                </div>
-              </div>
-            )}
+                <Button
+                  onClick={handlePurchase}
+                  className="w-full mt-6 py-6 text-lg"
+                  disabled={isLoading || !selectedPackage}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      {t("purchase.processing")}
+                    </>
+                  ) : (
+                    <>
+                      {t("purchase.proceed_to_payment")}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </>
+                  )}
+                </Button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-lg font-medium mb-4">
+                  {t("purchase.complete_payment")}
+                </h3>
 
-            <Button
-              onClick={handlePurchase}
-              className="w-full mt-6 py-6 text-lg"
-              disabled={isLoading || !selectedPackage}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  {t("purchase.processing")}
-                </>
-              ) : (
-                <>
-                  {t("purchase.proceed_to_payment")}
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </>
-              )}
-            </Button>
+                {selectedPackage && (
+                  <div className="mb-6 p-4 bg-muted/30 rounded-lg">
+                    <div className="flex justify-between mb-1">
+                      <span>{t("purchase.package")}:</span>
+                      <span className="font-bold">
+                        {formatCurrency(selectedPackage.points_amount)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between font-bold">
+                      <span>{t("purchase.total")}:</span>
+                      <span>
+                        {formatPrice(
+                          selectedPackage.price,
+                          selectedPackage.currency
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {stripeClientSecret && paymentId && (
+                  <Elements
+                    stripe={stripePromise}
+                    options={{
+                      clientSecret: stripeClientSecret,
+                      appearance: {
+                        theme: "night" as const,
+                        variables: {
+                          colorPrimary: "#6366f1", // Primary color
+                        },
+                      },
+                    }}
+                  >
+                    <StripePaymentForm
+                      paymentId={paymentId}
+                      onSuccess={handleStripeSuccess}
+                      onCancel={handleStripeCancel}
+                    />
+                  </Elements>
+                )}
+              </>
+            )}
           </div>
         </div>
       </DialogContent>

@@ -9,10 +9,12 @@ import {
 } from "@/schemas/handle-payment.schema";
 import { ActionError } from "@/types/action-error";
 import { Users } from "@/schemas/users.schema";
+import { updateUserPaymentStatus } from "./update-user-payment-status";
+import { payment_provider } from "@prisma/client";
 
 export async function createStripePayment(
   user: Users,
-  data: CreatePayment,
+  data: CreatePayment
 ): Promise<CreatePaymentResponse> {
   try {
     const { payment, pointPackage } = await createDefaultPayment(user, data);
@@ -23,30 +25,24 @@ export async function createStripePayment(
     const stripeCurrency = pointPackage.currency.toLowerCase();
 
     // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price_data: {
-            currency: stripeCurrency,
-            product_data: {
-              name: `${pointPackage.name} - ${pointPackage.points_amount} CS2Bits`,
-              description: `${pointPackage.bonus_points.gt(0) ? `+${pointPackage.bonus_points} bonus points` : "No bonus points"}`,
-            },
-            unit_amount_decimal: pointPackage.price.mul(100).toString(),
-          },
-          quantity: 1,
-        },
-      ],
-      allow_promotion_codes: true,
-      mode: "payment",
-      success_url: `${process.env.NEXTAUTH_URL}/payment/success?payment_id=${payment.id}`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/payment/cancel?payment_id=${payment.id}`,
+    const session = await stripe.paymentIntents.create({
+      amount: pointPackage.price.mul(100).toNumber(),
+      currency: stripeCurrency,
       metadata: {
         payment_id: payment.id,
         user_id: user.id,
       },
+      automatic_payment_methods: {
+        enabled: true,
+      },
     });
-
+    if (!session.client_secret) {
+      await updateUserPaymentStatus({
+        paymentId: payment.id,
+        paymentStatus: "Failed",
+      });
+      throw new ActionError("error.stripe_session_creation_failed");
+    }
     await prisma.user_payments.update({
       where: {
         id: payment.id,
@@ -56,10 +52,11 @@ export async function createStripePayment(
       },
     });
 
-    if (!session.url) {
-      throw new ActionError("error.stripe_session_creation_failed");
-    }
-    return { url: session.url, paymentId: payment.id };
+    return {
+      provider: payment_provider.Stripe,
+      clientSecret: session.client_secret ?? undefined,
+      paymentId: payment.id,
+    };
   } catch (error) {
     console.error("Error creating Stripe payment:", error);
     if (error instanceof ActionError) {

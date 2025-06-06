@@ -15,12 +15,12 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(
       Buffer.from(buf),
       signature,
-      webhookSecret,
+      webhookSecret
     );
   } catch (err) {
     console.warn(
       "⚠️ [StripeWebhook] signature verification failed:",
-      err ?? "Unknown error",
+      err ?? "Unknown error"
     );
     let message = "Webhook signature verification failed";
     if (err instanceof Error) {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const session = event.data.object as Stripe.Checkout.Session;
+  const session = event.data.object as Stripe.PaymentIntent;
   let message = "";
   try {
     const result = await processStripeWebhookPayment(session, event.type);

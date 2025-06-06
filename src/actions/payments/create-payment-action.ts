@@ -1,6 +1,6 @@
 "use server";
 
-import { payment_provider, payment_status } from "@prisma/client";
+import { currency, payment_provider, payment_status } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { ActionResponse } from "@/types/action-response";
 import {
@@ -13,7 +13,7 @@ import { createStripePayment } from "./create-stripe-payment";
 import { getCurrentUser } from "../user/get-current-user";
 
 export default async function createPaymentAction(
-  data: CreatePayment,
+  data: CreatePayment
 ): Promise<ActionResponse<CreatePaymentResponse>> {
   try {
     const user = await getCurrentUser();
@@ -66,14 +66,28 @@ export default async function createPaymentAction(
       }
     }
 
-    let result: CreatePaymentResponse | null = null;
     if (
-      point_package.currency === "USDC" ||
-      dataParsed.provider === payment_provider.Coinbase
+      point_package.currency === currency.USDC &&
+      dataParsed.provider !== payment_provider.Coinbase
     ) {
-      result = await createCoinbasePayment(user, dataParsed);
-    } else {
-      result = await createStripePayment(user, dataParsed);
+      return {
+        success: false,
+        error_message: "error.payment_creation_failed",
+      };
+    }
+    let result: CreatePaymentResponse | null = null;
+    switch (dataParsed.provider) {
+      case payment_provider.Stripe:
+        result = await createStripePayment(user, dataParsed);
+        break;
+      case payment_provider.Coinbase:
+        result = await createCoinbasePayment(user, dataParsed);
+        break;
+      default:
+        return {
+          success: false,
+          error_message: "error.payment_creation_failed",
+        };
     }
     if (!result) {
       return {

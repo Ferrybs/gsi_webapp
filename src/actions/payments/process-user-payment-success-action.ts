@@ -2,7 +2,11 @@
 
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
-import { payment_status, user_payments } from "@prisma/client";
+import {
+  payment_provider,
+  payment_status,
+  user_payments,
+} from "@prisma/client";
 import { CoinbaseTimelineStatusSchema } from "@/schemas/coinbase-payment-status.schema";
 import { coinbaseGetLastEvent } from "@/lib/utils";
 import paymentStatusChangedEvent from "../stream/payment-status-changed-event";
@@ -13,7 +17,7 @@ import { ActionError } from "@/types/action-error";
 import { getCurrentUser } from "../user/get-current-user";
 
 export async function processUserPaymentSuccessAction(
-  paymentId: string,
+  paymentId: string
 ): Promise<ActionResponse<ProcessPaymentResponse>> {
   try {
     const user = await getCurrentUser();
@@ -50,12 +54,12 @@ export async function processUserPaymentSuccessAction(
     let paymentStatus: payment_status;
 
     switch (payment.provider) {
-      case "Stripe":
+      case payment_provider.Stripe:
         paymentStatus = await processStripePaymentSuccessAction(
-          payment.provider_transaction_id,
+          payment.provider_transaction_id
         );
         break;
-      case "Coinbase":
+      case payment_provider.Coinbase:
         paymentStatus = await processCoinbasePaymentSuccessAction(payment);
         break;
     }
@@ -91,12 +95,18 @@ export async function processUserPaymentSuccessAction(
 }
 
 async function processStripePaymentSuccessAction(sessionID: string) {
-  const session = await stripe.checkout.sessions.retrieve(sessionID);
+  const session = await stripe.paymentIntents.retrieve(sessionID);
 
-  if (!session || session.payment_status !== "paid") {
+  if (!session) {
     return "Failed";
   }
-  return "Completed";
+  if (session.status === "canceled") {
+    return "Canceled";
+  }
+  if (session.status === "succeeded") {
+    return "Completed";
+  }
+  return "Processing";
 }
 
 async function processCoinbasePaymentSuccessAction(payment: user_payments) {
@@ -108,7 +118,7 @@ async function processCoinbasePaymentSuccessAction(payment: user_payments) {
         "X-CC-Api-Key": process.env.COINBASE_API_KEY!,
         "X-CC-Version": "2018-03-22",
       },
-    },
+    }
   );
 
   const json = await response.json();

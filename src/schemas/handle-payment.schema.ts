@@ -9,7 +9,9 @@ export const CreatePaymentSchema = z.object({
 export type CreatePayment = z.infer<typeof CreatePaymentSchema>;
 
 export const CreatePaymentResponseSchema = z.object({
-  url: z.string(),
+  url: z.string().optional(),
+  clientSecret: z.string().optional(),
+  provider: z.nativeEnum(payment_provider),
   paymentId: z.string(),
 });
 

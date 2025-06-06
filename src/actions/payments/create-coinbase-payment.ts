@@ -10,10 +10,11 @@ import {
 import { ActionError } from "@/types/action-error";
 import { updateUserPaymentStatus } from "./update-user-payment-status";
 import { Users } from "@/schemas/users.schema";
+import { payment_provider } from "@prisma/client";
 
 export async function createCoinbasePayment(
   user: Users,
-  data: CreatePayment,
+  data: CreatePayment
 ): Promise<CreatePaymentResponse> {
   try {
     const { payment, pointPackage } = await createDefaultPayment(user, data);
@@ -44,12 +45,12 @@ export async function createCoinbasePayment(
           "X-CC-Version": "2018-03-22",
           "X-CC-Api-Key": process.env.COINBASE_API_KEY!,
         },
-      },
+      }
     );
     if (!coinbaseResponse.ok) {
       console.error(
         "Failed to create Coinbase payment",
-        await coinbaseResponse.json(),
+        await coinbaseResponse.json()
       );
       await updateUserPaymentStatus({
         paymentId: payment.id,
@@ -59,7 +60,7 @@ export async function createCoinbasePayment(
     }
     const coinbaseData = await coinbaseResponse.json();
     const coinBasePaymentStatus = CoinbaseTimelineStatusSchema.safeParse(
-      coinbaseData.data,
+      coinbaseData.data
     );
 
     if (!coinBasePaymentStatus.success) {
@@ -82,6 +83,7 @@ export async function createCoinbasePayment(
 
     return {
       url: coinBasePaymentStatus.data.hosted_url,
+      provider: payment_provider.Coinbase,
       paymentId: payment.id,
     };
   } catch (error) {

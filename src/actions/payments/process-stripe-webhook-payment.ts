@@ -6,8 +6,8 @@ import { payment_status } from "@prisma/client";
 import paymentStatusChangedEvent from "../stream/payment-status-changed-event";
 
 export async function processStripeWebhookPayment(
-  session: Stripe.Checkout.Session,
-  eventType: string,
+  session: Stripe.PaymentIntent,
+  eventType: string
 ) {
   const payment = await prisma.user_payments.findFirst({
     where: { provider_transaction_id: session.id },
@@ -18,25 +18,14 @@ export async function processStripeWebhookPayment(
 
   let newStatus: payment_status | null = null;
   switch (eventType) {
-    case "checkout.session.completed":
-      if (session.payment_status === "paid") {
-        newStatus = "Completed";
-      } else {
-        newStatus = "Failed";
-      }
-      break;
-    case "checkout.session.async_payment_succeeded":
+    case "payment_intent.succeeded":
       newStatus = "Completed";
       break;
-    case "checkout.session.async_payment_failed":
-      newStatus = "Failed";
+    case "payment_intent.requires_action":
+      newStatus = "Processing";
       break;
-    case "checkout.session.expired":
-      if (session.payment_status === "paid") {
-        newStatus = "Completed";
-      } else {
-        newStatus = "Canceled";
-      }
+    case "payment_intent.payment_failed":
+      newStatus = "Failed";
       break;
     default:
       newStatus = null;
