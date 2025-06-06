@@ -5,7 +5,6 @@ import {
   useStripe,
   useElements,
   PaymentElement,
-  ExpressCheckoutElement,
 } from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
@@ -13,6 +12,8 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { processUserPaymentSuccessAction } from "@/actions/payments/process-user-payment-success-action";
 import cancelUserPaymentAction from "@/actions/payments/cancel-user-payment-action";
+import { useQuery } from "@tanstack/react-query";
+import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
 
 interface StripePaymentFormProps {
   paymentId: string;
@@ -30,9 +31,17 @@ export function StripePaymentForm({
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
-  const onConfirmExpressCheckout = async () => {
-    handleInternalConfirm();
-  };
+  const { data: user } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const response = await getCurrentUserAction();
+      if (response.success) {
+        return response.data;
+      }
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: false,
+  });
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     handleInternalConfirm();
@@ -107,12 +116,29 @@ export function StripePaymentForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <ExpressCheckoutElement
+      {/* <ExpressCheckoutElement
         onConfirm={onConfirmExpressCheckout}
         onCancel={handleCancel}
       />
-      <PaymentElement id="payment-element" options={{ layout: "accordion" }} />
-
+      <LinkAuthenticationElement
+        options={{ defaultValues: { email: user?.email ?? "" } }}
+      /> */}
+      <PaymentElement
+        id="payment-element"
+        options={{
+          defaultValues: {
+            billingDetails: {
+              email: user?.email ?? "",
+            },
+          },
+          wallets: {
+            googlePay: "auto",
+            applePay: "auto",
+            link: "auto",
+          },
+          layout: "accordion",
+        }}
+      />
       <div className="flex space-x-3">
         <Button
           type="button"
