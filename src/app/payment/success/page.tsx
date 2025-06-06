@@ -10,14 +10,6 @@ import { PaymentStatus } from "@/schemas/user-payment.schema";
 import { useTranslation } from "react-i18next";
 import { getUserPaymentDataAction } from "@/actions/payments/get-user-payment-data-action";
 import { ProcessPaymentResponse } from "@/schemas/handle-payment.schema";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "CS2 Bits - Pagamento Concluído",
-  description:
-    "Uma nova forma de viver o CS2. Aposte, desafie e interaja enquanto assiste seu streamer favorito.",
-};
-
 
 export default function PaymentSuccessPage() {
   const searchParams = useSearchParams();
@@ -48,7 +40,7 @@ export default function PaymentSuccessPage() {
                 : status === "Canceled"
                   ? "payment.cancelled_description"
                   : message
-          : "error.failed_to_process_payment",
+          : "error.failed_to_process_payment"
       );
       setPaymentStatus(status);
     };

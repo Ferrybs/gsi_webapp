@@ -7,13 +7,7 @@ import { XCircle } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import cancelUserPaymentAction from "@/actions/payments/cancel-user-payment-action";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "CS2 Bits - Pagamento Cancelado",
-  description:
-    "Uma nova forma de viver o CS2. Aposte, desafie e interaja enquanto assiste seu streamer favorito.",
-};
 
 export default function PaymentCancelPage() {
   const router = useRouter();
