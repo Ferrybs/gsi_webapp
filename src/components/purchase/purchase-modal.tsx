@@ -220,7 +220,7 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Coinbase" id="Coinbase" />
                   <Label htmlFor="Coinbase" className="font-medium">
-                    {t("purchase.crypto_usdt")}
+                    {t("purchase.crypto_usdc")}
                   </Label>
                 </div>
                 <div className="pl-6 mt-2 text-sm text-muted-foreground">

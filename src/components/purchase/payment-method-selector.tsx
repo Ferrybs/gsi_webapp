@@ -29,7 +29,7 @@ export function PaymentMethodSelector({
             {t("purchase.credit_card_pix")}
           </TabsTrigger>
           <TabsTrigger value="coinbase">
-            {t("purchase.crypto_usdt")}
+            {t("purchase.crypto_usdc")}
           </TabsTrigger>
         </TabsList>
         <TabsContent value="stripe">

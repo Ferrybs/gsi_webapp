@@ -7,7 +7,6 @@ import {
 } from "@/schemas/handle-payment.schema";
 import { ActionError } from "@/types/action-error";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUser } from "../user/get-current-user";
 
 export async function updateUserPaymentStatus({
   paymentId,
@@ -18,25 +17,20 @@ export async function updateUserPaymentStatus({
       paymentId,
       paymentStatus,
     });
-    const user = await getCurrentUser();
 
-    if (!user) {
-      throw new ActionError("error.user_not_authenticated");
-    }
-
-    const payment = await prisma.user_payments.findUnique({
+    const payment = await prisma.user_payments.count({
       where: {
-        id: data.paymentId,
-        user_id: user.id,
+        id: data.paymentId
       },
     });
 
-    if (!payment) {
+    if (payment === 0) {
+      console.error(`Payment with ID ${data.paymentId} not found.`);
       throw new ActionError("error.payment_not_found");
     }
 
     await paymentStatusChangedEvent({
-      payment_id: payment.id,
+      payment_id: data.paymentId,
       new_status: paymentStatus,
     });
 
