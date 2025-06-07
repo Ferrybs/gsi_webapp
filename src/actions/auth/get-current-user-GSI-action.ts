@@ -29,7 +29,6 @@ export async function getCurrentUserGSIAction(
     user = await prisma.users.findUnique({
       where: {
         steam_id: payload.id,
-        user_status_name: "Active",
       },
       include: {
         user_roles: true,
@@ -37,7 +36,7 @@ export async function getCurrentUserGSIAction(
     });
   }
 
-  if (!user) {
+  if (!user || user.user_status_name !== "Active") {
     return { success: false, error_message: "error.user_not_authenticated" };
   }
 

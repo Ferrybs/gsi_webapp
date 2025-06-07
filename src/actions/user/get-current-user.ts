@@ -12,14 +12,13 @@ export async function getCurrentUser() {
   const user = await prisma.users.findUnique({
     where: {
       steam_id: steamUser.id,
-      user_status_name: "Active",
     },
     include: {
       user_roles: true,
     },
   });
 
-  if (!user) {
+  if (!user || user.user_status_name !== "Active") {
     return null;
   }
 
