@@ -126,6 +126,11 @@ export function StripePaymentForm({
       <PaymentElement
         id="payment-element"
         options={{
+          fields: {
+            billingDetails: {
+              email: "auto",
+            },
+          },
           defaultValues: {
             billingDetails: {
               email: user?.email ?? "",
@@ -136,7 +141,10 @@ export function StripePaymentForm({
             applePay: "auto",
             link: "auto",
           },
-          layout: "accordion",
+          layout: {
+            type: "accordion",
+            defaultCollapsed: true,
+          },
         }}
       />
       <div className="flex space-x-3">
