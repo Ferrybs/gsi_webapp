@@ -137,7 +137,7 @@ export function PaymentHistory() {
                           variant="secondary"
                           className={getTextColror(data.user_payment.status)}
                         >
-                          {t(`transactions.types.deposit`)}
+                          ID: {data.user_payment.id}
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -264,8 +264,8 @@ export function TransactionListSkeleton() {
             <div className="flex items-center gap-3">
               <Skeleton className="h-4 w-4 rounded-full" />
               <div className="space-y-2">
-                <Skeleton className="h-5 w-20" />
-                <Skeleton className="h-4 w-64" />
+                <Skeleton className="h-5 w-60" />
+                <Skeleton className="h-4 w-40" />
                 <Skeleton className="h-3 w-32" />
               </div>
             </div>

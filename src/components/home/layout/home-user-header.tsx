@@ -188,10 +188,13 @@ export default function HomeUserHeader() {
       </DropdownMenu>
 
       {/* Purchase Modal */}
-      <PurchaseModal
-        isOpen={isPurchaseModalOpen}
-        onClose={() => setIsPurchaseModalOpen(false)}
-      />
+      {userData && (
+        <PurchaseModal
+          isOpen={isPurchaseModalOpen}
+          user={userData}
+          onClose={() => setIsPurchaseModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

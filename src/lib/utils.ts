@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export function formatTimeSince(date: Date) {
   const now = new Date();
   const diffInMinutes = Math.floor(
-    (now.getTime() - date.getTime()) / (1000 * 60),
+    (now.getTime() - date.getTime()) / (1000 * 60)
   );
 
   if (diffInMinutes < 60) {
@@ -28,7 +28,7 @@ export function formatCurrency(value: number) {
     maximumFractionDigits: 2,
   }).format(value);
 
-  return `${formatted} pts`;
+  return `${formatted} CS2Bits`;
 }
 
 export function formatPrice(price: number, currency: string) {

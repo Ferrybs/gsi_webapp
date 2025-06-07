@@ -30,6 +30,7 @@ import { StripePaymentForm } from "./stripe-payment-form";
 import { PaymentMethodSelector } from "./payment-method-selector";
 import cancelUserPaymentAction from "@/actions/payments/cancel-user-payment-action";
 import { useQueryClient } from "@tanstack/react-query";
+import { Users } from "@/schemas/users.schema";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -37,10 +38,11 @@ const stripePromise = loadStripe(
 
 interface PurchaseModalProps {
   isOpen: boolean;
+  user: Users;
   onClose: () => void;
 }
 
-export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
+export function PurchaseModal({ isOpen, user, onClose }: PurchaseModalProps) {
   const { t } = useTranslation();
   const qc = useQueryClient();
   const [packages, setPackages] = useState<PointPackage[]>([]);
@@ -126,8 +128,12 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
   };
 
   const handleStripeSuccess = () => {
-    toast.success(t("payment.processed_successfully"));
     onClose();
+    setSelectedPackage(null);
+    setPaymentMethod("Stripe");
+    setStripeClientSecret(null);
+    setPaymentId(null);
+    setShowStripeForm(false);
     qc.invalidateQueries({ queryKey: ["userBalance"] });
   };
 
@@ -317,9 +323,12 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
                 {selectedPackage && (
                   <div className="mb-6 p-4 bg-muted/30 rounded-lg">
                     <div className="flex justify-between mb-1">
-                      <span>{t("purchase.package")}:</span>
+                      <span>{t("purchase.total_points")}:</span>
                       <span className="font-bold">
-                        {formatCurrency(selectedPackage.points_amount)}
+                        {formatCurrency(
+                          selectedPackage.points_amount +
+                            selectedPackage.bonus_points
+                        )}
                       </span>
                     </div>
                     <div className="flex justify-between font-bold">
@@ -334,7 +343,7 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
                   </div>
                 )}
 
-                {stripeClientSecret && paymentId && (
+                {stripeClientSecret && user && selectedPackage && paymentId && (
                   <Elements
                     stripe={stripePromise}
                     options={{
@@ -349,6 +358,8 @@ export function PurchaseModal({ isOpen, onClose }: PurchaseModalProps) {
                   >
                     <StripePaymentForm
                       paymentId={paymentId}
+                      Pointpackage={selectedPackage}
+                      user={user}
                       onSuccess={handleStripeSuccess}
                       onCancel={handleStripeCancel}
                     />

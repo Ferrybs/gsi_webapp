@@ -12,17 +12,22 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { processUserPaymentSuccessAction } from "@/actions/payments/process-user-payment-success-action";
 import cancelUserPaymentAction from "@/actions/payments/cancel-user-payment-action";
-import { useQuery } from "@tanstack/react-query";
-import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
+import { formatPrice } from "@/lib/utils";
+import { PointPackage } from "@/schemas/point-package.schema";
+import { Users } from "@/schemas/users.schema";
 
 interface StripePaymentFormProps {
   paymentId: string;
+  Pointpackage: PointPackage;
+  user: Users;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
 export function StripePaymentForm({
   paymentId,
+  Pointpackage,
+  user,
   onSuccess,
   onCancel,
 }: StripePaymentFormProps) {
@@ -31,17 +36,6 @@ export function StripePaymentForm({
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { data: user } = useQuery({
-    queryKey: ["user"],
-    queryFn: async () => {
-      const response = await getCurrentUserAction();
-      if (response.success) {
-        return response.data;
-      }
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     handleInternalConfirm();
@@ -116,13 +110,6 @@ export function StripePaymentForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* <ExpressCheckoutElement
-        onConfirm={onConfirmExpressCheckout}
-        onCancel={handleCancel}
-      />
-      <LinkAuthenticationElement
-        options={{ defaultValues: { email: user?.email ?? "" } }}
-      /> */}
       <PaymentElement
         id="payment-element"
         options={{
@@ -133,7 +120,7 @@ export function StripePaymentForm({
           },
           defaultValues: {
             billingDetails: {
-              email: user?.email ?? "",
+              email: user.email ?? "",
             },
           },
           wallets: {
@@ -169,7 +156,9 @@ export function StripePaymentForm({
               {t("purchase.processing")}
             </>
           ) : (
-            t("purchase.pay_now")
+            t("purchase.pay_now", {
+              amount: formatPrice(Pointpackage.price, Pointpackage.currency),
+            })
           )}
         </Button>
       </div>

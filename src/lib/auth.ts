@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 import { NextApiRequest } from "next";
 
 export function authOptions(
-  req: Request | NextRequest | NextApiRequest | null,
+  req: Request | NextRequest | NextApiRequest | null
 ): NextAuthOptions {
   return {
     providers: [
@@ -26,17 +26,24 @@ export function authOptions(
               avatar: user.image,
             },
             process.env.NEXTAUTH_SECRET!,
-            { expiresIn: "30d" },
+            { expiresIn: "30d" }
           );
         }
         return token;
       },
       async session({ session, token }) {
+        const steam_id = token.sub as string;
+        const userData = await prisma.users.findUnique({
+          where: { steam_id: steam_id },
+        });
+        if (userData && userData.user_status_name !== "Active") {
+          throw new Error("User is not active");
+        }
         return {
           ...session,
           user: {
             ...session.user,
-            id: token.sub as string,
+            id: steam_id,
             avatar: session.user?.image,
           },
         };

@@ -29,10 +29,61 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const session = event.data.object as Stripe.PaymentIntent;
+  const obj = event.data.object;
   let message = "";
   try {
-    const result = await processStripeWebhookPayment(session, event.type);
+    let sessionId: string | undefined;
+
+    if (obj.object === "payment_intent") {
+      const session = obj as Stripe.PaymentIntent;
+      if (!session.id) {
+        throw new Error("Payment intent ID is missing");
+      }
+      console.log("🔔 [StripeWebhook] Payment intent received:", session.id);
+      sessionId = session.id;
+    }
+    if (obj.object === "dispute") {
+      const session = obj as Stripe.Dispute;
+      if (!session.payment_intent) {
+        throw new Error("Dispute ID is missing");
+      }
+      console.log(
+        "🔔 [StripeWebhook] Dispute received:",
+        session.payment_intent
+      );
+      if (typeof session.payment_intent === "string") {
+        sessionId = session.payment_intent;
+      } else if (session.payment_intent.id) {
+        sessionId = session.payment_intent.id;
+      }
+    }
+    if (obj.object === "refund") {
+      const session = obj as Stripe.Refund;
+      if (!session.payment_intent) {
+        throw new Error("Refund ID is missing");
+      }
+      if (typeof session.payment_intent === "string") {
+        sessionId = session.payment_intent;
+      } else if (session.payment_intent.id) {
+        sessionId = session.payment_intent.id;
+      }
+    }
+    if (obj.object === "charge") {
+      const session = obj as Stripe.Charge;
+      if (!session.payment_intent) {
+        throw new Error("Charge ID is missing");
+      }
+      if (typeof session.payment_intent === "string") {
+        sessionId = session.payment_intent;
+      } else if (session.payment_intent.id) {
+        sessionId = session.payment_intent.id;
+      }
+    }
+    if (!sessionId) {
+      throw new Error("Session ID is missing");
+    }
+    console.log("🔔 [StripeWebhook] Payment intent received:", sessionId);
+    const result = await processStripeWebhookPayment(sessionId, event.type);
     console.log("✅ [StripeWebhook] processed:", result);
   } catch (err) {
     message = "Error processing Stripe webhook";

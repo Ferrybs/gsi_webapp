@@ -1,34 +1,45 @@
 "use server";
 
-import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { payment_status } from "@prisma/client";
 import paymentStatusChangedEvent from "../stream/payment-status-changed-event";
+import { stripe } from "@/lib/stripe";
 
 export async function processStripeWebhookPayment(
-  session: Stripe.PaymentIntent,
+  paymentIntentId: string,
   eventType: string
 ) {
   const payment = await prisma.user_payments.findFirst({
-    where: { provider_transaction_id: session.id },
+    where: { provider_transaction_id: paymentIntentId },
   });
   if (!payment) {
-    throw new Error(`Payment session id: ${session.id} not found`);
+    throw new Error(`Payment session id: ${paymentIntentId} not found`);
+  }
+
+  const session = await stripe.paymentIntents.retrieve(paymentIntentId);
+  if (!session) {
+    throw new Error(
+      `Payment session id: ${paymentIntentId} not found in Stripe`
+    );
   }
 
   let newStatus: payment_status | null = null;
-  switch (eventType) {
-    case "payment_intent.succeeded":
-      newStatus = "Completed";
-      break;
-    case "payment_intent.requires_action":
-      newStatus = "Processing";
-      break;
-    case "payment_intent.payment_failed":
-      newStatus = "Failed";
-      break;
-    default:
-      newStatus = null;
+  if (eventType.startsWith("payment_intent")) {
+    switch (session.status) {
+      case "succeeded":
+        newStatus = "Completed";
+        break;
+      case "canceled":
+        newStatus = "Canceled";
+        break;
+      default:
+        newStatus = null;
+    }
+  } else if (
+    eventType.startsWith("charge.refund") ||
+    eventType.startsWith("charge.dispute")
+  ) {
+    newStatus = "Refunded";
   }
 
   if (!newStatus) {
@@ -58,8 +69,8 @@ export async function processStripeWebhookPayment(
   const msg =
     newStatus === "Completed"
       ? "payment.processing_description"
-      : newStatus === "Failed"
-        ? "payment.failed_description"
+      : newStatus === "Canceled"
+        ? "payment.canceled_description"
         : "payment.canceled";
 
   return {

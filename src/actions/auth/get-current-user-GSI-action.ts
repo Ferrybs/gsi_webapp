@@ -16,7 +16,7 @@ interface StreamerGSIAuth {
 }
 
 export async function getCurrentUserGSIAction(
-  authToken?: string,
+  authToken?: string
 ): Promise<ActionResponse<StreamerGSIAuth>> {
   let user: Users | null = null;
   if (!authToken) {
@@ -29,6 +29,7 @@ export async function getCurrentUserGSIAction(
     user = await prisma.users.findUnique({
       where: {
         steam_id: payload.id,
+        user_status_name: "Active",
       },
       include: {
         user_roles: true,
@@ -55,7 +56,7 @@ export async function getCurrentUserGSIAction(
       user_id: user.steam_id,
     },
     process.env.GRPC_SECRET as string,
-    { expiresIn: "2d" },
+    { expiresIn: "2d" }
   );
 
   return {
