@@ -39,7 +39,7 @@ export type GetUserTransactionsActionResponse = {
 
 export async function getUserTransactionsAction(
   paginationParams?: PaginationParams,
-  transactionsTypes?: TransactionType[],
+  transactionsTypes?: TransactionType[]
 ): Promise<ActionResponse<GetUserTransactionsActionResponse>> {
   try {
     const user = await getCurrentUser();
@@ -60,12 +60,10 @@ export async function getUserTransactionsAction(
       AND: transactionsTypes?.map((type) => ({ type })),
     };
 
-    // Buscar total de registros para paginação
     const total = await prisma.user_transactions.count({
       where,
     });
 
-    // Buscar transações com paginação
     const transactions = await prisma.user_transactions.findMany({
       where,
       include: {
@@ -101,12 +99,12 @@ export async function getUserTransactionsAction(
         return {
           user_payment: UserPaymentSchema.parse(pt.user_payments),
           point_package: PointPackageSchema.parse(
-            pt.user_payments.point_packages,
+            pt.user_payments.point_packages
           ),
         };
       }),
       user_predictions: transaction.user_prediction_transactions.map((pt) =>
-        UserPredictionSchema.parse(pt.user_predictions),
+        UserPredictionSchema.parse(pt.user_predictions)
       ),
     }));
 

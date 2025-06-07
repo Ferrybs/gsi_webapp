@@ -17,6 +17,7 @@ import { Skeleton } from "../ui/skeleton";
 import { useEffect, useState } from "react";
 import { getCurrentUserAction } from "@/actions/user/get-current-user-action";
 import { TransactionHistory } from "./transaction-history";
+import { PaymentHistory } from "./payment-history";
 
 export function UserProfile() {
   const [userData, setUser] = useState<Users | null>(null);
@@ -45,7 +46,7 @@ export function UserProfile() {
             <h2 className="text-2xl font-bold">{userData.username}</h2>
             <p className="text-muted-foreground flex items-center gap-1">
               {user_roles?.includes(
-                UserRoleSchema.shape.role_name.enum.Streamer,
+                UserRoleSchema.shape.role_name.enum.Streamer
               ) ? (
                 <>
                   <Shield className="h-4 w-4" /> {t("userProfile.streamer")}
@@ -60,12 +61,15 @@ export function UserProfile() {
         </div>
         <div>
           <Tabs defaultValue="info">
-            <TabsList className="grid grid-cols-2 mb-4">
+            <TabsList className="grid grid-cols-3 mb-4">
               <TabsTrigger value="info">
                 {t("userProfile.tabs.info")}
               </TabsTrigger>
               <TabsTrigger value="history">
                 {t("userProfile.tabs.history")}
+              </TabsTrigger>
+              <TabsTrigger value="payments">
+                {t("userProfile.tabs.payments")}
               </TabsTrigger>
             </TabsList>
             <TabsContent value="info">
@@ -82,7 +86,7 @@ export function UserProfile() {
                   <div className="space-y-6">
                     <UserInfo userData={userData} />
                     {user_roles?.includes(
-                      UserRoleSchema.shape.role_name.enum.Streamer,
+                      UserRoleSchema.shape.role_name.enum.Streamer
                     ) ? (
                       <StreamerInfo userData={userData} />
                     ) : null}
@@ -92,6 +96,9 @@ export function UserProfile() {
             </TabsContent>
             <TabsContent value="history">
               <TransactionHistory />
+            </TabsContent>
+            <TabsContent value="payments">
+              <PaymentHistory />
             </TabsContent>
           </Tabs>
         </div>
@@ -118,6 +125,9 @@ export function UserProfileSkeleton() {
                 <Skeleton className="h-4 w-16" />
               </TabsTrigger>
               <TabsTrigger value="history">
+                <Skeleton className="h-4 w-16" />
+              </TabsTrigger>
+              <TabsTrigger value="payments">
                 <Skeleton className="h-4 w-16" />
               </TabsTrigger>
             </TabsList>

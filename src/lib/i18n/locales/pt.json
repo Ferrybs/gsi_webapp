@@ -443,7 +443,8 @@
     "tabs": {
       "info": "Informações",
       "stats": "Estatísticas",
-      "history": "Histórico"
+      "history": "Histórico",
+      "payments": "Pagamentos"
     },
     "info": {
       "title": "Perfil do Usuário",
@@ -455,6 +456,12 @@
       "noActivity": "Nenhuma atividade recente",
       "noActivityDescription": "Suas atividades aparecerão aqui quando você começar a interagir com desafios e previsões.",
       "total": "Total de Atividades: {{count}}"
+    },
+    "payments": {
+      "title": "Histórico de Pagamentos",
+      "noPayments": "Nenhum pagamento encontrado",
+      "noPaymentsDescription": "Você pode ver seus pagamentos aqui quando começar a comprar CS2Bits ou participar de desafios.",
+      "total": "Total de Pagamentos: {{count}}"
     }
   },
   "pagination": {
@@ -466,8 +473,8 @@
     "types": {
       "reward": "Recompesa",
       "predict": "Previsão",
-      "deposit": "Compra",
-      "exchange": "Troca",
+      "deposit": "Compra de CS2Bits",
+      "exchange": "Compra na loja",
       "raffleticket": "Bilhete de Sorteio",
       "refund": "Reembolso"
     },
@@ -620,6 +627,14 @@
     "unknown_error": "Ocorreu um erro inesperado. Tente novamente."
   },
   "payment": {
+    "status": {
+      "Pending": "Pagamento Pendente",
+      "Processing": "Pagamento em Processamento",
+      "Completed": "Pagamento Concluído",
+      "Failed": "Pagamento Falhou",
+      "Canceled": "Pagamento Cancelado",
+      "Refunded": "Pagamento Reembolsado"
+    },
     "cancelled": "Pagamento Cancelado",
     "cancelled_description": "Seu pagamento foi cancelado. Nenhuma cobrança foi realizada.",
     "return_home": "Voltar para a Página Inicial",
