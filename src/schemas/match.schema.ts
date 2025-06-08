@@ -11,7 +11,7 @@ export const MatchSchema = z.object({
   status_name: z.nativeEnum(match_status),
   started_at: stringToDate,
   updated_at: stringToDate,
-  ended_at: stringToDate.nullable(),
+  ended_at: stringToDate.optional().nullable(),
 });
 
 export type Match = z.infer<typeof MatchSchema>;
