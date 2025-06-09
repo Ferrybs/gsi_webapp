@@ -58,6 +58,8 @@
     "agreement": "Ao entrar, você concorda com nossos <0>Termos de Serviço</0> e <1>Política de Privacidade</1>."
   },
   "header": {
+    "matches": "Partidas",
+    "raffles": "Sorteios",
     "back_home": "Voltar ao Início",
     "streamer_guide": "Guia para Streamers",
     "streamer_guide_desc": "Tudo o que você precisa saber para integrar o CS2 Bits em suas streams e aumentar o engajamento do seu público.",
