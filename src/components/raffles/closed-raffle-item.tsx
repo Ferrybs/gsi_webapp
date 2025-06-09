@@ -48,7 +48,8 @@ export function ClosedRaffleItem({ raffle }: ClosedRaffleItemProps) {
             <div className="absolute inset-0 flex items-center justify-center z-10">
               <Image
                 src={
-                  raffle.skin.image_url || "/placeholder.svg?height=64&width=64"
+                  raffle.skin.image_url ||
+                  "/CS2Bits-icon.png?height=64&width=64"
                 }
                 alt={raffle.skin.market_hash_name}
                 width={48}

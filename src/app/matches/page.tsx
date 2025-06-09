@@ -35,7 +35,7 @@ export default function MatchesPage() {
 
   // Fetch streamers for filter options
   const { data: streamersData } = useQuery({
-    queryKey: ["streamers"],
+    queryKey: ["streamers", filters],
     queryFn: async () => (await getMatchesStreamersAction(filters)).data,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -108,7 +108,7 @@ export default function MatchesPage() {
                     1,
                   end: Math.min(
                     pageData.pagination.page * pageData.pagination.limit,
-                    pageData.pagination.total,
+                    pageData.pagination.total
                   ),
                   total: pageData.pagination.total,
                 })}

@@ -63,7 +63,7 @@ export function MatchCard({ matchData }: MatchCardProps) {
     {
       addSuffix: true,
       locale: ptBR,
-    },
+    }
   );
   const isLive =
     matchData.stream_match.match_status === stream_match_status.Live;
@@ -79,7 +79,7 @@ export function MatchCard({ matchData }: MatchCardProps) {
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
               <AvatarImage
-                src={matchData.streamer.avatar_url || "/placeholder.svg"}
+                src={matchData.streamer.avatar_url ?? undefined}
                 alt={matchData.streamer.username_id}
               />
               <AvatarFallback>

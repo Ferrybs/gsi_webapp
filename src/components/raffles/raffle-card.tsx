@@ -155,7 +155,7 @@ export function RaffleCard({
               <Image
                 src={
                   raffle.skin.image_url ||
-                  "/placeholder.svg?height=200&width=200"
+                  "/CS2Bits-icon.png?height=200&width=200"
                 }
                 alt={raffle.skin.market_hash_name}
                 width={160}

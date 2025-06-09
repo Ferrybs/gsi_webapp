@@ -44,7 +44,7 @@ type MatchWhereInput = {
 };
 
 export async function getMatchesAction(
-  filters: MatchFilters,
+  filters: MatchFilters
 ): Promise<ActionResponse<MatchesActionResponse>> {
   try {
     const validatedFilters = MatchFiltersSchema.parse(filters);
@@ -109,18 +109,9 @@ export async function getMatchesAction(
         matches: {
           include: {
             match_player_stats: true,
-            streamers: {
-              include: {
-                stream_urls: true,
-              },
-            },
           },
         },
-        streamers: {
-          include: {
-            stream_urls: true,
-          },
-        },
+        streamers: true,
       },
       orderBy: {
         matches: {
@@ -132,14 +123,14 @@ export async function getMatchesAction(
     });
 
     const streamMatchesData = stream_matches
-      .filter((stream_match) => stream_match.streamers && stream_match.matches)
+      .filter((m) => m.matches && m.matches.match_player_stats)
       .map((stream_match) => {
         try {
           return {
             stream_match: StreamMatchSchema.parse(stream_match),
             match: MatchSchema.parse(stream_match.matches),
             match_player_stats: MatchPlayerStatsSchema.parse(
-              stream_match.matches.match_player_stats,
+              stream_match.matches.match_player_stats
             ),
             streamer: StreamerSchema.parse(stream_match.streamers),
           };

@@ -29,7 +29,8 @@ import { cn } from "@/lib/utils";
 import { formatMapName } from "@/types/map-name";
 import { Streamer } from "@/schemas/streamer.schema";
 import { MatchFilters } from "@/schemas/matches.schema";
-import Image from "next/image";
+import { Avatar } from "@radix-ui/react-avatar";
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface MatchFiltersProps {
   filters: MatchFilters;
@@ -49,10 +50,10 @@ export function StreamMatchFilters({
   const { t } = useTranslation();
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [selectedStreamers, setSelectedStreamers] = useState<string[]>(
-    filters.streamerIds || [],
+    filters.streamerIds || []
   );
   const [selectedMaps, setSelectedMaps] = useState<string[]>(
-    filters.mapIds || [],
+    filters.mapIds || []
   );
 
   const handleStatusChange = (status: string) => {
@@ -164,7 +165,7 @@ export function StreamMatchFilters({
                 variant="outline"
                 className={cn(
                   "w-full justify-start text-left font-normal",
-                  !dateRange && "text-muted-foreground",
+                  !dateRange && "text-muted-foreground"
                 )}
                 disabled={isLoading}
               >
@@ -185,7 +186,6 @@ export function StreamMatchFilters({
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
               <Calendar
-                initialFocus
                 mode="range"
                 defaultMonth={dateRange?.from}
                 selected={dateRange}
@@ -217,11 +217,15 @@ export function StreamMatchFilters({
                   htmlFor={`streamer-${streamer.id}`}
                   className="flex items-center gap-2 cursor-pointer flex-1"
                 >
-                  <Image
-                    src={streamer.avatar_url || "/placeholder.svg"}
-                    alt={streamer.username_id}
-                    className="w-6 h-6 rounded-full"
-                  />
+                  <Avatar className="h-5 w-5">
+                    <AvatarImage
+                      src={streamer.avatar_url ?? undefined}
+                      alt={streamer.username_id}
+                    />
+                    <AvatarFallback>
+                      {streamer.username_id.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <span className="text-sm">{streamer.username_id}</span>
                 </Label>
               </div>
