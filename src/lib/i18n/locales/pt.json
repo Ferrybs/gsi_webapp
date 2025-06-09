@@ -693,6 +693,7 @@
     "DeathsUnder": "Mortes Abaixo",
     "RoundAce": "{{streamer}} vai fazer um Ace depois do round {{round}}?",
     "KillsOverTwenty": "{{streamer}} vai matar + 20,5 nessa partida?",
+    "KillsOverSixteen": "{{streamer}} vai matar + 16,5 nessa partida?",
     "FourKillsOneRound": "4 Kills em Um Round",
     "insufficient_balance": "Saldo Insuficiente",
     "select_description": "Selecione uma opção para apostar",
