@@ -3,14 +3,14 @@
 import { RoundList } from "./round-list";
 import { MatchHeader } from "./match-header";
 import { Streamer } from "@/schemas/streamer.schema";
-import { useEffect, useState } from "react";
-import { PredictionsList } from "@/components/predictions/predictions-list";
 import { useQuery } from "@tanstack/react-query";
-import { Prediction, PredictionSchema } from "@/schemas/prediction.schema";
+import { PredictionSchema } from "@/schemas/prediction.schema";
 import { getPredictionsAction } from "@/actions/predictions/get-predictions-action";
 import { Match } from "@/schemas/match.schema";
 import { MatchPlayerStats } from "@/schemas/match-player-stats.schema";
 import { MatchPlayerRounds } from "@/schemas/match-player-rounds.schema";
+import { useTranslation } from "react-i18next";
+import { PredictionsList } from "@/components/predictions/predictions-list";
 
 interface MatchDetailsPageProps {
   streamer: Streamer | null;
@@ -25,14 +25,9 @@ export default function MatchDetailsPage({
   statsData,
   roundsData,
 }: MatchDetailsPageProps) {
-  const [predictionsData, setPredictionsData] = useState<Prediction[]>([]);
-
-  const {
-    data: predictionsDataQuery,
-    isFetching,
-    isRefetching,
-  } = useQuery({
-    queryKey: ["prediction"],
+  const { t } = useTranslation();
+  const { data: predictionsData = [] } = useQuery({
+    queryKey: ["prediction", matchData?.id],
     queryFn: async () => {
       if (!matchData) return [];
       const pred = await getPredictionsAction(matchData.id);
@@ -41,12 +36,6 @@ export default function MatchDetailsPage({
     enabled: matchData != null,
     refetchOnWindowFocus: false,
   });
-
-  useEffect(() => {
-    if (predictionsDataQuery) {
-      setPredictionsData(predictionsDataQuery);
-    }
-  }, [predictionsDataQuery, isFetching, isRefetching]);
 
   if (!streamer) {
     return <MatchDetailsLoading />;
@@ -60,7 +49,7 @@ export default function MatchDetailsPage({
           statsData={statsData}
           streamer={streamer}
         />
-        <RoundList rounds={roundsData || []} streamer={streamer} />
+        <RoundList rounds={roundsData || []} streamer={streamer} t={t} />
       </div>
 
       <div className="lg:col-span-4 space-y-6">

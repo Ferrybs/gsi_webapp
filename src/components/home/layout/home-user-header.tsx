@@ -36,13 +36,12 @@ export default function HomeUserHeader() {
   const userData = userResponse?.data;
 
   const { data: balanceResponse, isLoading } = useQuery({
-    queryKey: ["userBalance"],
+    queryKey: ["userBalance", userData?.id],
     queryFn: getUserBalanceAction,
+    enabled: !!userData,
     refetchOnWindowFocus: false,
+    select: (data) => (data?.data ? UserBalanceSchema.parse(data.data) : null),
   });
-  const userBalance = balanceResponse?.data
-    ? UserBalanceSchema.parse(balanceResponse.data)
-    : null;
   const handleOpenPurchaseModal = () => {
     setIsPurchaseModalOpen(true);
   };
@@ -58,10 +57,10 @@ export default function HomeUserHeader() {
         >
           <MdOutlineAccountBalanceWallet className="h-4 w-4" />
           <span className="text-base font-medium">
-            {!userBalance || isLoading ? (
+            {!balanceResponse || isLoading ? (
               <Skeleton className="h-4 w-16" />
             ) : (
-              formatCurrency(Number(userBalance.balance))
+              formatCurrency(Number(balanceResponse.balance))
             )}
           </span>
         </div>
@@ -134,10 +133,10 @@ export default function HomeUserHeader() {
                 {t("header.balance")}:
               </span>
               <span className="text-base font-medium text-primary">
-                {!userBalance ? (
+                {!balanceResponse ? (
                   <Skeleton className="h-4 w-16" />
                 ) : (
-                  formatCurrency(Number(userBalance.balance))
+                  formatCurrency(Number(balanceResponse.balance))
                 )}
               </span>
             </div>

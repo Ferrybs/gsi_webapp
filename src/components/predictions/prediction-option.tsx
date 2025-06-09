@@ -34,7 +34,7 @@ export function PredictionOption({
         "relative p-3 rounded-md border transition-all cursor-pointer hover:bg-accent/50",
         isSelected && "border-primary bg-primary/10",
         isWinner && "border-green-500 bg-green-500/10",
-        disabled && "opacity-80 cursor-default",
+        disabled && "opacity-80 cursor-default"
       )}
       onClick={!disabled ? onClick : undefined}
     >
@@ -51,7 +51,7 @@ export function PredictionOption({
 
       <div className="flex justify-between items-center text-xs text-muted-foreground">
         <div>
-          {option.betCount} {option.betCount === 1 ? "bet" : "bets"}
+          {option.betCount} {t("predictions.bets")}
         </div>
         <div className="font-mono">{formattedOdds}</div>
       </div>

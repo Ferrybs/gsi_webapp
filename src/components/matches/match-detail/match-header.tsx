@@ -14,12 +14,12 @@ import { AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Streamer } from "@/schemas/streamer.schema";
 import { formatMapName } from "@/types/map-name";
-import { formatMatchPhase } from "@/types/map-phase";
 import { useTranslation } from "react-i18next";
 import { Match } from "@/schemas/match.schema";
 import { MatchPlayerStats } from "@/schemas/match-player-stats.schema";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { match_status } from "@prisma/client";
 interface MatchHeaderProps {
   streamer: Streamer;
   matchData: Match | null;
@@ -73,7 +73,10 @@ export function MatchHeader({
             <div className="flex flex-col gap-1 w-full sm:w-auto">
               {matchData ? (
                 <Badge variant="destructive" className="self-end font-bold">
-                  {formatMatchPhase(matchData.phase_name)}
+                  {matchData.status_name == match_status.Abandoned ||
+                  matchData.status_name == match_status.Invalid
+                    ? t("match.status." + matchData.status_name)
+                    : t("match.status." + matchData.phase_name)}
                 </Badge>
               ) : (
                 <Badge variant="destructive" className="self-end font-bold">
@@ -86,7 +89,7 @@ export function MatchHeader({
                     <div
                       className={cn(
                         "p-1 rounded-md",
-                        statsData.team_side_name === "CT" && "relative",
+                        statsData.team_side_name === "CT" && "relative"
                       )}
                     >
                       <span className="text-chart-2">
@@ -100,7 +103,7 @@ export function MatchHeader({
                     <div
                       className={cn(
                         "p-1 rounded-md",
-                        statsData.team_side_name === "T" && "relative",
+                        statsData.team_side_name === "T" && "relative"
                       )}
                     >
                       <span className="text-chart-1">
@@ -229,7 +232,7 @@ export function MatchHeader({
                         {formatDistance(
                           matchData.started_at,
                           matchData.ended_at || new Date(),
-                          { locale: ptBR },
+                          { locale: ptBR }
                         )}
                       </span>
                     }

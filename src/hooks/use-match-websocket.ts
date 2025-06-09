@@ -26,7 +26,7 @@ export function useMatchWebSocket(streamerUserId: string) {
   const { t } = useTranslation();
   const [wssToken, setWssToken] = useState<string | null>(null);
   const [matchWebSocketData, setMatchWebSocketData] = useState<Match | null>(
-    null,
+    null
   );
   const qc = useQueryClient();
   const [statsWebSocketData, setStatsWebSocketData] =
@@ -53,7 +53,7 @@ export function useMatchWebSocket(streamerUserId: string) {
         return;
       }
       const eventPayloadParsed = EventPayloadSchema.safeParse(
-        JSON.parse(event.data),
+        JSON.parse(event.data)
       );
       if (!eventPayloadParsed.success) {
         console.error("Invalid event payload:", eventPayloadParsed.error);
@@ -98,7 +98,10 @@ export function useMatchWebSocket(streamerUserId: string) {
         });
       } else if (eventPayload.match_event === "end") {
         qc.invalidateQueries({
-          queryKey: ["prediction", "predictionDetails"],
+          queryKey: ["prediction"],
+        });
+        qc.invalidateQueries({
+          queryKey: ["predictionDetails"],
         });
         setInterval(() => location.reload(), 4000);
       }

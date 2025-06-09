@@ -115,7 +115,7 @@ export function PredictionCard({
           const num = Number(val);
           return !isNaN(num) && num > 0;
         },
-        { message: t("predictions.enter_valid_amount") },
+        { message: t("predictions.enter_valid_amount") }
       )
       .refine(
         (val) => Number(val) <= prediction.prediction_templates.max_bet_amount,
@@ -123,7 +123,7 @@ export function PredictionCard({
           message: t("predictions.minimum_bet_description", {
             amount: prediction.prediction_templates.min_bet_amount,
           }),
-        },
+        }
       )
       .refine(
         (val) => Number(val) >= prediction.prediction_templates.min_bet_amount,
@@ -131,14 +131,14 @@ export function PredictionCard({
           message: t("predictions.minimum_bet_description", {
             amount: prediction.prediction_templates.min_bet_amount,
           }),
-        },
+        }
       )
       .refine(
         (val) =>
           userBalance != null ? Number(val) <= userBalance.balance : false,
         {
           message: t("predictions.insufficient_balance"),
-        },
+        }
       ),
   });
 
@@ -378,7 +378,7 @@ export function PredictionCard({
             </div>
           )}
 
-          {isResolved && prediction.winning_option_label && (
+          {/* {isResolved && prediction.winning_option_label && (
             <div className="pt-2 border-t">
               <p className="text-sm font-medium text-green-500">
                 {t("predictions.winner")}:{" "}
@@ -389,7 +389,7 @@ export function PredictionCard({
                 }
               </p>
             </div>
-          )}
+          )} */}
 
           {isCanceled && (
             <div className="pt-2 border-t">

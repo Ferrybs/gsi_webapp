@@ -1,8 +1,8 @@
 enum MatchPhase {
-  Live = "Live",
-  Warmup = "Warmup",
-  Intermission = "Pause",
-  Gameover = "Game Over",
+  Live = "live",
+  Warmup = "warmup",
+  Intermission = "pause",
+  Gameover = "gameover",
 }
 
 type MatchPhaseKey = keyof typeof MatchPhase;

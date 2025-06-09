@@ -54,7 +54,9 @@ export async function getMatchesAction(
 
     // Apply stream match status filter
     if (validatedFilters.status === stream_match_status.Live) {
-      streamMatchWhere.match_status = stream_match_status.Live;
+      streamMatchWhere.match_status = {
+        in: [stream_match_status.Live, stream_match_status.Preparing],
+      };
     }
     if (validatedFilters.status === stream_match_status.Finished) {
       streamMatchWhere.match_status = stream_match_status.Finished;

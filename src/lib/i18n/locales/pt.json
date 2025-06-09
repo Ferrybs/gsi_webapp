@@ -61,7 +61,7 @@
     "back_home": "Voltar ao Início",
     "streamer_guide": "Guia para Streamers",
     "streamer_guide_desc": "Tudo o que você precisa saber para integrar o CS2 Bits em suas streams e aumentar o engajamento do seu público.",
-    "balance": "CS2Bits",
+    "balance": "Saldo",
     "event_balance": "CS2Bits EV",
     "buy_cs2bits": "Comprar CS2Bits"
   },
@@ -553,6 +553,14 @@
     "fetching_stream_match_details": "Erro ao carregar a partida"
   },
   "match": {
+    "status": {
+      "Abandoned": "Abandonada",
+      "Invalid": "Invalida",
+      "Live": "Jogando",
+      "Warmup": "Aquecimento",
+      "Intermission": "Pausa",
+      "Gameover": "Terminada"
+    },
     "offline": "OFFLINE",
     "kills": "Kills",
     "deaths": "Deaths",
