@@ -160,7 +160,7 @@ model raffles {
   id             String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   skin_id        BigInt
   ticket_price   Decimal            @db.Decimal(20, 4)
-  status         raffle_status_enum @default(active)
+  status         raffle_status_enum @default(created)
   winner_user_id String?            @db.Uuid
   drawn_at       DateTime?          @db.Timestamptz(6)
   end_at         DateTime           @db.Timestamptz(6)
@@ -472,6 +472,7 @@ enum payment_status {
 
 enum prediction_kind {
   MatchOutcome
+  KillsOverSixteen
   KillsOverTwenty
   DeathsUnder
   RoundAce
@@ -479,6 +480,7 @@ enum prediction_kind {
 }
 
 enum raffle_status_enum {
+  created
   active
   closed
   cancelled
@@ -541,6 +543,7 @@ enum trade_offer_status_enum {
 enum transaction_type {
   Deposit
   Reward
+  Gift
   RaffleTicket
   Predict
   Exchange
@@ -551,4 +554,5 @@ enum user_status {
   Active
   Inative
   Deleted
+  Banned
 }
