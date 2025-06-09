@@ -17,7 +17,7 @@ import HomeFooter from "@/components/home/layout/home-footer";
 export const metadata: Metadata = {
   title: "CS2 Bits",
   description:
-    "Uma nova forma de viver o CS2. Aposte, desafie e interaja enquanto assiste seu streamer favorito.",
+    "Uma nova forma de assistir Counter Strike. Desafie seu streamer favorito.",
 };
 
 export default async function RootLayout({
