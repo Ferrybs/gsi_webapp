@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import HomeUserHeader from "./home-user-header";
 import { Skeleton } from "../../ui/skeleton";
-import { Gift, Sword } from "lucide-react";
+import { Gift, Store, Sword } from "lucide-react";
 
 export default function HomeHeader() {
   const { t } = useTranslation();
@@ -60,6 +60,15 @@ export default function HomeHeader() {
             >
               <Gift className="h-4 w-4" />
               {t("header.raffles")}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2"
+              aria-label={t("header.store")}
+            >
+              <Store className="h-4 w-4" />
+              {t("header.store")}
             </Button>
           </nav>
         </div>

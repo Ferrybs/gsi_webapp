@@ -3,8 +3,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import { SiCoinbase, SiVisa } from "react-icons/si";
-import { FaBitcoin, FaCcMastercard, FaEthereum } from "react-icons/fa";
+import { SiCoinbase, SiTether, SiVisa } from "react-icons/si";
+import {
+  FaBitcoin,
+  FaCcApplePay,
+  FaCcMastercard,
+  FaEthereum,
+  FaGooglePay,
+} from "react-icons/fa";
+import { TokenETH, TokenUSDC, TokenUSDT } from "@web3icons/react";
 interface PaymentMethodSelectorProps {
   selected: "stripe" | "coinbase";
   onSelect: (method: "stripe" | "coinbase") => void;
@@ -38,11 +45,13 @@ export function PaymentMethodSelector({
         </TabsList>
         <TabsContent value="stripe">
           <Card>
-            <CardContent className="p-4 space-y-4">
+            <CardContent className=" space-y-4">
               <div className="flex items-center w-full max-h-9 justify-between">
-                <div className="flex w-full space-x-4 m-8">
+                <div className="flex w-full space-x-4">
                   <SiVisa className="flex-1 h-full" />
                   <FaCcMastercard className="flex-1 h-full" />
+                  <FaGooglePay className="flex-1 h-full" />
+                  <FaCcApplePay className="flex-1 h-full" />
                 </div>
               </div>
               {showStripeForm && stripeFormContent && (
@@ -53,12 +62,26 @@ export function PaymentMethodSelector({
         </TabsContent>
         <TabsContent value="coinbase">
           <Card>
-            <CardContent className="p-4 space-y-4">
+            <CardContent className="space-y-4">
               <div className="flex items-center w-full max-h-9 justify-between">
                 <div className="flex w-full space-x-4">
                   <FaBitcoin className="flex-1 h-full" />
-                  <FaEthereum className="flex-1 h-full" />
-                  <SiCoinbase className="flex-1 h-full" />
+                  <TokenETH
+                    variant="mono"
+                    color="#FFFFFF"
+                    className="flex-1 h-full"
+                  />
+                  <TokenUSDC
+                    variant="mono"
+                    color="#FFFFFF"
+                    className="flex-1 h-full"
+                  />
+                  <TokenUSDT
+                    variant="mono"
+                    color="#FFFFFF"
+                    className="flex-1 h-full"
+                  />
+                  {/* <SiCoinbase className="flex-1 h-full" /> */}
                 </div>
               </div>
             </CardContent>

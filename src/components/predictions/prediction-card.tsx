@@ -211,7 +211,11 @@ export function PredictionCard({
   };
 
   // Quick bet buttons
-  const quickBetAmounts = [100, 500, 1000];
+  const quickBetAmounts = [
+    prediction.prediction_templates.min_bet_amount,
+    prediction.prediction_templates.min_bet_amount * 5,
+    prediction.prediction_templates.min_bet_amount * 10,
+  ];
   const handleQuickBet = (amount: number) => {
     form.setValue("amount", amount.toString());
     form.clearErrors("amount");
