@@ -1,4 +1,4 @@
-import { raffle_status_enum } from "@prisma/client";
+import { raffle_status } from "@prisma/client";
 import { z } from "zod";
 import { decimalToNumber, stringToDate } from "./helper.schema";
 
@@ -6,7 +6,7 @@ export const RaffleSchema = z.object({
   id: z.string().uuid(),
   skin_id: z.bigint(),
   ticket_price: decimalToNumber,
-  status: z.nativeEnum(raffle_status_enum),
+  status: z.nativeEnum(raffle_status),
   winner_user_id: z.string().uuid().nullable(),
   drawn_at: stringToDate.nullable(),
   end_at: stringToDate,

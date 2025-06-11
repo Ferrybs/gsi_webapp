@@ -6,13 +6,13 @@ import {
   PurchaseTicketsSchema,
 } from "@/schemas/raffle.schema";
 import { prisma } from "@/lib/prisma";
-import { raffle_status_enum, transaction_type } from "@prisma/client";
+import { raffle_status, transaction_type } from "@prisma/client";
 import { getUserBalance } from "../user/get-user-balance";
 import { revalidatePath } from "next/cache";
 import { ActionError } from "@/types/action-error";
 
 export async function purchaseTicketsAction(
-  input: PurchaseTicketsInput,
+  input: PurchaseTicketsInput
 ): Promise<ActionResponse<{ tickets_purchased: number }>> {
   try {
     const balance = await getUserBalance();
@@ -27,7 +27,7 @@ export async function purchaseTicketsAction(
     const raffle = await prisma.raffles.findUnique({
       where: {
         id: validatedInput.raffle_id,
-        status: raffle_status_enum.active,
+        status: raffle_status.active,
       },
     });
 

@@ -5,7 +5,7 @@ import { Raffle, RaffleSchema } from "@/schemas/raffle.schema";
 import { Skin, SkinSchema } from "@/schemas/skin.schema";
 import { Users, UsersSchema } from "@/schemas/users.schema";
 import type { ActionResponse } from "@/types/action-response";
-import { raffle_status_enum } from "@prisma/client";
+import { raffle_status } from "@prisma/client";
 
 export type RaffleWithSkin = Raffle & {
   skin: Skin;
@@ -19,7 +19,7 @@ export async function getAllRafflesAction(): Promise<
     const response = await prisma.raffles.findMany({
       where: {
         status: {
-          not: raffle_status_enum.cancelled,
+          not: raffle_status.cancelled,
         },
       },
       include: {
@@ -32,7 +32,7 @@ export async function getAllRafflesAction(): Promise<
       skin: SkinSchema.parse({
         ...raffle.skins,
         fiat_value: raffle.skins.estimated_fiat_value.mul(
-          raffle.skins.fee_pct.add(1),
+          raffle.skins.fee_pct.add(1)
         ),
       }),
       winner: raffle.users ? UsersSchema.parse(raffle.users) : null,
