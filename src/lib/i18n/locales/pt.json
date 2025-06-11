@@ -89,16 +89,16 @@
     "live": "AO VIVO",
     "live_desc": "CS2 Bits Integration Demo",
     "stream_expirence": "Eleve sua experiência de transmissão",
-    "stream_expirence_desc": "O CS2 Bits oferece aos streamers ferramentas poderosas para criar experiências interativas que mantêm os espectadores engajados e voltando para mais.",
+    "stream_expirence_desc": "O CS2 Bits oferece aos streamers uma ferramenta poderosa para criar experiências interativas que mantêm os espectadores engajados.",
     "partner": "Aplique como Parceiro"
   },
   "features": {
     "interact_live": "Interatividade ao vivo",
     "interact_streamer": " Participe em tempo real das transmissões e interaja diretamente com o streamer e outros espectadores.",
-    "challenges": "Desafios com base em eventos reais",
-    "challenges_live": "Faça previsões e desafios baseadas nos eventos que acontecem em tempo real durante a partida.",
+    "challenges": "Previsões com base em eventos reais",
+    "challenges_live": "Faça previsões baseadas nos eventos que acontecem em tempo real durante a partida.",
     "exchange_points": "Troque seus pontos por skins",
-    "points_for_skins": "Transforme suas previsões e desafios em prêmios: Ganhe skins com seus pontos."
+    "points_for_skins": "Transforme suas previsões em prêmios: Ganhe skins com seus pontos."
   },
   "cta": {
     "new_expirence": "Streamer, pronto para uma nova experiência?",
@@ -111,20 +111,20 @@
   "benefits": {
     "title": "Por que fazer parceria com a CS2 Bits?",
     "engagement_title": "Aumento de Engajamento",
-    "engagement_description": "Engaje seu público em tempo real com desafios interativos.",
-    "engagement_point_1": "Desafios personalizados baseados no seu estilo de jogo",
-    "engagement_point_2": "Interação ao vivo com resultados da partida",
-    "engagement_point_3": "Eventos e previsões iniciados pelos espectadores",
+    "engagement_description": "Engaje seu público em tempo real com previsões interativas.",
+    "engagement_point_1": "Previsões ao vivo com base nos resultados da partida",
+    "engagement_point_2": "Interação ao vivo com os dados da partida",
+    "engagement_point_3": "Previsões iniciadas e gerenciadas automaticamente pelo sistema",
     "unique_content_title": "Conteúdo Único",
     "unique_content_description": "Destaque-se com recursos interativos exclusivos",
-    "unique_content_point_1": "Desafios personalizados de acordo com seu estilo de jogo",
-    "unique_content_point_2": "Desafios ao vivo com base nos resultados da partida",
-    "unique_content_point_3": "Eventos e previsões iniciados pelos espectadores",
+    "unique_content_point_1": "Sorteios de skins para os espectadores",
+    "unique_content_point_2": "Loja de skins integrada e automatizada - EM BREVE",
+    "unique_content_point_3": "Todo sistema de previsões, sorteios e loja gerenciado automaticamente pelo CS2 Bits",
     "additional_revenue_title": "Renda Adicional",
     "additional_revenue_description": "Novas oportunidades de monetização para seu canal",
-    "additional_revenue_point_1": "Participação na receita das atividades da plataforma",
-    "additional_revenue_point_2": "Participação na receita dos desafios",
-    "additional_revenue_point_3": "Oportunidades promocionais especiais"
+    "additional_revenue_point_1": "Participação na receita das previsões",
+    "additional_revenue_point_2": "Oportunidades promocionais especiais",
+    "additional_revenue_point_3": "Patrocínios e parcerias exclusivas"
   },
   "howItWorks": {
     "title": "Como funciona?",
@@ -141,11 +141,11 @@
         },
         "step2": {
           "title": "Conecte sua transmissão",
-          "description": "Vincule sua conta do Twitch ou YouTube e instale nossa integração de estado de jogo leve para o CS2."
+          "description": "Vincule sua conta do Twitch ou YouTube e instale nossa integração de estado de jogo leve chamada CS2 Bits Client."
         },
         "step3": {
           "title": "Comece a transmitir",
-          "description": "Inicie sua live com o CS2 Bits Client ligado e seus espectadores poderão interagir imediatamente."
+          "description": "Inicie sua live com o CS2 Bits Client ligado e seus espectadores poderão interagir assim que iniciar uma partida."
         }
       },
       "requirements": {
@@ -172,10 +172,10 @@
     },
     "revenue": {
       "modelTitle": "Modelo de Compartilhamento de Receita",
-      "point1": "O valor em CS2Bits gastos em desafios durante sua transmissão é paga diretamente a você.",
-      "point2": "Quando um desafio é concluído, o valor em CS2Bits pagos é envida a você.",
+      "point1": "Parte da recompensa de previções em CS2Bits gastos em sua transmissão é direcionada a você.",
+      "point2": "Patrocínios e parceirias exclusivas para streamers.",
       "integrationTitle": "Integração com a Plataforma",
-      "integrationPoint1": "O CS2 Bits integra-se diretamente à sua configuração de streaming, oferecendo interação em tempo real sem interromper seu gameplay.",
+      "integrationPoint1": "O CS2 Bits integra-se diretamente à sua configuração de streaming, oferecendo interação em tempo real sem interromper sua gameplay.",
       "integrationPoint2": "Nosso sistema captura eventos do jogo conforme acontecem para interação imediata dos espectadores."
     }
   },
