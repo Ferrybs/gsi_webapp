@@ -1,4 +1,4 @@
-import { getWsTokenAction } from "@/actions/ws/get-ws-token-action";
+import { getMatchWsTokenAction } from "@/actions/ws/get-ws-token-action";
 import { EventPayloadSchema } from "@/schemas/event-payload.schema";
 import {
   MatchPlayerRounds,
@@ -34,13 +34,13 @@ export function useMatchWebSocket(streamerUserId: string) {
   const [roundsWebSocketData, setRoundsWebSocketData] =
     useState<MatchPlayerRounds | null>(null);
   useEffect(() => {
-    getWsTokenAction().then((token) => {
-      setWssToken(token);
+    getMatchWsTokenAction(streamerUserId).then((response) => {
+      setWssToken(response.data ?? null);
     });
   }, []);
   useEffect(() => {
     if (!wssToken) return;
-    const url = `${process.env.NEXT_PUBLIC_WS_URL!}/match_events?token=${wssToken}&streamer=${streamerUserId}`;
+    const url = `${process.env.NEXT_PUBLIC_WS_URL!}/?token=${wssToken}`;
     const wsInstance = new WebsocketBuilder(url)
       .withBackoff(new ExponentialBackoff(2, 5))
       .withInstantReconnect(true)

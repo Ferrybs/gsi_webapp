@@ -1,9 +1,18 @@
 "use server";
+import { ActionResponse } from "@/types/action-response";
 import jwt from "jsonwebtoken";
 
-export async function getWsTokenAction() {
+export async function getMatchWsTokenAction(
+  streamerID: string
+): Promise<ActionResponse<string>> {
   const secret = process.env.WS_SECRET!;
-
-  const token = jwt.sign({}, secret, { expiresIn: "1d" });
-  return token;
+  const tokenData: WsTokenData = {
+    ChannelName: "match_events",
+    ChannelID: streamerID,
+  };
+  const token = jwt.sign(tokenData, secret, { expiresIn: "8h" });
+  return {
+    success: true,
+    data: token,
+  };
 }
