@@ -31,6 +31,11 @@ export const userEditSchema = UsersSchema.pick({
   trade_link: true,
 });
 
+export const userCompleteSchema = z.object({
+  email: z.string().nonempty().email(),
+  trade_link: z.string().regex(TRADE_LINK_REGEX, "Invalid trade link"),
+});
+
 export type Users = z.infer<typeof UsersSchema>;
 
 export type UserRole = z.infer<typeof UserRoleSchema>;

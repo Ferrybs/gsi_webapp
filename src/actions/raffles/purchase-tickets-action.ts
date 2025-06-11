@@ -10,6 +10,7 @@ import { raffle_status, transaction_type } from "@prisma/client";
 import { getUserBalance } from "../user/get-user-balance";
 import { revalidatePath } from "next/cache";
 import { ActionError } from "@/types/action-error";
+import { getCurrentUserComplete } from "../user/get-current-user-complete";
 
 export async function purchaseTicketsAction(
   input: PurchaseTicketsInput
@@ -23,6 +24,14 @@ export async function purchaseTicketsAction(
       };
     }
     const validatedInput = PurchaseTicketsSchema.parse(input);
+
+    const userComplete = await getCurrentUserComplete();
+    if (!userComplete) {
+      return {
+        success: false,
+        error_message: "error.user_not_complete",
+      };
+    }
 
     const raffle = await prisma.raffles.findUnique({
       where: {

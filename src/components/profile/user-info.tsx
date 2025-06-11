@@ -52,8 +52,8 @@ export function UserInfo({ userData }: UserInfoProps) {
         toast.error(t(res.error_message || "error.error_sending_otp"));
       }
     }
-    if (values.trade_link !== userData.trade_link) {
-      const res = await updateTradeLinkAction(values.trade_link ?? "");
+    if (values.trade_link && values.trade_link !== userData.trade_link) {
+      const res = await updateTradeLinkAction(values.trade_link);
       if (res.success) {
         toast.success(t("profile.trade_link_updated"));
         window.location.reload();

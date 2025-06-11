@@ -4,7 +4,8 @@
     "cancel": "Cancelar",
     "loading": "Carregando...",
     "error": "Erro",
-    "success": "Sucesso"
+    "success": "Sucesso",
+    "close": "Fechar"
   },
   "callback": {
     "loading": "Carregando...",
@@ -508,6 +509,8 @@
     "confirm_email": "Confirmar e-mail",
     "confirm_email_description": "Por favor, confirme o código enviado para o seu novo e-mail para continuar.",
     "trade_link_updated": "Link de troca atualizado com sucesso",
+    "incompleteProfile": "Perfil Incompleto",
+    "incompleteProfileDescription": "Complete seu perfil para acessar todas as funcionalidades do CS2 Bits.",
     "streamer": {
       "title": "Informações de Streamer",
       "username": "Pagina do Streamer",
@@ -553,7 +556,8 @@
     "bet_amount_too_low": "Valor da aposta muito baixo",
     "bet_amount_too_high": "Valor da aposta muito alto",
     "stream_match_not_found": "Partida não encontrada",
-    "fetching_stream_match_details": "Erro ao carregar a partida"
+    "fetching_stream_match_details": "Erro ao carregar a partida",
+    "user_not_complete": "Usuário não completo, complete seu perfil para continuar"
   },
   "match": {
     "status": {

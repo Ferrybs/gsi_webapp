@@ -3,12 +3,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import { SiCoinbase, SiTether, SiVisa } from "react-icons/si";
+import { SiVisa } from "react-icons/si";
 import {
   FaBitcoin,
   FaCcApplePay,
   FaCcMastercard,
-  FaEthereum,
   FaGooglePay,
 } from "react-icons/fa";
 import { TokenETH, TokenUSDC, TokenUSDT } from "@web3icons/react";
