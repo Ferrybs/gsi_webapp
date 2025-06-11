@@ -11,7 +11,7 @@ const TRADE_LINK_REGEX =
   /^https:\/\/steamcommunity\.com\/tradeoffer\/new\/\?partner=\d+&token=[A-Za-z0-9_-]+$/;
 
 export const UsersSchema = z.object({
-  user_roles: z.array(UserRoleSchema).nullable(),
+  user_roles: z.array(UserRoleSchema).optional().nullable(),
   id: z.string(),
   steam_id: z.string(),
   username: z.string(),

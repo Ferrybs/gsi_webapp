@@ -71,7 +71,7 @@ export function ClosedRaffleItem({ raffle }: ClosedRaffleItemProps) {
               </span>
             </div>
             <div className="text-xs text-muted-foreground mt-0.5">
-              {t("raffle.drawn_on")}:{" "}
+              {t("raffle.drawn_on")}{" "}
               {formatRelative(raffle.drawn_at!, new Date(), { locale: ptBR })}
             </div>
           </div>
